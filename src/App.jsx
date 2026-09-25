@@ -1,121 +1,120 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app">
+      <header className="navbar">
+        <div className="brand">
+          <span className="brand-mark">i</span>
+          <span className="brand-name">Lost</span>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+        <nav className="nav-links">
+          <a href="#home">Home</a>
+          <a href="#how-it-works">How It Works</a>
+          <button className="nav-login">Log In</button>
+        </nav>
+      </header>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <main>
+        <section className="hero-section" id="home">
+          <div className="hero-content">
+            <p className="eyebrow">BULACAN STATE UNIVERSITY · MENESES CAMPUS</p>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+            <h1>
+              Lost it?
+              <span> Find it back.</span>
+            </h1>
+
+            <p className="hero-description">
+              A simple way to report, search, and recover lost and found items
+              around the campus.
+            </p>
+
+            <div className="hero-actions">
+              <button className="primary-button">Report Lost Item</button>
+              <button className="secondary-button">Report Found Item</button>
+            </div>
+          </div>
+
+          <div className="search-card">
+            <p className="search-label">Looking for something?</p>
+
+            <div className="search-box">
+              <span className="search-icon">⌕</span>
+              <input
+                type="text"
+                placeholder="Search for an item..."
+                aria-label="Search for an item"
+              />
+              <button>Search</button>
+            </div>
+
+            <div className="quick-filters">
+              <button>Item</button>
+              <button>Category</button>
+              <button>Location</button>
+              <button>Date</button>
+            </div>
+          </div>
+        </section>
+
+        <section className="how-section" id="how-it-works">
+          <div className="section-heading">
+            <p className="eyebrow">HOW IT WORKS</p>
+            <h2>From lost to found.</h2>
+            <p>
+              iLost connects people who lost items with those who found them,
+              while keeping the return process verified.
+            </p>
+          </div>
+
+          <div className="steps">
+            <div className="step-card">
+              <span className="step-number">01</span>
+              <h3>Report</h3>
+              <p>
+                Report an item you lost or found with its basic details.
+              </p>
+            </div>
+
+            <div className="step-card">
+              <span className="step-number">02</span>
+              <h3>Search</h3>
+              <p>
+                Search and filter reported items to find a possible match.
+              </p>
+            </div>
+
+            <div className="step-card">
+              <span className="step-number">03</span>
+              <h3>Claim</h3>
+              <p>
+                Submit a claim request when you believe an item belongs to you.
+              </p>
+            </div>
+
+            <div className="step-card">
+              <span className="step-number">04</span>
+              <h3>Verify</h3>
+              <p>
+                An administrator verifies ownership before the item is
+                returned.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <div className="brand">
+          <span className="brand-mark">i</span>
+          <span className="brand-name">Lost</span>
+        </div>
+
+        <p>Lost it? Find it back.</p>
+      </footer>
+    </div>
   )
 }
 
