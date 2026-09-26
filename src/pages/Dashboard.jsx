@@ -1,18 +1,32 @@
 import { useEffect, useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
 
-function Dashboard() {
+import Sidebar from '../components/Sidebar'
+
+function Dashboard({ setPage }) {
   const [fullName, setFullName] = useState('User')
   const [loading, setLoading] = useState(true)
 
+  const [stats, setStats] = useState({
+    lost: 0,
+    found: 0,
+    recovered: 0,
+    unclaimed: 0,
+  })
+
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [statsError, setStatsError] = useState('')
+
   useEffect(() => {
-    const getProfile = async () => {
+    const getDashboardData = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
       if (!user) {
         setLoading(false)
+        setStatsLoading(false)
         return
       }
 
@@ -27,67 +41,160 @@ function Dashboard() {
       }
 
       setLoading(false)
+
+      const { data: items, error: itemsError } = await supabase
+        .from('items')
+        .select('type, status')
+
+      if (itemsError) {
+        setStatsError(
+          'Unable to load system statistics.'
+        )
+        setStatsLoading(false)
+        return
+      }
+
+      const lost = items.filter(
+        (item) => item.type === 'lost'
+      ).length
+
+      const found = items.filter(
+        (item) => item.type === 'found'
+      ).length
+
+      const recovered = items.filter(
+        (item) => item.status === 'returned'
+      ).length
+
+      const unclaimed = items.filter(
+        (item) => item.status !== 'returned'
+      ).length
+
+      setStats({
+        lost,
+        found,
+        recovered,
+        unclaimed,
+      })
+
+      setStatsLoading(false)
     }
 
-    getProfile()
+    getDashboardData()
   }, [])
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-navbar">
-        <div className="brand">
-          <span className="brand-mark">i</span>
-          <span className="brand-name">Lost</span>
-        </div>
+    <div className="dashboard-layout">
+      <Sidebar
+        page="dashboard"
+        setPage={setPage}
+      />
 
-        <button className="dashboard-logout">
-          Log Out
-        </button>
-      </header>
+      <main className="dashboard-main">
+        <section className="dashboard-content">
+          <section className="dashboard-welcome">
+            <p className="eyebrow">OVERVIEW</p>
 
-      <main className="dashboard-content">
-        <section className="dashboard-welcome">
-          <p className="eyebrow">MY DASHBOARD</p>
+            <h1>
+              Welcome, {loading ? '...' : fullName}.
+            </h1>
 
-          <h1>
-            Welcome, {loading ? '...' : fullName}.
-          </h1>
-
-          <p>
-            Find your lost item or help return one to its owner.
-          </p>
-        </section>
-
-        <section className="dashboard-actions">
-          <button className="dashboard-action-card">
-            <span>01</span>
-            <h2>Report Lost Item</h2>
             <p>
-              Report something you lost around campus.
+              Here's an overview of the campus lost and found system.
             </p>
-          </button>
+          </section>
 
-          <button className="dashboard-action-card">
-            <span>02</span>
-            <h2>Report Found Item</h2>
-            <p>
-              Report an item you found on campus.
-            </p>
-          </button>
-        </section>
+          <section className="dashboard-actions">
+            <button
+              className="dashboard-action-card"
+              onClick={() => setPage('report-lost')}
+            >
+              <span>01</span>
 
-        <section className="dashboard-reports">
-          <div className="section-heading">
-            <p className="eyebrow">ACTIVITY</p>
-            <h2>My Reports</h2>
-          </div>
+              <h2>Report Lost Item</h2>
 
-          <div className="empty-state">
-            <p>No reports yet.</p>
-            <span>
-              Your lost and found reports will appear here.
-            </span>
-          </div>
+              <p>
+                Report something you lost around campus.
+              </p>
+            </button>
+
+            <button
+              className="dashboard-action-card"
+              onClick={() => setPage('report-found')}
+            >
+              <span>02</span>
+
+              <h2>Report Found Item</h2>
+
+              <p>
+                Report an item you found on campus.
+              </p>
+            </button>
+          </section>
+
+          <section className="dashboard-overview">
+            <div className="section-heading">
+              <p className="eyebrow">SYSTEM SUMMARY</p>
+
+              <h2>Lost & Found Overview</h2>
+            </div>
+
+            {statsError ? (
+              <div className="overview-placeholder">
+                <p>{statsError}</p>
+              </div>
+            ) : (
+              <div className="overview-stats">
+                <div className="stat-card">
+                  <span>ITEMS LOST</span>
+
+                  <strong>
+                    {statsLoading ? '...' : stats.lost}
+                  </strong>
+
+                  <p>
+                    Reported lost items
+                  </p>
+                </div>
+
+                <div className="stat-card">
+                  <span>ITEMS FOUND</span>
+
+                  <strong>
+                    {statsLoading ? '...' : stats.found}
+                  </strong>
+
+                  <p>
+                    Reported found items
+                  </p>
+                </div>
+
+                <div className="stat-card">
+                  <span>ITEMS RECOVERED</span>
+
+                  <strong>
+                    {statsLoading ? '...' : stats.recovered}
+                  </strong>
+
+                  <p>
+                    Successfully returned items
+                  </p>
+                </div>
+
+                <div className="stat-card">
+                  <span>ITEMS UNCLAIMED</span>
+
+                  <strong>
+                    {statsLoading ? '...' : stats.unclaimed}
+                  </strong>
+
+                  <p>
+                    Items not yet returned
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
         </section>
       </main>
     </div>
