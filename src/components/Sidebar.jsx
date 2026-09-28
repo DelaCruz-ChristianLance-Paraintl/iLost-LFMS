@@ -44,6 +44,15 @@ function Sidebar({ page, setPage }) {
         </button>
 
         <button
+        className={`sidebar-link ${
+            page === 'find-missing' ? 'active' : ''
+        }`}
+        onClick={() => setPage('find-missing')}
+        >
+        Find My Missing Items
+        </button>
+
+        <button
           className={`sidebar-link ${
             page === 'history' ? 'active' : ''
           }`}
