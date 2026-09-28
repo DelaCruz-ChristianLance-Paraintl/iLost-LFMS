@@ -11,6 +11,10 @@ import ReportItem from './pages/ReportItem'
 import History from './pages/History'
 import BrowseItems from './pages/BrowseItems'
 import FindMyMissingItems from './pages/FindMyMissingItems'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminClaims from './pages/AdminClaims'
+import AdminItems from './pages/AdminItems'
+import AdminUsers from './pages/AdminUsers'
 
 function App() {
   const [page, setPage] = useState('home')
@@ -36,7 +40,22 @@ function App() {
     if (error) {
       setLoginMessage(error.message)
     } else {
-      setPage('dashboard')
+      const {
+        data: profile,
+        error: profileError,
+      } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', (await supabase.auth.getUser()).data.user.id)
+        .single()
+
+      if (profileError) {
+        setLoginMessage('Unable to load your account information.')
+      } else if (profile.role === 'admin') {
+        setPage('admin-dashboard')
+      } else {
+        setPage('dashboard')
+      }
     }
 
     setLoginLoading(false)
@@ -72,6 +91,22 @@ function App() {
 
   if (page === 'browse') {
     return <BrowseItems setPage={setPage} />
+  }
+
+  if (page === 'admin-dashboard') {
+  return <AdminDashboard setPage={setPage} />
+    }
+
+  if (page === 'admin-claims') {
+  return <AdminClaims setPage={setPage} />
+  }
+
+  if (page === 'admin-items') {
+  return <AdminItems setPage={setPage} />
+  }
+
+  if (page === 'admin-users') {
+  return <AdminUsers setPage={setPage} />
   }
 
   return (

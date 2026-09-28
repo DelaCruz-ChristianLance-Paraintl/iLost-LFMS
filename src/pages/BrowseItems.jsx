@@ -6,7 +6,9 @@ import Sidebar from '../components/Sidebar'
 
 function BrowseItems({ setPage }) {
   const [items, setItems] = useState([])
+
   const [loading, setLoading] = useState(true)
+
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -19,7 +21,38 @@ function BrowseItems({ setPage }) {
       if (itemsError) {
         setError('Unable to load reported items.')
       } else {
-        setItems(data || [])
+        const itemsWithPhotos = await Promise.all(
+          (data || []).map(async (item) => {
+            if (!item.photo_url) {
+              return {
+                ...item,
+                photoSignedUrl: null,
+              }
+            }
+
+            const {
+              data: signedUrlData,
+              error: signedUrlError,
+            } = await supabase.storage
+              .from('item-photos')
+              .createSignedUrl(item.photo_url, 3600)
+
+            if (signedUrlError) {
+              return {
+                ...item,
+                photoSignedUrl: null,
+              }
+            }
+
+            return {
+              ...item,
+              photoSignedUrl:
+                signedUrlData?.signedUrl || null,
+            }
+          })
+        )
+
+        setItems(itemsWithPhotos)
       }
 
       setLoading(false)
@@ -30,49 +63,66 @@ function BrowseItems({ setPage }) {
 
   return (
     <div className="dashboard-layout">
+
       <Sidebar
         page="browse"
         setPage={setPage}
       />
 
       <main className="dashboard-main">
+
         <section className="dashboard-content">
 
           <section className="browse-header">
-            <p className="eyebrow">BROWSE ITEMS</p>
 
-            <h1>Lost & Found Items</h1>
+            <p className="eyebrow">
+              BROWSE ITEMS
+            </p>
+
+            <h1>
+              Lost & Found Items
+            </h1>
 
             <p>
               Browse reported items without exposing identifying details.
             </p>
+
           </section>
 
           <section className="browse-items">
 
             {loading ? (
               <div className="empty-state">
-                <p>Loading reported items...</p>
+                <p>
+                  Loading reported items...
+                </p>
               </div>
 
             ) : error ? (
               <div className="empty-state">
-                <p>{error}</p>
+                <p>
+                  {error}
+                </p>
               </div>
 
             ) : items.length === 0 ? (
               <div className="empty-state">
-                <p>No reported items yet.</p>
+
+                <p>
+                  No reported items yet.
+                </p>
 
                 <span>
                   Lost and found reports will appear here.
                 </span>
+
               </div>
 
             ) : (
               <div className="browse-list">
 
                 {items.map((item) => (
+
                   <article
                     className="browse-card"
                     key={item.id}
@@ -80,9 +130,9 @@ function BrowseItems({ setPage }) {
 
                     <div className="browse-card-image">
 
-                      {item.photo_url ? (
+                      {item.photoSignedUrl ? (
                         <img
-                          src={item.photo_url}
+                          src={item.photoSignedUrl}
                           alt="Reported item"
                           className="browse-item-image"
                         />
@@ -104,7 +154,9 @@ function BrowseItems({ setPage }) {
                           : 'FOUND'}
                       </span>
 
-                      <h3>{item.category}</h3>
+                      <h3>
+                        {item.category}
+                      </h3>
 
                       <p className="browse-category">
                         Category
@@ -113,6 +165,7 @@ function BrowseItems({ setPage }) {
                     </div>
 
                   </article>
+
                 ))}
 
               </div>
@@ -121,7 +174,9 @@ function BrowseItems({ setPage }) {
           </section>
 
         </section>
+
       </main>
+
     </div>
   )
 }

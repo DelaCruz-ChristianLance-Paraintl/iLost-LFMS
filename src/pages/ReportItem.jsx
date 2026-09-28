@@ -1,5 +1,7 @@
 import { useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
+
 import Sidebar from '../components/Sidebar'
 
 const categoryOptions = {
@@ -221,7 +223,14 @@ const shouldShowSize = (category, subcategory) => {
 
   if (
     category === 'Bags' &&
-    ['Backpack', 'Laptop Bag', 'Shoulder Bag', 'Sling Bag', 'Tote Bag', 'Pouch'].includes(subcategory)
+    [
+      'Backpack',
+      'Laptop Bag',
+      'Shoulder Bag',
+      'Sling Bag',
+      'Tote Bag',
+      'Pouch',
+    ].includes(subcategory)
   ) {
     return true
   }
@@ -245,6 +254,7 @@ function ReportItem({ type, setPage }) {
     time: '',
   })
 
+  const [photo, setPhoto] = useState(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -270,6 +280,36 @@ function ReportItem({ type, setPage }) {
     })
   }
 
+  const handlePhotoChange = (event) => {
+    const selectedFile = event.target.files?.[0]
+
+    setError('')
+    setMessage('')
+
+    if (!selectedFile) {
+      setPhoto(null)
+      return
+    }
+
+    if (!selectedFile.type.startsWith('image/')) {
+      setError('Please select an image file.')
+      event.target.value = ''
+      setPhoto(null)
+      return
+    }
+
+    const maxSize = 5 * 1024 * 1024
+
+    if (selectedFile.size > maxSize) {
+      setError('Photo must be 5 MB or smaller.')
+      event.target.value = ''
+      setPhoto(null)
+      return
+    }
+
+    setPhoto(selectedFile)
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
 
@@ -285,6 +325,36 @@ function ReportItem({ type, setPage }) {
       setError('You must be logged in to submit a report.')
       setLoading(false)
       return
+    }
+
+    let photoPath = null
+
+    /*
+      Upload the photo first.
+      The path is stored in items.photo_url.
+    */
+    if (photo) {
+      const fileExtension = photo.name.split('.').pop()?.toLowerCase() || 'jpg'
+
+      const fileName = `${crypto.randomUUID()}.${fileExtension}`
+
+      const filePath = `${user.id}/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('item-photos')
+        .upload(filePath, photo, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: photo.type,
+        })
+
+      if (uploadError) {
+        setError(`Photo upload failed: ${uploadError.message}`)
+        setLoading(false)
+        return
+      }
+
+      photoPath = filePath
     }
 
     const { error: insertError } = await supabase
@@ -304,10 +374,17 @@ function ReportItem({ type, setPage }) {
         location: form.location,
         date: form.date,
         time: form.time || null,
+        photo_url: photoPath,
         status: 'reported',
       })
 
     if (insertError) {
+      if (photoPath) {
+        await supabase.storage
+          .from('item-photos')
+          .remove([photoPath])
+      }
+
       setError(insertError.message)
       setLoading(false)
       return
@@ -332,23 +409,39 @@ function ReportItem({ type, setPage }) {
       time: '',
     })
 
+    setPhoto(null)
+
+    const fileInput = document.getElementById('itemPhoto')
+
+    if (fileInput) {
+      fileInput.value = ''
+    }
+
     setLoading(false)
   }
 
-  const brandOptions = getBrandOptions(form.category, form.subcategory)
+  const brandOptions = getBrandOptions(
+    form.category,
+    form.subcategory
+  )
 
   return (
     <div className="dashboard-layout">
+
       <Sidebar
         page={isLost ? 'report-lost' : 'report-found'}
         setPage={setPage}
       />
 
       <main className="dashboard-main">
+
         <section className="dashboard-content">
 
           <section className="report-header">
-            <p className="eyebrow">NEW REPORT</p>
+
+            <p className="eyebrow">
+              NEW REPORT
+            </p>
 
             <h1>
               Report {isLost ? 'Lost' : 'Found'} Item
@@ -358,6 +451,7 @@ function ReportItem({ type, setPage }) {
               Provide the details below so the item can be added
               to the campus lost and found records.
             </p>
+
           </section>
 
           <form
@@ -368,6 +462,7 @@ function ReportItem({ type, setPage }) {
             {/* ITEM NAME */}
 
             <div className="form-group">
+
               <label htmlFor="itemName">
                 Item Name
               </label>
@@ -381,12 +476,42 @@ function ReportItem({ type, setPage }) {
                 onChange={handleChange}
                 required
               />
+
+            </div>
+
+
+            {/* PHOTO */}
+
+            <div className="form-group">
+
+              <label htmlFor="itemPhoto">
+                Item Photo
+              </label>
+
+              <input
+                id="itemPhoto"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+              />
+
+              <small>
+                Optional. Upload an image of the item, up to 5 MB.
+              </small>
+
+              {photo && (
+                <small>
+                  Selected: {photo.name}
+                </small>
+              )}
+
             </div>
 
 
             {/* CATEGORY */}
 
             <div className="form-group">
+
               <label htmlFor="category">
                 Category
               </label>
@@ -398,6 +523,7 @@ function ReportItem({ type, setPage }) {
                 onChange={handleCategoryChange}
                 required
               >
+
                 <option value="">
                   Select a category
                 </option>
@@ -410,7 +536,9 @@ function ReportItem({ type, setPage }) {
                     {category}
                   </option>
                 ))}
+
               </select>
+
             </div>
 
 
@@ -418,6 +546,7 @@ function ReportItem({ type, setPage }) {
 
             {form.category && (
               <div className="form-group">
+
                 <label htmlFor="subcategory">
                   Subcategory
                 </label>
@@ -429,6 +558,7 @@ function ReportItem({ type, setPage }) {
                   onChange={handleChange}
                   required
                 >
+
                   <option value="">
                     Select a subcategory
                   </option>
@@ -441,7 +571,9 @@ function ReportItem({ type, setPage }) {
                       {subcategory}
                     </option>
                   ))}
+
                 </select>
+
               </div>
             )}
 
@@ -450,17 +582,20 @@ function ReportItem({ type, setPage }) {
 
             {form.subcategory && shouldShowBrand(form.category) && (
               <div className="form-group">
+
                 <label htmlFor="brand">
                   Brand
                 </label>
 
                 {brandOptions.length > 0 ? (
+
                   <select
                     id="brand"
                     name="brand"
                     value={form.brand}
                     onChange={handleChange}
                   >
+
                     <option value="">
                       Select a brand
                     </option>
@@ -473,8 +608,11 @@ function ReportItem({ type, setPage }) {
                         {brand}
                       </option>
                     ))}
+
                   </select>
+
                 ) : (
+
                   <input
                     id="brand"
                     name="brand"
@@ -483,7 +621,9 @@ function ReportItem({ type, setPage }) {
                     value={form.brand}
                     onChange={handleChange}
                   />
+
                 )}
+
               </div>
             )}
 
@@ -493,6 +633,7 @@ function ReportItem({ type, setPage }) {
             {form.subcategory &&
               shouldShowModel(form.category, form.subcategory) && (
                 <div className="form-group">
+
                   <label htmlFor="model">
                     Model
                   </label>
@@ -505,6 +646,7 @@ function ReportItem({ type, setPage }) {
                     value={form.model}
                     onChange={handleChange}
                   />
+
                 </div>
               )}
 
@@ -514,6 +656,7 @@ function ReportItem({ type, setPage }) {
             {form.subcategory &&
               shouldShowColor(form.category) && (
                 <div className="form-group">
+
                   <label htmlFor="color">
                     Color
                   </label>
@@ -524,6 +667,7 @@ function ReportItem({ type, setPage }) {
                     value={form.color}
                     onChange={handleChange}
                   >
+
                     <option value="">
                       Select a color
                     </option>
@@ -536,7 +680,9 @@ function ReportItem({ type, setPage }) {
                         {color}
                       </option>
                     ))}
+
                   </select>
+
                 </div>
               )}
 
@@ -546,6 +692,7 @@ function ReportItem({ type, setPage }) {
             {form.subcategory &&
               shouldShowSize(form.category, form.subcategory) && (
                 <div className="form-group">
+
                   <label htmlFor="size">
                     Size
                   </label>
@@ -556,6 +703,7 @@ function ReportItem({ type, setPage }) {
                     value={form.size}
                     onChange={handleChange}
                   >
+
                     <option value="">
                       Select a size
                     </option>
@@ -568,7 +716,9 @@ function ReportItem({ type, setPage }) {
                         {size}
                       </option>
                     ))}
+
                   </select>
+
                 </div>
               )}
 
@@ -576,6 +726,7 @@ function ReportItem({ type, setPage }) {
             {/* DESCRIPTION */}
 
             <div className="form-group">
+
               <label htmlFor="description">
                 Description
               </label>
@@ -588,12 +739,14 @@ function ReportItem({ type, setPage }) {
                 onChange={handleChange}
                 rows="5"
               />
+
             </div>
 
 
             {/* DISTINCTIVE DETAILS */}
 
             <div className="form-group">
+
               <label htmlFor="distinctiveDetails">
                 Distinctive Details
               </label>
@@ -610,12 +763,14 @@ function ReportItem({ type, setPage }) {
               <small>
                 These details are kept private and may be used during claim verification.
               </small>
+
             </div>
 
 
             {/* LOCATION */}
 
             <div className="form-group">
+
               <label htmlFor="location">
                 {isLost
                   ? 'Where did you lose it?'
@@ -631,12 +786,14 @@ function ReportItem({ type, setPage }) {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
 
             {/* DATE */}
 
             <div className="form-group">
+
               <label htmlFor="date">
                 {isLost ? 'Date Lost' : 'Date Found'}
               </label>
@@ -649,12 +806,14 @@ function ReportItem({ type, setPage }) {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
 
             {/* TIME */}
 
             <div className="form-group">
+
               <label htmlFor="time">
                 Estimated Time {isLost ? 'Lost' : 'Found'}
               </label>
@@ -666,6 +825,7 @@ function ReportItem({ type, setPage }) {
                 value={form.time}
                 onChange={handleChange}
               />
+
             </div>
 
 
@@ -691,12 +851,17 @@ function ReportItem({ type, setPage }) {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Submitting...' : 'Submit Report'}
+              {loading
+                ? 'Submitting...'
+                : 'Submit Report'}
             </button>
 
           </form>
+
         </section>
+
       </main>
+
     </div>
   )
 }
