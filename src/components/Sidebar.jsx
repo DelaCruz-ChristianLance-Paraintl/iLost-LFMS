@@ -9,8 +9,11 @@ function Sidebar({ page, setPage }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <span className="brand-mark">i</span>
-        <span className="brand-name">Lost</span>
+        <img
+          src="/logo.png"
+          alt="iLost"
+          className="sidebar-logo"
+        />
       </div>
 
       <nav className="sidebar-nav">

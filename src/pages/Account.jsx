@@ -152,34 +152,24 @@ function Account({ setPage }) {
     setPage('login')
   }
 
-  if (loading) {
-    return (
-      <div className="dashboard-layout">
-        <main className="dashboard-main">
-          <section className="dashboard-content">
-            <p>Loading account...</p>
-          </section>
-        </main>
-      </div>
-    )
-  }
+
 
   const isAdmin = profile?.role === 'admin'
 
   return (
     <div className="dashboard-layout">
 
-      {isAdmin ? (
+        {isAdmin ? (
         <AdminSidebar
-          page="account"
-          setPage={setPage}
+            page="account"
+            setPage={setPage}
         />
-      ) : (
+        ) : (
         <Sidebar
-          page="account"
-          setPage={setPage}
+            page="account"
+            setPage={setPage}
         />
-      )}
+        )}
 
       <main className="dashboard-main">
         <section className="dashboard-content">
