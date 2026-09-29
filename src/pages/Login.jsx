@@ -193,7 +193,7 @@ function Login({ setPage }) {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Log In'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
         </form>

@@ -8,13 +8,22 @@ function Sidebar({ page, setPage }) {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-brand">
-        <img
-          src="/logo.png"
-          alt="iLost"
-          className="sidebar-logo"
-        />
-      </div>
+
+    <button
+      type="button"
+      className="sidebar-brand"
+      onClick={() => {
+        setPage('dashboard')
+        window.location.reload()
+      }}
+      aria-label="Go to iLost overview"
+    >
+      <img
+        src="/ilost.png"
+        alt="iLost"
+        className="sidebar-logo"
+      />
+    </button>
 
       <nav className="sidebar-nav">
         <button

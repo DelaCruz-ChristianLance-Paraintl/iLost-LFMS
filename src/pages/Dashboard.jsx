@@ -4,10 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 
 import Sidebar from '../components/Sidebar'
 
-function Dashboard({ setPage }) {
-  const [fullName, setFullName] = useState('User')
-  const [loading, setLoading] = useState(true)
-
+function Dashboard({ setPage, profile }) {
   const [stats, setStats] = useState({
     lost: 0,
     found: 0,
@@ -19,30 +16,11 @@ function Dashboard({ setPage }) {
   const [statsError, setStatsError] = useState('')
 
   useEffect(() => {
-    const getDashboardData = async () => {
+    const getDashboardStats = async () => {
       const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        setLoading(false)
-        setStatsLoading(false)
-        return
-      }
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user.id)
-        .single()
-
-      if (!error && data) {
-        setFullName(data.full_name)
-      }
-
-      setLoading(false)
-
-      const { data: items, error: itemsError } = await supabase
+        data: items,
+        error: itemsError,
+      } = await supabase
         .from('items')
         .select('type, status')
 
@@ -50,6 +28,7 @@ function Dashboard({ setPage }) {
         setStatsError(
           'Unable to load system statistics.'
         )
+
         setStatsLoading(false)
         return
       }
@@ -80,8 +59,11 @@ function Dashboard({ setPage }) {
       setStatsLoading(false)
     }
 
-    getDashboardData()
+    getDashboardStats()
   }, [])
+
+  const fullName =
+    profile?.full_name || 'User'
 
   return (
     <div className="dashboard-layout">
@@ -92,11 +74,14 @@ function Dashboard({ setPage }) {
 
       <main className="dashboard-main">
         <section className="dashboard-content">
+
           <section className="dashboard-welcome">
-            <p className="eyebrow">OVERVIEW</p>
+            <p className="eyebrow">
+              OVERVIEW
+            </p>
 
             <h1>
-              Welcome, {loading ? '...' : fullName}.
+              Welcome, {fullName}.
             </h1>
 
             <p>
@@ -107,11 +92,15 @@ function Dashboard({ setPage }) {
           <section className="dashboard-actions">
             <button
               className="dashboard-action-card"
-              onClick={() => setPage('report-lost')}
+              onClick={() =>
+                setPage('report-lost')
+              }
             >
               <span>01</span>
 
-              <h2>Report Lost Item</h2>
+              <h2>
+                Report Lost Item
+              </h2>
 
               <p>
                 Report something you lost around campus.
@@ -120,11 +109,15 @@ function Dashboard({ setPage }) {
 
             <button
               className="dashboard-action-card"
-              onClick={() => setPage('report-found')}
+              onClick={() =>
+                setPage('report-found')
+              }
             >
               <span>02</span>
 
-              <h2>Report Found Item</h2>
+              <h2>
+                Report Found Item
+              </h2>
 
               <p>
                 Report an item you found on campus.
@@ -134,22 +127,33 @@ function Dashboard({ setPage }) {
 
           <section className="dashboard-overview">
             <div className="section-heading">
-              <p className="eyebrow">SYSTEM SUMMARY</p>
+              <p className="eyebrow">
+                SYSTEM SUMMARY
+              </p>
 
-              <h2>Lost & Found Overview</h2>
+              <h2>
+                Lost & Found Overview
+              </h2>
             </div>
 
             {statsError ? (
               <div className="overview-placeholder">
-                <p>{statsError}</p>
+                <p>
+                  {statsError}
+                </p>
               </div>
             ) : (
               <div className="overview-stats">
+
                 <div className="stat-card">
-                  <span>ITEMS LOST</span>
+                  <span>
+                    ITEMS LOST
+                  </span>
 
                   <strong>
-                    {statsLoading ? '...' : stats.lost}
+                    {statsLoading
+                      ? '...'
+                      : stats.lost}
                   </strong>
 
                   <p>
@@ -158,10 +162,14 @@ function Dashboard({ setPage }) {
                 </div>
 
                 <div className="stat-card">
-                  <span>ITEMS FOUND</span>
+                  <span>
+                    ITEMS FOUND
+                  </span>
 
                   <strong>
-                    {statsLoading ? '...' : stats.found}
+                    {statsLoading
+                      ? '...'
+                      : stats.found}
                   </strong>
 
                   <p>
@@ -170,10 +178,14 @@ function Dashboard({ setPage }) {
                 </div>
 
                 <div className="stat-card">
-                  <span>ITEMS RECOVERED</span>
+                  <span>
+                    ITEMS RECOVERED
+                  </span>
 
                   <strong>
-                    {statsLoading ? '...' : stats.recovered}
+                    {statsLoading
+                      ? '...'
+                      : stats.recovered}
                   </strong>
 
                   <p>
@@ -182,19 +194,25 @@ function Dashboard({ setPage }) {
                 </div>
 
                 <div className="stat-card">
-                  <span>ITEMS UNCLAIMED</span>
+                  <span>
+                    ITEMS UNCLAIMED
+                  </span>
 
                   <strong>
-                    {statsLoading ? '...' : stats.unclaimed}
+                    {statsLoading
+                      ? '...'
+                      : stats.unclaimed}
                   </strong>
 
                   <p>
                     Items not yet returned
                   </p>
                 </div>
+
               </div>
             )}
           </section>
+
         </section>
       </main>
     </div>
