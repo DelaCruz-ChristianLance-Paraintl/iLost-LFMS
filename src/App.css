@@ -1,3 +1,10 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
 .app {
   min-height: 100vh;
   background: #f7f9fc;
@@ -518,7 +525,6 @@
   }
 }
 
-
 .dashboard-page {
   min-height: 100vh;
   background:
@@ -847,8 +853,6 @@
   }
 }
 
-
-
 .report-page {
   min-height: 100vh;
   background:
@@ -996,7 +1000,6 @@
     padding: 24px;
   }
 }
-
 
 .reports-list {
   display: flex;
@@ -1176,7 +1179,6 @@
   font-size: 13px;
 }
 
-
 .history-header {
   margin-bottom: 35px;
 }
@@ -1201,7 +1203,6 @@
   color: #6b7280;
   line-height: 1.6;
 }
-
 
 .overview-stats {
   display: grid;
@@ -1238,7 +1239,6 @@
   color: #6b7280;
   font-size: 12px;
 }
-
 
 .browse-header {
   margin-bottom: 35px;
@@ -1311,11 +1311,6 @@
   color: #263238;
 }
 
-
-
-
-
-
 /* =========================================================
    iLost LANDING PAGE
    ========================================================= */
@@ -1327,7 +1322,6 @@
   background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
 }
-
 
 /* =========================================================
    LEFT BRAND PANEL
@@ -1357,7 +1351,6 @@
     );
 }
 
-
 .landing-brand-panel::before {
   content: "";
   position: absolute;
@@ -1381,7 +1374,6 @@
   pointer-events: none;
 }
 
-
 /* =========================================================
    LOGO
    ========================================================= */
@@ -1391,7 +1383,6 @@
   z-index: 5;
 }
 
-
 .landing-logo {
   display: flex;
   align-items: center;
@@ -1399,7 +1390,6 @@
 
   margin-bottom: 20px;
 }
-
 
 .landing-logo-circle {
   width: 48px;
@@ -1424,7 +1414,6 @@
   font-weight: 700;
 }
 
-
 .landing-logo-text {
   color: #b83a4b;
 
@@ -1433,7 +1422,6 @@
 
   letter-spacing: -2px;
 }
-
 
 .landing-brand h1 {
   margin: 0 0 5px;
@@ -1446,7 +1434,6 @@
   letter-spacing: -1.5px;
 }
 
-
 .landing-campus {
   margin: 0 0 15px;
 
@@ -1456,7 +1443,6 @@
   font-weight: 600;
 }
 
-
 .landing-tagline {
   margin: 0;
 
@@ -1465,7 +1451,6 @@
   font-size: 14px;
   line-height: 1.4;
 }
-
 
 /* =========================================================
    CAMPUS ILLUSTRATION
@@ -1480,7 +1465,6 @@
 
   margin-top: 10px;
 }
-
 
 .illustration-map {
   position: absolute;
@@ -1498,7 +1482,6 @@
   background: rgba(184, 58, 75, 0.08);
 }
 
-
 .map-pin {
   position: absolute;
 
@@ -1512,18 +1495,15 @@
   transform: rotate(-45deg);
 }
 
-
 .pin-one {
   left: 27px;
   top: 25px;
 }
 
-
 .pin-two {
   right: 27px;
   bottom: 17px;
 }
-
 
 .map-route {
   position: absolute;
@@ -1536,7 +1516,6 @@
   transform-origin: left center;
 }
 
-
 .route-one {
   left: 34px;
   top: 36px;
@@ -1544,14 +1523,12 @@
   transform: rotate(28deg);
 }
 
-
 .route-two {
   left: 74px;
   top: 61px;
 
   transform: rotate(-28deg);
 }
-
 
 /* =========================================================
    CAMPUS PLATFORM
@@ -1579,7 +1556,6 @@
     0 0 40px rgba(184, 58, 75, 0.15);
 }
 
-
 /* buildings */
 
 .campus-building {
@@ -1595,14 +1571,12 @@
     0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-
 .building-left {
   left: 8%;
 
   width: 25%;
   height: 90px;
 }
-
 
 .building-center {
   left: 36%;
@@ -1613,14 +1587,12 @@
   background: #6c717b;
 }
 
-
 .building-right {
   right: 7%;
 
   width: 21%;
   height: 77px;
 }
-
 
 .building-window {
   width: 17px;
@@ -1632,7 +1604,6 @@
 
   background: #b83a4b;
 }
-
 
 .building-screen {
   position: absolute;
@@ -1655,7 +1626,6 @@
   font-weight: 700;
 }
 
-
 .screen-line {
   width: 80%;
   height: 3px;
@@ -1665,11 +1635,9 @@
   background: #b83a4b;
 }
 
-
 .screen-line.short {
   width: 52%;
 }
-
 
 /* =========================================================
    TREES
@@ -1683,7 +1651,6 @@
   width: 45px;
   height: 75px;
 }
-
 
 .illustration-tree::before {
   content: "";
@@ -1699,7 +1666,6 @@
   background: #806047;
 }
 
-
 .illustration-tree span {
   position: absolute;
 
@@ -1714,18 +1680,15 @@
   background: #64734d;
 }
 
-
 .tree-one {
   left: 39%;
 }
-
 
 .tree-two {
   right: 27%;
 
   transform: scale(0.75);
 }
-
 
 /* =========================================================
    PEOPLE
@@ -1739,7 +1702,6 @@
   width: 22px;
   height: 65px;
 }
-
 
 .person-head {
   position: absolute;
@@ -1755,7 +1717,6 @@
   background: #d6a37b;
 }
 
-
 .person-body {
   position: absolute;
 
@@ -1770,11 +1731,9 @@
   background: #b83a4b;
 }
 
-
 .person-one {
   left: 28%;
 }
-
 
 .person-two {
   left: 60%;
@@ -1782,13 +1741,11 @@
   transform: scale(1.15);
 }
 
-
 .person-three {
   right: 12%;
 
   transform: scale(0.9);
 }
-
 
 /* =========================================================
    ILLUSTRATION LABELS
@@ -1820,18 +1777,15 @@
     0 5px 15px rgba(0, 0, 0, 0.25);
 }
 
-
 .label-found {
   left: 12%;
   top: 39%;
 }
 
-
 .label-lost {
   right: 7%;
   top: 33%;
 }
-
 
 .label-icon {
   width: 15px;
@@ -1847,7 +1801,6 @@
 
   background: #b83a4b;
 }
-
 
 /* =========================================================
    NETWORK INFORMATION
@@ -1866,7 +1819,6 @@
   margin-top: auto;
 }
 
-
 .network-dot {
   width: 10px;
   height: 10px;
@@ -1883,7 +1835,6 @@
     0 0 12px #b83a4b;
 }
 
-
 .network-info strong {
   display: block;
 
@@ -1894,7 +1845,6 @@
   font-size: 13px;
 }
 
-
 .network-info p {
   margin: 0;
 
@@ -1903,13 +1853,11 @@
   font-size: 10px;
 }
 
-
 .network-info p span {
   margin: 0 6px;
 
   color: #b83a4b;
 }
-
 
 /* =========================================================
    RIGHT LOGIN PANEL
@@ -1929,7 +1877,6 @@
 
   background: #ffffff;
 }
-
 
 /* =========================================================
    CIRCUIT BACKGROUND
@@ -1960,7 +1907,6 @@
   background-size: 90px 90px;
 }
 
-
 .circuit-line {
   position: absolute;
 
@@ -1970,7 +1916,6 @@
 
   border-width: 0;
 }
-
 
 .line-1 {
   left: 5%;
@@ -1983,7 +1928,6 @@
   border-bottom-width: 2px;
 }
 
-
 .line-2 {
   right: 5%;
   top: 10%;
@@ -1994,7 +1938,6 @@
   border-left-width: 2px;
   border-bottom-width: 2px;
 }
-
 
 .line-3 {
   left: 2%;
@@ -2007,7 +1950,6 @@
   border-top-width: 2px;
 }
 
-
 .line-4 {
   right: 12%;
   bottom: 5%;
@@ -2018,7 +1960,6 @@
   border-left-width: 2px;
   border-top-width: 2px;
 }
-
 
 .line-5 {
   left: 30%;
@@ -2031,7 +1972,6 @@
   border-right-width: 2px;
 }
 
-
 .line-6 {
   right: 30%;
   bottom: 0;
@@ -2042,7 +1982,6 @@
   border-left-width: 2px;
   border-right-width: 2px;
 }
-
 
 /* =========================================================
    LOGIN CARD
@@ -2067,13 +2006,11 @@
     0 4px 12px rgba(38, 50, 56, 0.08);
 }
 
-
 .login-card-heading {
   padding: 30px 28px 22px;
 
   text-align: center;
 }
-
 
 .login-card-heading h2 {
   margin: 0;
@@ -2084,11 +2021,9 @@
   font-weight: 700;
 }
 
-
 .login-card-heading h2 span {
   color: #b83a4b;
 }
-
 
 /* =========================================================
    LOGIN FIELDS
@@ -2097,7 +2032,6 @@
 .landing-login-fields {
   padding: 0 28px 22px;
 }
-
 
 .landing-field {
   height: 48px;
@@ -2123,14 +2057,12 @@
     box-shadow 0.2s ease;
 }
 
-
 .landing-field:focus-within {
   border-color: #b83a4b;
 
   box-shadow:
     0 0 0 3px rgba(184, 58, 75, 0.08);
 }
-
 
 .landing-field input {
   width: 100%;
@@ -2147,11 +2079,9 @@
   font-size: 13px;
 }
 
-
 .landing-field input::placeholder {
   color: #777b80;
 }
-
 
 .field-icon {
   width: 18px;
@@ -2165,7 +2095,6 @@
 
   color: #7b424b;
 }
-
 
 .field-icon svg,
 .eye-button svg,
@@ -2182,7 +2111,6 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-
 
 .eye-button {
   width: 22px;
@@ -2205,7 +2133,6 @@
   cursor: pointer;
 }
 
-
 /* =========================================================
    LOGIN OPTIONS
    ========================================================= */
@@ -2220,7 +2147,6 @@
   font-size: 12px;
 }
 
-
 .remember-option {
   display: flex;
   align-items: center;
@@ -2232,14 +2158,12 @@
   cursor: pointer;
 }
 
-
 .remember-option input {
   width: 14px;
   height: 14px;
 
   accent-color: #b83a4b;
 }
-
 
 .login-options button {
   padding: 0;
@@ -2255,11 +2179,9 @@
   cursor: pointer;
 }
 
-
 .login-options button:hover {
   text-decoration: underline;
 }
-
 
 /* =========================================================
    LOGIN MESSAGE
@@ -2274,7 +2196,6 @@
 
   line-height: 1.4;
 }
-
 
 /* =========================================================
    SIGN IN BUTTON
@@ -2301,13 +2222,11 @@
     transform 0.2s ease;
 }
 
-
 .landing-signin-button:hover {
   background: #963040;
 
   transform: translateY(-1px);
 }
-
 
 .landing-signin-button:disabled {
   opacity: 0.7;
@@ -2316,7 +2235,6 @@
 
   transform: none;
 }
-
 
 /* =========================================================
    REGISTER LINK
@@ -2331,7 +2249,6 @@
 
   font-size: 12px;
 }
-
 
 .landing-register-link button {
   margin-left: 5px;
@@ -2350,11 +2267,9 @@
   cursor: pointer;
 }
 
-
 .landing-register-link button:hover {
   text-decoration: underline;
 }
-
 
 /* =========================================================
    SECURITY NOTICE
@@ -2382,19 +2297,16 @@
   text-align: center;
 }
 
-
 .login-security span {
   display: flex;
 
   color: #8f3443;
 }
 
-
 .login-security svg {
   width: 14px;
   height: 14px;
 }
-
 
 /* =========================================================
    AUTH PAGES
@@ -2418,7 +2330,6 @@
     #f7f9fc;
 }
 
-
 .auth-card {
   width: min(430px, 100%);
 
@@ -2433,7 +2344,6 @@
     0 20px 50px rgba(38, 50, 56, 0.08);
 }
 
-
 .auth-brand {
   display: flex;
   align-items: center;
@@ -2442,7 +2352,6 @@
 
   margin-bottom: 25px;
 }
-
 
 .auth-brand .brand-mark {
   width: 38px;
@@ -2461,14 +2370,12 @@
   font-weight: 700;
 }
 
-
 .auth-brand .brand-name {
   color: #b83a4b;
 
   font-size: 30px;
   font-weight: 700;
 }
-
 
 .auth-card h1 {
   margin: 0 0 8px;
@@ -2477,7 +2384,6 @@
 
   font-size: 30px;
 }
-
 
 .auth-description {
   margin: 0 0 25px;
@@ -2489,11 +2395,9 @@
   line-height: 1.6;
 }
 
-
 .form-group {
   margin-bottom: 17px;
 }
-
 
 .form-group label {
   display: block;
@@ -2505,7 +2409,6 @@
   font-size: 12px;
   font-weight: 700;
 }
-
 
 .form-group input {
   width: 100%;
@@ -2527,14 +2430,12 @@
   font-size: 13px;
 }
 
-
 .form-group input:focus {
   border-color: #b83a4b;
 
   box-shadow:
     0 0 0 3px rgba(184, 58, 75, 0.08);
 }
-
 
 .auth-button {
   width: 100%;
@@ -2555,18 +2456,15 @@
   cursor: pointer;
 }
 
-
 .auth-button:hover {
   background: #963040;
 }
-
 
 .auth-button:disabled {
   opacity: 0.7;
 
   cursor: not-allowed;
 }
-
 
 .auth-message {
   margin: 15px 0 0;
@@ -2578,7 +2476,6 @@
   line-height: 1.5;
 }
 
-
 .auth-footer {
   margin: 22px 0 0;
 
@@ -2588,7 +2485,6 @@
 
   text-align: center;
 }
-
 
 .auth-footer button {
   padding: 0;
@@ -2605,11 +2501,9 @@
   cursor: pointer;
 }
 
-
 .auth-footer button:hover {
   text-decoration: underline;
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -2625,12 +2519,10 @@
     overflow: auto;
   }
 
-
   .landing-brand-panel,
   .landing-login-panel {
     width: 100%;
   }
-
 
   .landing-brand-panel {
     min-height: 540px;
@@ -2638,18 +2530,15 @@
     padding: 35px;
   }
 
-
   .landing-login-panel {
     min-height: 650px;
 
     padding: 50px 0;
   }
 
-
   .campus-illustration {
     min-height: 270px;
   }
-
 
   .network-info {
     margin-top: 15px;
@@ -2657,18 +2546,15 @@
 
 }
 
-
 @media (max-width: 520px) {
 
   .landing-brand-panel {
     padding: 28px 24px;
   }
 
-
   .landing-logo-text {
     font-size: 32px;
   }
-
 
   .landing-logo-circle {
     width: 42px;
@@ -2677,48 +2563,39 @@
     font-size: 27px;
   }
 
-
   .landing-brand h1 {
     font-size: 34px;
   }
-
 
   .landing-campus {
     font-size: 14px;
   }
 
-
   .landing-tagline {
     font-size: 13px;
   }
-
 
   .landing-login-card {
     width: 90%;
   }
 
-
   .login-card-heading {
     padding: 26px 22px 20px;
   }
-
 
   .landing-login-fields {
     padding: 0 22px 22px;
   }
 
-
   .login-options {
     font-size: 11px;
   }
-
 
   .login-options button {
     font-size: 11px;
   }
 
 }
-
 
 .missing-items-section {
   margin-top: 10px;
@@ -2888,7 +2765,6 @@
   }
 }
 
-
 .stat-card {
   width: 100%;
   padding: 24px;
@@ -2904,7 +2780,6 @@
   border-color: #b83a4b;
   box-shadow: 0 8px 20px rgba(38, 50, 56, 0.06);
 }
-
 
 /* ================================
    ADMIN CLAIMS
@@ -3282,7 +3157,6 @@
   }
 }
 
-
 .admin-users-list {
   display: flex;
   flex-direction: column;
@@ -3347,7 +3221,6 @@
   }
 }
 
-
 .admin-item-photo {
   width: 100%;
   margin-bottom: 20px;
@@ -3363,7 +3236,6 @@
   max-height: 320px;
   object-fit: contain;
 }
-
 
 .browse-card-image {
   width: 100%;
@@ -3390,7 +3262,6 @@
   font-size: 14px;
 }
 
-
 .match-card-image {
   width: 100%;
   height: 180px;
@@ -3406,7 +3277,6 @@
   object-fit: cover;
   display: block;
 }
-
 
 /* =========================================================
    ACCOUNT PAGE
@@ -3619,4 +3489,126 @@
   }
 }
 
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
 
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

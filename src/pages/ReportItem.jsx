@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { Button } from '../components/ui/button'
 
 import Sidebar from '../components/Sidebar'
 
@@ -238,6 +239,59 @@ const shouldShowSize = (category, subcategory) => {
   return false
 }
 
+const inputClassName =
+  'w-full rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-sm text-[#263238] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#B83A4B] focus:ring-2 focus:ring-[#B83A4B]/10'
+
+const selectClassName =
+  'w-full rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2.5 text-sm text-[#263238] outline-none transition focus:border-[#B83A4B] focus:ring-2 focus:ring-[#B83A4B]/10'
+
+const textareaClassName =
+  'w-full resize-y rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-3 text-sm leading-6 text-[#263238] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#B83A4B] focus:ring-2 focus:ring-[#B83A4B]/10'
+
+function Field({ label, htmlFor, required = false, hint, children }) {
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-medium text-[#263238]"
+      >
+        {label}
+        {required && (
+          <span className="ml-1 text-[#B83A4B]">*</span>
+        )}
+      </label>
+
+      {children}
+
+      {hint && (
+        <p className="text-xs leading-5 text-[#6B7280]">
+          {hint}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function SectionHeader({ number, title, description }) {
+  return (
+    <div className="mb-6 flex items-start gap-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B83A4B]/10 text-sm font-semibold text-[#B83A4B]">
+        {number}
+      </div>
+
+      <div>
+        <h2 className="text-base font-semibold text-[#263238]">
+          {title}
+        </h2>
+
+        <p className="mt-0.5 text-sm leading-5 text-[#6B7280]">
+          {description}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function ReportItem({ type, setPage }) {
   const [form, setForm] = useState({
     itemName: '',
@@ -329,15 +383,11 @@ function ReportItem({ type, setPage }) {
 
     let photoPath = null
 
-    /*
-      Upload the photo first.
-      The path is stored in items.photo_url.
-    */
     if (photo) {
-      const fileExtension = photo.name.split('.').pop()?.toLowerCase() || 'jpg'
+      const fileExtension =
+        photo.name.split('.').pop()?.toLowerCase() || 'jpg'
 
       const fileName = `${crypto.randomUUID()}.${fileExtension}`
-
       const filePath = `${user.id}/${fileName}`
 
       const { error: uploadError } = await supabase.storage
@@ -427,441 +477,518 @@ function ReportItem({ type, setPage }) {
 
   return (
     <div className="dashboard-layout">
-
       <Sidebar
         page={isLost ? 'report-lost' : 'report-found'}
         setPage={setPage}
       />
 
       <main className="dashboard-main">
+        <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+          {/* PAGE HEADER */}
+          <header className="mb-8">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-full bg-[#B83A4B]/10 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#B83A4B]">
+                NEW REPORT
+              </span>
 
-        <section className="dashboard-content">
+              <span className="h-1 w-1 rounded-full bg-[#D9B65D]" />
 
-          <section className="report-header">
+              <span className="text-xs font-medium text-[#6B7280]">
+                {isLost ? 'Lost Item' : 'Found Item'}
+              </span>
+            </div>
 
-            <p className="eyebrow">
-              NEW REPORT
-            </p>
-
-            <h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-[#263238] sm:text-3xl">
               Report {isLost ? 'Lost' : 'Found'} Item
             </h1>
 
-            <p>
-              Provide the details below so the item can be added
-              to the campus lost and found records.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6B7280]">
+              Provide accurate item details so iLost can organize the
+              report and help connect lost belongings with their owners.
             </p>
+          </header>
 
-          </section>
-
+          {/* FORM */}
           <form
-            className="report-form"
             onSubmit={handleSubmit}
+            className="space-y-5"
           >
-
-            {/* ITEM NAME */}
-
-            <div className="form-group">
-
-              <label htmlFor="itemName">
-                Item Name
-              </label>
-
-              <input
-                id="itemName"
-                name="itemName"
-                type="text"
-                placeholder="e.g. Samsung Galaxy A15"
-                value={form.itemName}
-                onChange={handleChange}
-                required
+            {/* ITEM DETAILS */}
+            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+              <SectionHeader
+                number="01"
+                title="Item details"
+                description="Start with the basic information that identifies the item."
               />
 
-            </div>
-
-
-            {/* PHOTO */}
-
-            <div className="form-group">
-
-              <label htmlFor="itemPhoto">
-                Item Photo
-              </label>
-
-              <input
-                id="itemPhoto"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-              />
-
-              <small>
-                Optional. Upload an image of the item, up to 5 MB.
-              </small>
-
-              {photo && (
-                <small>
-                  Selected: {photo.name}
-                </small>
-              )}
-
-            </div>
-
-
-            {/* CATEGORY */}
-
-            <div className="form-group">
-
-              <label htmlFor="category">
-                Category
-              </label>
-
-              <select
-                id="category"
-                name="category"
-                value={form.category}
-                onChange={handleCategoryChange}
-                required
-              >
-
-                <option value="">
-                  Select a category
-                </option>
-
-                {Object.keys(categoryOptions).map((category) => (
-                  <option
-                    key={category}
-                    value={category}
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <Field
+                    label="Item Name"
+                    htmlFor="itemName"
+                    required
+                    hint="Use the item's common name or model name."
                   >
-                    {category}
-                  </option>
-                ))}
+                    <input
+                      id="itemName"
+                      name="itemName"
+                      type="text"
+                      placeholder="e.g. Samsung Galaxy A15"
+                      value={form.itemName}
+                      onChange={handleChange}
+                      required
+                      className={inputClassName}
+                    />
+                  </Field>
+                </div>
 
-              </select>
-
-            </div>
-
-
-            {/* SUBCATEGORY */}
-
-            {form.category && (
-              <div className="form-group">
-
-                <label htmlFor="subcategory">
-                  Subcategory
-                </label>
-
-                <select
-                  id="subcategory"
-                  name="subcategory"
-                  value={form.subcategory}
-                  onChange={handleChange}
+                <Field
+                  label="Category"
+                  htmlFor="category"
                   required
                 >
-
-                  <option value="">
-                    Select a subcategory
-                  </option>
-
-                  {categoryOptions[form.category].map((subcategory) => (
-                    <option
-                      key={subcategory}
-                      value={subcategory}
-                    >
-                      {subcategory}
-                    </option>
-                  ))}
-
-                </select>
-
-              </div>
-            )}
-
-
-            {/* BRAND */}
-
-            {form.subcategory && shouldShowBrand(form.category) && (
-              <div className="form-group">
-
-                <label htmlFor="brand">
-                  Brand
-                </label>
-
-                {brandOptions.length > 0 ? (
-
                   <select
-                    id="brand"
-                    name="brand"
-                    value={form.brand}
-                    onChange={handleChange}
+                    id="category"
+                    name="category"
+                    value={form.category}
+                    onChange={handleCategoryChange}
+                    required
+                    className={selectClassName}
                   >
-
                     <option value="">
-                      Select a brand
+                      Select a category
                     </option>
 
-                    {brandOptions.map((brand) => (
-                      <option
-                        key={brand}
-                        value={brand}
-                      >
-                        {brand}
-                      </option>
-                    ))}
-
+                    {Object.keys(categoryOptions).map(
+                      (category) => (
+                        <option
+                          key={category}
+                          value={category}
+                        >
+                          {category}
+                        </option>
+                      )
+                    )}
                   </select>
+                </Field>
 
-                ) : (
+                {form.category && (
+                  <Field
+                    label="Subcategory"
+                    htmlFor="subcategory"
+                    required
+                  >
+                    <select
+                      id="subcategory"
+                      name="subcategory"
+                      value={form.subcategory}
+                      onChange={handleChange}
+                      required
+                      className={selectClassName}
+                    >
+                      <option value="">
+                        Select a subcategory
+                      </option>
 
-                  <input
-                    id="brand"
-                    name="brand"
-                    type="text"
-                    placeholder="Enter brand or leave blank"
-                    value={form.brand}
-                    onChange={handleChange}
-                  />
-
+                      {categoryOptions[form.category].map(
+                        (subcategory) => (
+                          <option
+                            key={subcategory}
+                            value={subcategory}
+                          >
+                            {subcategory}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </Field>
                 )}
 
+                {form.subcategory &&
+                  shouldShowBrand(form.category) && (
+                    <Field
+                      label="Brand"
+                      htmlFor="brand"
+                      hint="Optional if the item has no recognizable brand."
+                    >
+                      {brandOptions.length > 0 ? (
+                        <select
+                          id="brand"
+                          name="brand"
+                          value={form.brand}
+                          onChange={handleChange}
+                          className={selectClassName}
+                        >
+                          <option value="">
+                            Select a brand
+                          </option>
+
+                          {brandOptions.map((brand) => (
+                            <option
+                              key={brand}
+                              value={brand}
+                            >
+                              {brand}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          id="brand"
+                          name="brand"
+                          type="text"
+                          placeholder="Enter brand or leave blank"
+                          value={form.brand}
+                          onChange={handleChange}
+                          className={inputClassName}
+                        />
+                      )}
+                    </Field>
+                  )}
+
+                {form.subcategory &&
+                  shouldShowModel(
+                    form.category,
+                    form.subcategory
+                  ) && (
+                    <Field
+                      label="Model"
+                      htmlFor="model"
+                      hint="Include the specific model when known."
+                    >
+                      <input
+                        id="model"
+                        name="model"
+                        type="text"
+                        placeholder="e.g. Galaxy A15"
+                        value={form.model}
+                        onChange={handleChange}
+                        className={inputClassName}
+                      />
+                    </Field>
+                  )}
+
+                {form.subcategory &&
+                  shouldShowColor(form.category) && (
+                    <Field
+                      label="Color"
+                      htmlFor="color"
+                    >
+                      <select
+                        id="color"
+                        name="color"
+                        value={form.color}
+                        onChange={handleChange}
+                        className={selectClassName}
+                      >
+                        <option value="">
+                          Select a color
+                        </option>
+
+                        {colorOptions.map((color) => (
+                          <option
+                            key={color}
+                            value={color}
+                          >
+                            {color}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                  )}
+
+                {form.subcategory &&
+                  shouldShowSize(
+                    form.category,
+                    form.subcategory
+                  ) && (
+                    <Field
+                      label="Size"
+                      htmlFor="size"
+                    >
+                      <select
+                        id="size"
+                        name="size"
+                        value={form.size}
+                        onChange={handleChange}
+                        className={selectClassName}
+                      >
+                        <option value="">
+                          Select a size
+                        </option>
+
+                        {sizeOptions.map((size) => (
+                          <option
+                            key={size}
+                            value={size}
+                          >
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                  )}
               </div>
-            )}
+            </section>
 
+            {/* PHOTO */}
+            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+              <SectionHeader
+                number="02"
+                title="Item photo"
+                description="A clear photo can make the item easier to recognize."
+              />
 
-            {/* MODEL */}
+              <div className="rounded-xl border border-dashed border-[#D1D5DB] bg-[#F7F9FC] p-6 text-center transition hover:border-[#B83A4B]/50 hover:bg-[#B83A4B]/[0.02]">
+                <div className="mx-auto flex max-w-md flex-col items-center">
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#B83A4B] shadow-sm ring-1 ring-[#E5E7EB]">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="16"
+                        rx="2"
+                      />
+                      <circle cx="8.5" cy="9" r="1.5" />
+                      <path d="m21 15-4.5-4.5L7 20" />
+                    </svg>
+                  </div>
 
-            {form.subcategory &&
-              shouldShowModel(form.category, form.subcategory) && (
-                <div className="form-group">
+                  <p className="text-sm font-medium text-[#263238]">
+                    Upload a photo of the item
+                  </p>
 
-                  <label htmlFor="model">
-                    Model
+                  <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+                    JPG, PNG, or other image formats up to 5 MB.
+                  </p>
+
+                  <label
+                    htmlFor="itemPhoto"
+                    className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#263238] shadow-sm transition hover:border-[#B83A4B] hover:text-[#B83A4B]"
+                  >
+                    Choose Photo
                   </label>
 
                   <input
-                    id="model"
-                    name="model"
-                    type="text"
-                    placeholder="e.g. Galaxy A15"
-                    value={form.model}
-                    onChange={handleChange}
+                    id="itemPhoto"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="sr-only"
                   />
 
+                  {photo && (
+                    <div className="mt-4 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-left">
+                      <p className="text-xs font-medium text-[#263238]">
+                        Selected file
+                      </p>
+
+                      <p className="mt-0.5 max-w-sm truncate text-xs text-[#6B7280]">
+                        {photo.name}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-
-
-            {/* COLOR */}
-
-            {form.subcategory &&
-              shouldShowColor(form.category) && (
-                <div className="form-group">
-
-                  <label htmlFor="color">
-                    Color
-                  </label>
-
-                  <select
-                    id="color"
-                    name="color"
-                    value={form.color}
-                    onChange={handleChange}
-                  >
-
-                    <option value="">
-                      Select a color
-                    </option>
-
-                    {colorOptions.map((color) => (
-                      <option
-                        key={color}
-                        value={color}
-                      >
-                        {color}
-                      </option>
-                    ))}
-
-                  </select>
-
-                </div>
-              )}
-
-
-            {/* SIZE */}
-
-            {form.subcategory &&
-              shouldShowSize(form.category, form.subcategory) && (
-                <div className="form-group">
-
-                  <label htmlFor="size">
-                    Size
-                  </label>
-
-                  <select
-                    id="size"
-                    name="size"
-                    value={form.size}
-                    onChange={handleChange}
-                  >
-
-                    <option value="">
-                      Select a size
-                    </option>
-
-                    {sizeOptions.map((size) => (
-                      <option
-                        key={size}
-                        value={size}
-                      >
-                        {size}
-                      </option>
-                    ))}
-
-                  </select>
-
-                </div>
-              )}
-
+              </div>
+            </section>
 
             {/* DESCRIPTION */}
-
-            <div className="form-group">
-
-              <label htmlFor="description">
-                Description
-              </label>
-
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Provide a general description of the item."
-                value={form.description}
-                onChange={handleChange}
-                rows="5"
+            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+              <SectionHeader
+                number="03"
+                title="Description"
+                description="Add information that can help distinguish the item from similar reports."
               />
 
-            </div>
+              <div className="space-y-5">
+                <Field
+                  label="General Description"
+                  htmlFor="description"
+                  hint="Describe the visible appearance, condition, or other useful information."
+                >
+                  <textarea
+                    id="description"
+                    name="description"
+                    placeholder="e.g. Black smartphone with a clear protective case."
+                    value={form.description}
+                    onChange={handleChange}
+                    rows={4}
+                    className={textareaClassName}
+                  />
+                </Field>
 
+                <div className="rounded-xl border border-[#D9B65D]/40 bg-[#D9B65D]/[0.06] p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D9B65D]/15 text-[#8A6D1D]">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        className="h-4 w-4"
+                        aria-hidden="true"
+                      >
+                        <path d="M12 3 4 7v5c0 5 3.4 8.1 8 9 4.6-.9 8-4 8-9V7l-8-4Z" />
+                        <path d="M9.5 12 11 13.5 14.5 10" />
+                      </svg>
+                    </div>
 
-            {/* DISTINCTIVE DETAILS */}
+                    <h3 className="text-sm font-semibold text-[#5F4B12]">
+                      Private verification details
+                    </h3>
+                  </div>
 
-            <div className="form-group">
+                  <p className="mb-4 text-xs leading-5 text-[#6B7280]">
+                    Add details that should not be publicly revealed.
+                    These can help verify whether a claimant is the
+                    rightful owner.
+                  </p>
 
-              <label htmlFor="distinctiveDetails">
-                Distinctive Details
-              </label>
+                  <Field
+                    label="Distinctive Details"
+                    htmlFor="distinctiveDetails"
+                  >
+                    <textarea
+                      id="distinctiveDetails"
+                      name="distinctiveDetails"
+                      placeholder="e.g. Small scratch near the camera, specific sticker, initials, or other private detail."
+                      value={form.distinctiveDetails}
+                      onChange={handleChange}
+                      rows={4}
+                      className={textareaClassName}
+                    />
+                  </Field>
+                </div>
+              </div>
+            </section>
 
-              <textarea
-                id="distinctiveDetails"
-                name="distinctiveDetails"
-                placeholder="Describe private details that can help verify ownership."
-                value={form.distinctiveDetails}
-                onChange={handleChange}
-                rows="5"
+            {/* LOCATION AND DATE */}
+            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+              <SectionHeader
+                number="04"
+                title="When and where"
+                description="Provide the location and approximate time connected to the report."
               />
 
-              <small>
-                These details are kept private and may be used during claim verification.
-              </small>
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <Field
+                    label={
+                      isLost
+                        ? 'Where did you lose it?'
+                        : 'Where did you find it?'
+                    }
+                    htmlFor="location"
+                    required
+                    hint="Use a specific campus location when possible."
+                  >
+                    <input
+                      id="location"
+                      name="location"
+                      type="text"
+                      placeholder="e.g. Engineering Building, 2nd Floor"
+                      value={form.location}
+                      onChange={handleChange}
+                      required
+                      className={inputClassName}
+                    />
+                  </Field>
+                </div>
 
-            </div>
+                <Field
+                  label={isLost ? 'Date Lost' : 'Date Found'}
+                  htmlFor="date"
+                  required
+                >
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  onClick={(event) => {
+                    event.currentTarget.showPicker?.()
+                  }}
+                  required
+                  className={`${inputClassName} cursor-pointer`}
+                />
+                </Field>
 
-
-            {/* LOCATION */}
-
-            <div className="form-group">
-
-              <label htmlFor="location">
-                {isLost
-                  ? 'Where did you lose it?'
-                  : 'Where did you find it?'}
-              </label>
-
-              <input
-                id="location"
-                name="location"
-                type="text"
-                placeholder="e.g. Engineering Building, 2nd Floor"
-                value={form.location}
-                onChange={handleChange}
-                required
-              />
-
-            </div>
-
-
-            {/* DATE */}
-
-            <div className="form-group">
-
-              <label htmlFor="date">
-                {isLost ? 'Date Lost' : 'Date Found'}
-              </label>
-
-              <input
-                id="date"
-                name="date"
-                type="date"
-                value={form.date}
-                onChange={handleChange}
-                required
-              />
-
-            </div>
-
-
-            {/* TIME */}
-
-            <div className="form-group">
-
-              <label htmlFor="time">
-                Estimated Time {isLost ? 'Lost' : 'Found'}
-              </label>
-
-              <input
-                id="time"
-                name="time"
-                type="time"
-                value={form.time}
-                onChange={handleChange}
-              />
-
-            </div>
-
+                <Field
+                  label={
+                    isLost
+                      ? 'Estimated Time Lost'
+                      : 'Estimated Time Found'
+                  }
+                  htmlFor="time"
+                  hint="Optional if the exact time is unknown."
+                >
+                  <input
+                    id="time"
+                    name="time"
+                    type="time"
+                    value={form.time}
+                    onChange={handleChange}
+                    onClick={(event) => {
+                      event.currentTarget.showPicker?.()
+                    }}
+                    className={`${inputClassName} cursor-pointer`}
+                  />
+                </Field>
+              </div>
+            </section>
 
             {/* MESSAGES */}
-
             {message && (
-              <p className="form-success">
+              <div
+                role="status"
+                className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+              >
                 {message}
-              </p>
+              </div>
             )}
 
             {error && (
-              <p className="form-error">
+              <div
+                role="alert"
+                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              >
                 {error}
-              </p>
+              </div>
             )}
 
+            {/* FORM ACTIONS */}
+            <div className="flex flex-col-reverse gap-3 border-t border-[#E5E7EB] pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setPage('dashboard')}
+                className="h-10 rounded-lg border-[#E5E7EB] bg-white px-5 text-sm font-medium text-[#263238] hover:bg-[#F7F9FC]"
+              >
+                Cancel
+              </Button>
 
-            {/* SUBMIT */}
-
-            <button
-              className="report-submit"
-              type="submit"
-              disabled={loading}
-            >
-              {loading
-                ? 'Submitting...'
-                : 'Submit Report'}
-            </button>
-
+              <Button
+                type="submit"
+                disabled={loading}
+                className="h-10 rounded-lg bg-[#B83A4B] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#963040] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading
+                  ? 'Submitting...'
+                  : `Submit ${isLost ? 'Lost' : 'Found'} Report`}
+              </Button>
+            </div>
           </form>
-
-        </section>
-
+        </div>
       </main>
-
     </div>
   )
 }
