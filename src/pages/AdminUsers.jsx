@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
+
+import AdminSidebar from '../components/AdminSidebar'
 
 function AdminUsers({ setPage }) {
   const [users, setUsers] = useState([])
@@ -19,13 +22,17 @@ function AdminUsers({ setPage }) {
       return
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+    const { data: profile, error: profileError } =
+      await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
 
-    if (profileError || profile?.role !== 'admin') {
+    if (
+      profileError ||
+      profile?.role !== 'admin'
+    ) {
       setPage('dashboard')
       return
     }
@@ -43,7 +50,9 @@ function AdminUsers({ setPage }) {
         role,
         created_at
       `)
-      .order('created_at', { ascending: false })
+      .order('created_at', {
+        ascending: false,
+      })
 
     if (error) {
       setMessage(error.message)
@@ -60,28 +69,30 @@ function AdminUsers({ setPage }) {
 
   return (
     <div className="dashboard-layout">
+
+      <AdminSidebar
+        page="admin-users"
+        setPage={setPage}
+      />
+
       <main className="dashboard-main">
         <section className="dashboard-content">
 
           <section className="dashboard-welcome">
-            <p className="eyebrow">ADMINISTRATION</p>
 
-            <h1>User Management</h1>
+            <p className="eyebrow">
+              ADMINISTRATION
+            </p>
+
+            <h1>
+              User Management
+            </h1>
 
             <p>
               View registered users and their account information.
             </p>
-          </section>
 
-          <div className="admin-page-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => setPage('admin-dashboard')}
-            >
-              Back to Admin Dashboard
-            </button>
-          </div>
+          </section>
 
           {message && (
             <p className="auth-message">
@@ -92,19 +103,32 @@ function AdminUsers({ setPage }) {
           <section className="admin-section">
 
             <div className="section-heading">
-              <p className="eyebrow">USERS</p>
-              <h2>Registered Users</h2>
+
+              <p className="eyebrow">
+                USERS
+              </p>
+
+              <h2>
+                Registered Users
+              </h2>
+
             </div>
 
             {loading ? (
-              <p>Loading users...</p>
+              <p>
+                Loading users...
+              </p>
             ) : users.length === 0 ? (
               <div className="admin-empty-state">
-                <h3>No users registered yet.</h3>
+
+                <h3>
+                  No users registered yet.
+                </h3>
 
                 <p>
                   Registered accounts will appear here.
                 </p>
+
               </div>
             ) : (
               <div className="admin-users-list">
@@ -118,6 +142,7 @@ function AdminUsers({ setPage }) {
                     <div className="admin-user-header">
 
                       <div>
+
                         <p className="eyebrow">
                           {user.role === 'admin'
                             ? 'ADMINISTRATOR'
@@ -125,12 +150,14 @@ function AdminUsers({ setPage }) {
                         </p>
 
                         <h3>
-                          {user.full_name || 'Unnamed User'}
+                          {user.full_name ||
+                            'Unnamed User'}
                         </h3>
 
                         <p className="admin-user-email">
                           {user.email}
                         </p>
+
                       </div>
 
                       <span
@@ -148,54 +175,68 @@ function AdminUsers({ setPage }) {
                     <div className="admin-user-grid">
 
                       <div className="admin-detail-block">
+
                         <p className="admin-detail-label">
                           CONTACT
                         </p>
 
                         <p>
-                          {user.contact_number || 'Not provided'}
+                          {user.contact_number ||
+                            'Not provided'}
                         </p>
+
                       </div>
 
                       <div className="admin-detail-block">
+
                         <p className="admin-detail-label">
                           PROGRAM
                         </p>
 
                         <p>
-                          {user.program || 'Not provided'}
+                          {user.program ||
+                            'Not provided'}
                         </p>
+
                       </div>
 
                       <div className="admin-detail-block">
+
                         <p className="admin-detail-label">
                           YEAR LEVEL
                         </p>
 
                         <p>
-                          {user.year_level || 'Not provided'}
+                          {user.year_level ||
+                            'Not provided'}
                         </p>
+
                       </div>
 
                       <div className="admin-detail-block">
+
                         <p className="admin-detail-label">
                           SECTION
                         </p>
 
                         <p>
-                          {user.section || 'Not provided'}
+                          {user.section ||
+                            'Not provided'}
                         </p>
+
                       </div>
 
                     </div>
 
                     <div className="admin-user-footer">
+
                       <p>
                         Account Created:{' '}
                         {new Date(
                           user.created_at
                         ).toLocaleString()}
                       </p>
+
                     </div>
 
                   </article>
@@ -208,6 +249,7 @@ function AdminUsers({ setPage }) {
 
         </section>
       </main>
+
     </div>
   )
 }

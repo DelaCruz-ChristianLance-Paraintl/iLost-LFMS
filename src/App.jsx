@@ -15,6 +15,8 @@ import AdminDashboard from './pages/AdminDashboard'
 import AdminClaims from './pages/AdminClaims'
 import AdminItems from './pages/AdminItems'
 import AdminUsers from './pages/AdminUsers'
+import Account from './pages/Account'
+
 
 function App() {
   const [page, setPage] = useState('home')
@@ -107,6 +109,10 @@ function App() {
 
   if (page === 'admin-users') {
   return <AdminUsers setPage={setPage} />
+  }
+
+  if (page === 'account') {
+    return <Account setPage={setPage} />
   }
 
   return (
@@ -454,8 +460,8 @@ function App() {
                 disabled={loginLoading}
               >
                 {loginLoading
-                  ? 'Signing In...'
-                  : 'Sign In'}
+                  ? 'Logging In...'
+                  : 'Log In'}
               </button>
 
 

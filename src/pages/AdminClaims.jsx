@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
+
+import AdminSidebar from '../components/AdminSidebar'
 
 function AdminClaims({ setPage }) {
   const [claims, setClaims] = useState([])
@@ -103,7 +106,9 @@ function AdminClaims({ setPage }) {
       const contentStart = start + label.length
       const remaining = message.slice(contentStart)
 
-      const nextSection = remaining.search(/\n\n[A-Za-z ]+:\n/)
+      const nextSection = remaining.search(
+        /\n\n[A-Za-z ]+:\n/
+      )
 
       if (nextSection === -1) {
         return remaining.trim()
@@ -113,18 +118,32 @@ function AdminClaims({ setPage }) {
     }
 
     return {
-      reason: getSection('Why I believe this is my item:\n'),
-      location: getSection('Where I lost it:\n'),
-      date: getSection('When I lost it:\n'),
-      details: getSection('Private identifying details:\n'),
-      additionalInfo: getSection('Additional information:\n'),
+      reason: getSection(
+        'Why I believe this is my item:\n'
+      ),
+      location: getSection(
+        'Where I lost it:\n'
+      ),
+      date: getSection(
+        'When I lost it:\n'
+      ),
+      details: getSection(
+        'Private identifying details:\n'
+      ),
+      additionalInfo: getSection(
+        'Additional information:\n'
+      ),
     }
   }
 
   const handleApprove = async (claim) => {
     const confirmed = window.confirm(
-      `Approve this claim for ${claim.claimant?.full_name || 'this claimant'}?\n\n` +
-      `Item: ${claim.item?.item_name || 'Unknown item'}\n\n` +
+      `Approve this claim for ${
+        claim.claimant?.full_name || 'this claimant'
+      }?\n\n` +
+      `Item: ${
+        claim.item?.item_name || 'Unknown item'
+      }\n\n` +
       `This will mark the claim as approved and the item as claimed.`
     )
 
@@ -181,8 +200,12 @@ function AdminClaims({ setPage }) {
 
   const handleReject = async (claim) => {
     const confirmed = window.confirm(
-      `Reject this claim from ${claim.claimant?.full_name || 'this claimant'}?\n\n` +
-      `Item: ${claim.item?.item_name || 'Unknown item'}\n\n` +
+      `Reject this claim from ${
+        claim.claimant?.full_name || 'this claimant'
+      }?\n\n` +
+      `Item: ${
+        claim.item?.item_name || 'Unknown item'
+      }\n\n` +
       `This action will mark the claim as rejected.`
     )
 
@@ -214,8 +237,12 @@ function AdminClaims({ setPage }) {
 
   const handleHandover = async (claim) => {
     const confirmed = window.confirm(
-      `Confirm physical handover for ${claim.claimant?.full_name || 'this claimant'}?\n\n` +
-      `Item: ${claim.item?.item_name || 'Unknown item'}\n\n` +
+      `Confirm physical handover for ${
+        claim.claimant?.full_name || 'this claimant'
+      }?\n\n` +
+      `Item: ${
+        claim.item?.item_name || 'Unknown item'
+      }\n\n` +
       `Only confirm this if the claimant has physically received the item.`
     )
 
@@ -270,28 +297,28 @@ function AdminClaims({ setPage }) {
 
   return (
     <div className="dashboard-layout">
+
+      <AdminSidebar
+        page="admin-claims"
+        setPage={setPage}
+      />
+
       <main className="dashboard-main">
         <section className="dashboard-content">
 
           <section className="dashboard-welcome">
-            <p className="eyebrow">ADMINISTRATION</p>
+            <p className="eyebrow">
+              ADMINISTRATION
+            </p>
 
-            <h1>Claim Review</h1>
+            <h1>
+              Claim Review
+            </h1>
 
             <p>
               Review and verify ownership claims submitted through iLost.
             </p>
           </section>
-
-          <div className="admin-page-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => setPage('admin-dashboard')}
-            >
-              Back to Admin Dashboard
-            </button>
-          </div>
 
           {message && (
             <p className="auth-message">
@@ -302,15 +329,24 @@ function AdminClaims({ setPage }) {
           <section className="admin-section">
 
             <div className="section-heading">
-              <p className="eyebrow">CLAIMS</p>
-              <h2>Submitted Claims</h2>
+              <p className="eyebrow">
+                CLAIMS
+              </p>
+
+              <h2>
+                Submitted Claims
+              </h2>
             </div>
 
             {loading ? (
-              <p>Loading claims...</p>
+              <p>
+                Loading claims...
+              </p>
             ) : claims.length === 0 ? (
               <div className="admin-empty-state">
-                <h3>No claims yet.</h3>
+                <h3>
+                  No claims yet.
+                </h3>
 
                 <p>
                   Submitted claims will appear here for administrator review.
@@ -320,7 +356,9 @@ function AdminClaims({ setPage }) {
               <div className="admin-claims-list">
 
                 {claims.map((claim) => {
-                  const parsed = parseClaimMessage(claim.message)
+                  const parsed = parseClaimMessage(
+                    claim.message
+                  )
 
                   return (
                     <article
@@ -336,7 +374,8 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <h3>
-                            {claim.item?.item_name || 'Unknown Item'}
+                            {claim.item?.item_name ||
+                              'Unknown Item'}
                           </h3>
                         </div>
 
@@ -358,12 +397,14 @@ function AdminClaims({ setPage }) {
 
                           <p>
                             <strong>
-                              {claim.claimant?.full_name || 'Unknown'}
+                              {claim.claimant?.full_name ||
+                                'Unknown'}
                             </strong>
                           </p>
 
                           <p>
-                            {claim.claimant?.email || 'No email'}
+                            {claim.claimant?.email ||
+                              'No email'}
                           </p>
 
                           <p>
@@ -372,11 +413,14 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <p>
-                            {claim.claimant?.program || 'No program'}
+                            {claim.claimant?.program ||
+                              'No program'}
                             {' · '}
-                            {claim.claimant?.year_level || 'No year'}
+                            {claim.claimant?.year_level ||
+                              'No year'}
                             {' · '}
-                            {claim.claimant?.section || 'No section'}
+                            {claim.claimant?.section ||
+                              'No section'}
                           </p>
 
                         </div>
@@ -389,14 +433,17 @@ function AdminClaims({ setPage }) {
 
                           <p>
                             <strong>
-                              {claim.item?.item_name || 'Unknown Item'}
+                              {claim.item?.item_name ||
+                                'Unknown Item'}
                             </strong>
                           </p>
 
                           <p>
-                            {claim.item?.category || 'No category'}
+                            {claim.item?.category ||
+                              'No category'}
                             {' / '}
-                            {claim.item?.subcategory || 'No subcategory'}
+                            {claim.item?.subcategory ||
+                              'No subcategory'}
                           </p>
 
                           {claim.item?.brand && (
@@ -446,7 +493,8 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <p>
-                            {parsed.reason || 'No response provided.'}
+                            {parsed.reason ||
+                              'No response provided.'}
                           </p>
                         </div>
 
@@ -456,7 +504,8 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <p>
-                            {parsed.location || 'No response provided.'}
+                            {parsed.location ||
+                              'No response provided.'}
                           </p>
                         </div>
 
@@ -466,7 +515,8 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <p>
-                            {parsed.date || 'No response provided.'}
+                            {parsed.date ||
+                              'No response provided.'}
                           </p>
                         </div>
 
@@ -476,7 +526,8 @@ function AdminClaims({ setPage }) {
                           </p>
 
                           <p>
-                            {parsed.details || 'No response provided.'}
+                            {parsed.details ||
+                              'No response provided.'}
                           </p>
                         </div>
 
@@ -520,8 +571,12 @@ function AdminClaims({ setPage }) {
                             <button
                               type="button"
                               className="admin-reject-button"
-                              disabled={processingId === claim.id}
-                              onClick={() => handleReject(claim)}
+                              disabled={
+                                processingId === claim.id
+                              }
+                              onClick={() =>
+                                handleReject(claim)
+                              }
                             >
                               {processingId === claim.id
                                 ? 'Processing...'
@@ -531,8 +586,12 @@ function AdminClaims({ setPage }) {
                             <button
                               type="button"
                               className="admin-approve-button"
-                              disabled={processingId === claim.id}
-                              onClick={() => handleApprove(claim)}
+                              disabled={
+                                processingId === claim.id
+                              }
+                              onClick={() =>
+                                handleApprove(claim)
+                              }
                             >
                               {processingId === claim.id
                                 ? 'Processing...'
@@ -546,6 +605,7 @@ function AdminClaims({ setPage }) {
                           <div className="admin-claim-actions">
 
                             <div className="claim-approved-notice">
+
                               <strong>
                                 Claim approved.
                               </strong>
@@ -554,13 +614,18 @@ function AdminClaims({ setPage }) {
                                 Confirm only after the claimant has
                                 physically received the item.
                               </span>
+
                             </div>
 
                             <button
                               type="button"
                               className="admin-approve-button"
-                              disabled={processingId === claim.id}
-                              onClick={() => handleHandover(claim)}
+                              disabled={
+                                processingId === claim.id
+                              }
+                              onClick={() =>
+                                handleHandover(claim)
+                              }
                             >
                               {processingId === claim.id
                                 ? 'Processing...'
@@ -572,6 +637,7 @@ function AdminClaims({ setPage }) {
 
                         {claim.status === 'completed' && (
                           <div className="claim-approved-notice">
+
                             <strong>
                               Item returned successfully.
                             </strong>
@@ -580,11 +646,13 @@ function AdminClaims({ setPage }) {
                               Physical handover has been confirmed and
                               the claim is completed.
                             </span>
+
                           </div>
                         )}
 
                         {claim.status === 'rejected' && (
                           <div className="claim-rejected-notice">
+
                             <strong>
                               Claim rejected.
                             </strong>
@@ -593,6 +661,7 @@ function AdminClaims({ setPage }) {
                               This claim is no longer pending
                               administrator review.
                             </span>
+
                           </div>
                         )}
 
@@ -609,6 +678,7 @@ function AdminClaims({ setPage }) {
 
         </section>
       </main>
+
     </div>
   )
 }

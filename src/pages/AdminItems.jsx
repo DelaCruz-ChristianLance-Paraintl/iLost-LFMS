@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 
+import AdminSidebar from '../components/AdminSidebar'
+
 function AdminItems({ setPage }) {
   const [items, setItems] = useState([])
-
   const [loading, setLoading] = useState(true)
-
   const [message, setMessage] = useState('')
 
   const loadItems = async () => {
@@ -22,13 +22,19 @@ function AdminItems({ setPage }) {
       return
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const {
+      data: profile,
+      error: profileError,
+    } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (profileError || profile?.role !== 'admin') {
+    if (
+      profileError ||
+      profile?.role !== 'admin'
+    ) {
       setPage('dashboard')
       return
     }
@@ -58,13 +64,16 @@ function AdminItems({ setPage }) {
           email
         )
       `)
-      .order('created_at', { ascending: false })
+      .order('created_at', {
+        ascending: false,
+      })
 
     if (error) {
       setMessage(error.message)
     } else {
       const itemsWithPhotos = await Promise.all(
         (data || []).map(async (item) => {
+
           if (!item.photo_url) {
             return {
               ...item,
@@ -77,7 +86,10 @@ function AdminItems({ setPage }) {
             error: signedUrlError,
           } = await supabase.storage
             .from('item-photos')
-            .createSignedUrl(item.photo_url, 3600)
+            .createSignedUrl(
+              item.photo_url,
+              3600
+            )
 
           if (signedUrlError) {
             return {
@@ -106,10 +118,17 @@ function AdminItems({ setPage }) {
 
   return (
     <div className="dashboard-layout">
+
+      <AdminSidebar
+        page="admin-items"
+        setPage={setPage}
+      />
+
       <main className="dashboard-main">
         <section className="dashboard-content">
 
           <section className="dashboard-welcome">
+
             <p className="eyebrow">
               ADMINISTRATION
             </p>
@@ -121,17 +140,8 @@ function AdminItems({ setPage }) {
             <p>
               View and monitor all lost and found item reports.
             </p>
-          </section>
 
-          <div className="admin-page-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => setPage('admin-dashboard')}
-            >
-              Back to Admin Dashboard
-            </button>
-          </div>
+          </section>
 
           {message && (
             <p className="auth-message">
@@ -142,6 +152,7 @@ function AdminItems({ setPage }) {
           <section className="admin-section">
 
             <div className="section-heading">
+
               <p className="eyebrow">
                 ITEMS
               </p>
@@ -149,6 +160,7 @@ function AdminItems({ setPage }) {
               <h2>
                 Reported Items
               </h2>
+
             </div>
 
             {loading ? (
@@ -178,10 +190,12 @@ function AdminItems({ setPage }) {
 
                     {item.photoSignedUrl && (
                       <div className="admin-item-photo">
+
                         <img
                           src={item.photoSignedUrl}
                           alt={item.item_name}
                         />
+
                       </div>
                     )}
 
@@ -221,9 +235,7 @@ function AdminItems({ setPage }) {
                           <strong>
                             {item.category}
                           </strong>
-
                           {' / '}
-
                           {item.subcategory ||
                             'No subcategory'}
                         </p>
@@ -266,7 +278,6 @@ function AdminItems({ setPage }) {
 
                         <p>
                           Date: {item.date}
-
                           {item.time
                             ? ` · ${item.time}`
                             : ''}
@@ -274,7 +285,6 @@ function AdminItems({ setPage }) {
 
                         <p>
                           Reporter:{' '}
-
                           {item.reporter?.full_name ||
                             'Unknown'}
                         </p>
@@ -306,7 +316,6 @@ function AdminItems({ setPage }) {
 
                       <p>
                         Reported:{' '}
-
                         {new Date(
                           item.created_at
                         ).toLocaleString()}
@@ -314,7 +323,6 @@ function AdminItems({ setPage }) {
 
                       <p>
                         Type:{' '}
-
                         {item.type === 'lost'
                           ? 'Lost'
                           : 'Found'}
@@ -332,6 +340,7 @@ function AdminItems({ setPage }) {
 
         </section>
       </main>
+
     </div>
   )
 }

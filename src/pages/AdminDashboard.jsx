@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
+
+import AdminSidebar from '../components/AdminSidebar'
 
 function AdminDashboard({ setPage }) {
   const [fullName, setFullName] = useState('Administrator')
@@ -28,7 +31,7 @@ function AdminDashboard({ setPage }) {
         return
       }
 
-      setFullName(data.full_name)
+      setFullName(data.full_name || 'Administrator')
       setAuthorized(true)
       setLoading(false)
     }
@@ -54,11 +57,19 @@ function AdminDashboard({ setPage }) {
 
   return (
     <div className="dashboard-layout">
+
+      <AdminSidebar
+        page="admin-dashboard"
+        setPage={setPage}
+      />
+
       <main className="dashboard-main">
         <section className="dashboard-content">
 
           <section className="dashboard-welcome">
-            <p className="eyebrow">ADMINISTRATION</p>
+            <p className="eyebrow">
+              ADMINISTRATION
+            </p>
 
             <h1>
               Welcome, {fullName}.
@@ -72,8 +83,13 @@ function AdminDashboard({ setPage }) {
           <section className="dashboard-overview">
 
             <div className="section-heading">
-              <p className="eyebrow">ADMIN PANEL</p>
-              <h2>System Management</h2>
+              <p className="eyebrow">
+                ADMIN PANEL
+              </p>
+
+              <h2>
+                System Management
+              </h2>
             </div>
 
             <div className="overview-stats">
@@ -82,8 +98,14 @@ function AdminDashboard({ setPage }) {
                 className="stat-card"
                 onClick={() => setPage('admin-claims')}
               >
-                <span>CLAIMS</span>
-                <strong>View</strong>
+                <span>
+                  CLAIMS
+                </span>
+
+                <strong>
+                  View
+                </strong>
+
                 <p>
                   Review submitted claims.
                 </p>
@@ -93,8 +115,14 @@ function AdminDashboard({ setPage }) {
                 className="stat-card"
                 onClick={() => setPage('admin-users')}
               >
-                <span>USERS</span>
-                <strong>View</strong>
+                <span>
+                  USERS
+                </span>
+
+                <strong>
+                  View
+                </strong>
+
                 <p>
                   Manage registered users.
                 </p>
@@ -104,8 +132,14 @@ function AdminDashboard({ setPage }) {
                 className="stat-card"
                 onClick={() => setPage('admin-items')}
               >
-                <span>ITEMS</span>
-                <strong>View</strong>
+                <span>
+                  ITEMS
+                </span>
+
+                <strong>
+                  View
+                </strong>
+
                 <p>
                   Manage reported items.
                 </p>
@@ -113,17 +147,22 @@ function AdminDashboard({ setPage }) {
 
               <button
                 className="stat-card"
-                onClick={() => setPage('dashboard')}
+                onClick={() => setPage('account')}
               >
-                <span>ACCOUNT</span>
-                <strong>Exit</strong>
+                <span>
+                  ACCOUNT
+                </span>
+
+                <strong>
+                  View
+                </strong>
+
                 <p>
-                  Return to the user dashboard.
+                  Manage your administrator account.
                 </p>
               </button>
 
             </div>
-
           </section>
 
         </section>

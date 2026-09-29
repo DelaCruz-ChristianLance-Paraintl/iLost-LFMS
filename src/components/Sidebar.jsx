@@ -1,4 +1,11 @@
+import { supabase } from '../lib/supabaseClient'
+
 function Sidebar({ page, setPage }) {
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setPage('home')
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -44,12 +51,12 @@ function Sidebar({ page, setPage }) {
         </button>
 
         <button
-        className={`sidebar-link ${
+          className={`sidebar-link ${
             page === 'find-missing' ? 'active' : ''
-        }`}
-        onClick={() => setPage('find-missing')}
+          }`}
+          onClick={() => setPage('find-missing')}
         >
-        Find My Missing Items
+          Find My Missing Items
         </button>
 
         <button
@@ -60,10 +67,22 @@ function Sidebar({ page, setPage }) {
         >
           History
         </button>
+
+        <button
+          className={`sidebar-link ${
+            page === 'account' ? 'active' : ''
+          }`}
+          onClick={() => setPage('account')}
+        >
+          Account
+        </button>
       </nav>
 
       <div className="sidebar-bottom">
-        <button className="sidebar-logout">
+        <button
+          className="sidebar-logout"
+          onClick={handleLogout}
+        >
           Log Out
         </button>
       </div>
