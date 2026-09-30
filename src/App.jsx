@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabaseClient'
 
 import CampusIllustration from './components/CampusIllustration'
+import CircuitBackground from './components/CircuitBackground'
 
 import Register from './pages/Register'
 import Login from './pages/Login'
@@ -380,14 +381,8 @@ function App() {
       {/* RIGHT PANEL */}
       <section className="landing-login-panel">
 
-        <div className="circuit-background">
-          <div className="circuit-line line-1"></div>
-          <div className="circuit-line line-2"></div>
-          <div className="circuit-line line-3"></div>
-          <div className="circuit-line line-4"></div>
-          <div className="circuit-line line-5"></div>
-          <div className="circuit-line line-6"></div>
-        </div>
+        <CircuitBackground />
+
 
         {/* LOGIN CARD */}
         <div className="landing-login-card">
