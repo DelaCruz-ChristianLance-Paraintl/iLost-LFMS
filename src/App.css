@@ -3739,3 +3739,33 @@
   display: block;
   object-fit: contain;
 }
+
+/* Paste at the very END of App.css (overrides the old illustration rules) */
+
+.campus-illustration {
+  position: relative;
+  flex: 1;
+  min-height: 350px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campus-illustration-image {
+  width: 100%;
+  max-width: 560px;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+}
+
+.campus-illustration-image svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .campus-illustration {
+    min-height: 270px;
+  }
+}

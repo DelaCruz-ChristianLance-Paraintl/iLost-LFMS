@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 
 import { supabase } from './lib/supabaseClient'
 
+import CampusIllustration from './components/CampusIllustration'
+
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -181,7 +183,6 @@ function App() {
       {/* LEFT PANEL */}
       <section className="landing-brand-panel">
         <div className="landing-brand">
-          
           <div className="landing-logo">
             <img
               src="/ilost.png"
@@ -207,70 +208,7 @@ function App() {
 
         {/* CAMPUS ILLUSTRATION */}
         <div className="campus-illustration">
-          <div className="illustration-map">
-            <div className="map-pin pin-one"></div>
-            <div className="map-pin pin-two"></div>
-            <div className="map-route route-one"></div>
-            <div className="map-route route-two"></div>
-          </div>
-
-          <div className="campus-platform">
-            <div className="campus-building building-left">
-              <div className="building-window"></div>
-              <div className="building-window"></div>
-              <div className="building-window"></div>
-            </div>
-
-            <div className="campus-building building-center">
-              <div className="building-screen">
-                <span>iLost</span>
-                <div className="screen-line"></div>
-                <div className="screen-line short"></div>
-              </div>
-            </div>
-
-            <div className="campus-building building-right">
-              <div className="building-window"></div>
-              <div className="building-window"></div>
-            </div>
-
-            <div className="illustration-tree tree-one">
-              <span></span>
-            </div>
-
-            <div className="illustration-tree tree-two">
-              <span></span>
-            </div>
-
-            <div className="illustration-person person-one">
-              <span className="person-head"></span>
-              <span className="person-body"></span>
-            </div>
-
-            <div className="illustration-person person-two">
-              <span className="person-head"></span>
-              <span className="person-body"></span>
-            </div>
-
-            <div className="illustration-person person-three">
-              <span className="person-head"></span>
-              <span className="person-body"></span>
-            </div>
-          </div>
-
-          <div className="illustration-label label-found">
-            <span className="label-icon">
-              +
-            </span>
-            Found Item
-          </div>
-
-          <div className="illustration-label label-lost">
-            <span className="label-icon">
-              i
-            </span>
-            Lost Item
-          </div>
+          <CampusIllustration />
         </div>
 
         {/* BOTTOM INFORMATION */}
