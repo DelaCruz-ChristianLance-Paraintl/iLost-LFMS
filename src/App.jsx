@@ -169,6 +169,7 @@ function App() {
   if (page === 'report-lost') {
     return (
       <ReportItem
+        key="report-lost"
         type="lost"
         setPage={setPage}
       />
@@ -178,6 +179,7 @@ function App() {
   if (page === 'report-found') {
     return (
       <ReportItem
+        key="report-found"
         type="found"
         setPage={setPage}
       />
@@ -204,6 +206,7 @@ function App() {
     return (
       <AdminDashboard
         setPage={setPage}
+        profile={profile}
       />
     )
   }
@@ -236,6 +239,7 @@ function App() {
     return (
       <Account
         setPage={setPage}
+        profile={profile}
       />
     )
   }

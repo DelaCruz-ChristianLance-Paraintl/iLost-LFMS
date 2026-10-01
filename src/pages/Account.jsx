@@ -7,9 +7,9 @@ import Sidebar from '../components/Sidebar'
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
 
-function Account({ setPage }) {
+function Account({ setPage, profile: initialProfile }) {
   const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState(null)
+  const [profile, setProfile] = useState(initialProfile || null)
 
   const [fullName, setFullName] = useState('')
   const [contactNumber, setContactNumber] = useState('')
@@ -197,7 +197,7 @@ function Account({ setPage }) {
           Back to Overview
         </Badge>
 
-          <section className="account-header">
+          <section className="dashboard-welcome account-welcome">
             <p className="eyebrow">
               ACCOUNT
             </p>

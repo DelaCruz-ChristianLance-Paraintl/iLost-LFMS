@@ -49,9 +49,9 @@ function Register({ setPage }) {
           full_name: fullName.trim(),
           contact_number: contactNumber.trim(),
           user_type: userType,
-          program: program.trim(),
-          year_level: yearLevel,
-          section: section.trim(),
+          program: userType === 'Student' ? program.trim() : null,
+          year_level: userType === 'Student' ? yearLevel : null,
+          section: userType === 'Student' ? section.trim() : null,
         },
       },
     })
@@ -137,13 +137,11 @@ function Register({ setPage }) {
       <div className="auth-card">
 
         <div className="auth-brand">
-          <span className="brand-mark">
-            i
-          </span>
-
-          <span className="brand-name">
-            Lost
-          </span>
+          <img
+            src="/ilost.png"
+            alt="iLost"
+            className="register-brand-logo"
+          />
         </div>
 
         <h1>
@@ -215,9 +213,16 @@ function Register({ setPage }) {
             <select
               id="userType"
               value={userType}
-              onChange={(e) =>
-                setUserType(e.target.value)
-              }
+              onChange={(e) => {
+                const selectedUserType = e.target.value
+                setUserType(selectedUserType)
+
+                if (selectedUserType !== 'Student') {
+                  setProgram('')
+                  setYearLevel('')
+                  setSection('')
+                }
+              }}
               required
             >
               <option value="">
@@ -238,78 +243,82 @@ function Register({ setPage }) {
             </select>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="program">
-              Program
-            </label>
+          {userType === 'Student' && (
+            <>
+              <div className="form-group">
+                <label htmlFor="program">
+                  Program
+                </label>
 
-            <input
-              id="program"
-              type="text"
-              value={program}
-              onChange={(e) =>
-                setProgram(e.target.value)
-              }
-              placeholder="Example: BS Computer Engineering"
-              required
-            />
-          </div>
+                <input
+                  id="program"
+                  type="text"
+                  value={program}
+                  onChange={(e) =>
+                    setProgram(e.target.value)
+                  }
+                  placeholder="Example: BS Computer Engineering"
+                  required
+                />
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="yearLevel">
-              Year Level
-            </label>
+              <div className="form-group">
+                <label htmlFor="yearLevel">
+                  Year Level
+                </label>
 
-            <select
-              id="yearLevel"
-              value={yearLevel}
-              onChange={(e) =>
-                setYearLevel(e.target.value)
-              }
-              required
-            >
-              <option value="">
-                Select year level
-              </option>
+                <select
+                  id="yearLevel"
+                  value={yearLevel}
+                  onChange={(e) =>
+                    setYearLevel(e.target.value)
+                  }
+                  required
+                >
+                  <option value="">
+                    Select year level
+                  </option>
 
-              <option value="1st Year">
-                1st Year
-              </option>
+                  <option value="1st Year">
+                    1st Year
+                  </option>
 
-              <option value="2nd Year">
-                2nd Year
-              </option>
+                  <option value="2nd Year">
+                    2nd Year
+                  </option>
 
-              <option value="3rd Year">
-                3rd Year
-              </option>
+                  <option value="3rd Year">
+                    3rd Year
+                  </option>
 
-              <option value="4th Year">
-                4th Year
-              </option>
+                  <option value="4th Year">
+                    4th Year
+                  </option>
 
-              <option value="Graduate">
-                Graduate
-              </option>
-            </select>
-          </div>
+                  <option value="Graduate">
+                    Graduate
+                  </option>
+                </select>
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="section">
-              Section
-            </label>
+              <div className="form-group">
+                <label htmlFor="section">
+                  Section
+                </label>
 
-            <input
-              id="section"
-              type="text"
-              value={section}
-              onChange={(e) =>
-                setSection(e.target.value)
-              }
-              placeholder="Example: BSCPE-4A"
-              required
-            />
-          </div>
+                <input
+                  id="section"
+                  type="text"
+                  value={section}
+                  onChange={(e) =>
+                    setSection(e.target.value)
+                  }
+                  placeholder="Example: BSCPE-4A"
+                  required
+                />
+              </div>
+            </>
+          )}
 
           <div className="form-group">
             <label htmlFor="registerPassword">
@@ -389,7 +398,7 @@ function Register({ setPage }) {
               type="button"
               onClick={() => setPage('home')}
             >
-              Log In
+              Sign In
             </button>
           </p>
 

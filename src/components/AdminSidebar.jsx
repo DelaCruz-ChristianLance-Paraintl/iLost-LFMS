@@ -1,24 +1,81 @@
+import { useState } from 'react'
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+
 import { supabase } from '../lib/supabaseClient'
 
 function AdminSidebar({ page, setPage }) {
+  const [collapsed, setCollapsed] = useState(
+    () =>
+      window.matchMedia('(max-width: 700px)').matches ||
+      window.localStorage.getItem('sidebar-collapsed') === 'true'
+  )
+
+  const toggleSidebar = () => {
+    setCollapsed((current) => {
+      const next = !current
+      window.localStorage.setItem('sidebar-collapsed', String(next))
+      return next
+    })
+  }
+
+  const navigateTo = (target) => {
+    const scrollPosition = {
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    }
+
+    window.scrollTo(scrollPosition)
+    document.documentElement.scrollTo(scrollPosition)
+    document.body.scrollTo(scrollPosition)
+    document.getElementById('root')?.scrollTo(scrollPosition)
+    document.querySelector('.dashboard-main')?.scrollTo(scrollPosition)
+
+    if (window.matchMedia('(max-width: 700px)').matches) {
+      setCollapsed(true)
+      window.localStorage.setItem('sidebar-collapsed', 'true')
+    }
+
+    setPage(target)
+  }
+
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setPage('home')
   }
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        <span className="brand-mark">i</span>
-        <span className="brand-name">Lost</span>
-      </div>
+    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+      <button
+        type="button"
+        className="sidebar-toggle"
+        onClick={toggleSidebar}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        aria-expanded={!collapsed}
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
+      </button>
+
+      <button
+        type="button"
+        className="sidebar-brand"
+        onClick={() => navigateTo('admin-dashboard')}
+        aria-label="Go to admin overview"
+      >
+        <img
+          src="/ilost.png"
+          alt="iLost"
+          className="sidebar-logo"
+        />
+      </button>
 
       <nav className="sidebar-nav">
         <button
           className={`sidebar-link ${
             page === 'admin-dashboard' ? 'active' : ''
           }`}
-          onClick={() => setPage('admin-dashboard')}
+          onClick={() => navigateTo('admin-dashboard')}
         >
           Overview
         </button>
@@ -27,7 +84,7 @@ function AdminSidebar({ page, setPage }) {
           className={`sidebar-link ${
             page === 'admin-claims' ? 'active' : ''
           }`}
-          onClick={() => setPage('admin-claims')}
+          onClick={() => navigateTo('admin-claims')}
         >
           Claims
         </button>
@@ -36,7 +93,7 @@ function AdminSidebar({ page, setPage }) {
           className={`sidebar-link ${
             page === 'admin-users' ? 'active' : ''
           }`}
-          onClick={() => setPage('admin-users')}
+          onClick={() => navigateTo('admin-users')}
         >
           Users
         </button>
@@ -45,7 +102,7 @@ function AdminSidebar({ page, setPage }) {
           className={`sidebar-link ${
             page === 'admin-items' ? 'active' : ''
           }`}
-          onClick={() => setPage('admin-items')}
+          onClick={() => navigateTo('admin-items')}
         >
           Items
         </button>
@@ -54,7 +111,7 @@ function AdminSidebar({ page, setPage }) {
           className={`sidebar-link ${
             page === 'account' ? 'active' : ''
           }`}
-          onClick={() => setPage('account')}
+          onClick={() => navigateTo('account')}
         >
           Account
         </button>

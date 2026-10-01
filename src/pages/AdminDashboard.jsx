@@ -4,10 +4,14 @@ import { supabase } from '../lib/supabaseClient'
 
 import AdminSidebar from '../components/AdminSidebar'
 
-function AdminDashboard({ setPage }) {
-  const [fullName, setFullName] = useState('Administrator')
-  const [loading, setLoading] = useState(true)
-  const [authorized, setAuthorized] = useState(false)
+function AdminDashboard({ setPage, profile }) {
+  const [fullName, setFullName] = useState(
+    profile?.full_name || 'Administrator'
+  )
+  const [loading, setLoading] = useState(!profile)
+  const [authorized, setAuthorized] = useState(
+    profile?.role === 'admin'
+  )
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -42,6 +46,11 @@ function AdminDashboard({ setPage }) {
   if (loading) {
     return (
       <div className="dashboard-layout">
+        <AdminSidebar
+          page="admin-dashboard"
+          setPage={setPage}
+        />
+
         <main className="dashboard-main">
           <section className="dashboard-content">
             <p>Loading admin dashboard...</p>
