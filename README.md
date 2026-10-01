@@ -32,7 +32,7 @@ The system is designed specifically for the campus lost and found process of Bul
 
 ### User Authentication
 
-Users can create an account and log in using their registered email and password.
+Users can create an account and Sign in using their registered email and password.
 
 ### Report Lost Item
 

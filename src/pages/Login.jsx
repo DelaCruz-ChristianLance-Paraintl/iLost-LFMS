@@ -39,7 +39,7 @@ function Login({ setPage }) {
         <h1>Welcome back</h1>
 
         <p className="auth-description">
-          Log in to report, search, and recover lost items
+          Sign in to report, search, and recover lost items
           around campus.
         </p>
 
@@ -83,7 +83,7 @@ function Login({ setPage }) {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Logging In...' : 'Log In'}
+            {loading ? 'Logging In...' : 'Sign in'}
           </button>
         </form>
 

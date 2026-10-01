@@ -382,16 +382,16 @@ function Register({ setPage }) {
           </button>
         </div>
 
-        <p className="auth-footer">
-          Already have an account?{' '}
+          <p className="auth-footer">
+            Already have an account?{' '}
 
-          <button
-            type="button"
-            onClick={() => setPage('login')}
-          >
-            Log In
-          </button>
-        </p>
+            <button
+              type="button"
+              onClick={() => setPage('home')}
+            >
+              Log In
+            </button>
+          </p>
 
       </div>
     </div>
