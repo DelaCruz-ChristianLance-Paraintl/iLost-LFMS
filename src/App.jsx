@@ -6,6 +6,8 @@ import { supabase } from './lib/supabaseClient'
 
 import Register from './pages/Register'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import ReportItem from './pages/ReportItem'
 import History from './pages/History'
@@ -30,7 +32,30 @@ function App() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
+    const recoveryInUrl =
+      window.location.hash.includes('type=recovery') ||
+      new URLSearchParams(
+        window.location.search
+      ).get('type') === 'recovery'
+
+    const {
+      data: authListener,
+    } = supabase.auth.onAuthStateChange(
+      (event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          setPage('reset-password')
+          setCheckingSession(false)
+        }
+      }
+    )
+
     const restoreSession = async () => {
+      if (recoveryInUrl) {
+        setPage('reset-password')
+        setCheckingSession(false)
+        return
+      }
+
       const {
         data: { session },
       } = await supabase.auth.getSession()
@@ -41,11 +66,12 @@ function App() {
         return
       }
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('full_name, role')
-        .eq('id', session.user.id)
-        .single()
+      const { data: profile, error } =
+        await supabase
+          .from('profiles')
+          .select('full_name, role')
+          .eq('id', session.user.id)
+          .single()
 
       if (error) {
         setPage('home')
@@ -63,6 +89,10 @@ function App() {
     }
 
     restoreSession()
+
+    return () => {
+      authListener.subscription.unsubscribe()
+    }
   }, [])
 
   const handleLandingLogin = async (e) => {
@@ -80,12 +110,14 @@ function App() {
     if (error) {
       setLoginMessage(error.message)
     } else {
-      const { data: profile, error: profileError } =
-        await supabase
-          .from('profiles')
-          .select('full_name, role')
-          .eq('id', data.user.id)
-          .single()
+      const {
+        data: profile,
+        error: profileError,
+      } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', data.user.id)
+        .single()
 
       if (profileError) {
         setLoginMessage(
@@ -117,6 +149,14 @@ function App() {
     return <Login setPage={setPage} />
   }
 
+  if (page === 'forgot-password') {
+    return <ForgotPassword setPage={setPage} />
+  }
+
+  if (page === 'reset-password') {
+    return <ResetPassword setPage={setPage} />
+  }
+
   if (page === 'dashboard') {
     return (
       <Dashboard
@@ -145,7 +185,11 @@ function App() {
   }
 
   if (page === 'find-missing') {
-    return <FindMyMissingItems setPage={setPage} />
+    return (
+      <FindMyMissingItems
+        setPage={setPage}
+      />
+    )
   }
 
   if (page === 'history') {
@@ -157,31 +201,53 @@ function App() {
   }
 
   if (page === 'admin-dashboard') {
-    return <AdminDashboard setPage={setPage} />
+    return (
+      <AdminDashboard
+        setPage={setPage}
+      />
+    )
   }
 
   if (page === 'admin-claims') {
-    return <AdminClaims setPage={setPage} />
+    return (
+      <AdminClaims
+        setPage={setPage}
+      />
+    )
   }
 
   if (page === 'admin-items') {
-    return <AdminItems setPage={setPage} />
+    return (
+      <AdminItems
+        setPage={setPage}
+      />
+    )
   }
 
   if (page === 'admin-users') {
-    return <AdminUsers setPage={setPage} />
+    return (
+      <AdminUsers
+        setPage={setPage}
+      />
+    )
   }
 
   if (page === 'account') {
-    return <Account setPage={setPage} />
+    return (
+      <Account
+        setPage={setPage}
+      />
+    )
   }
 
   return (
     <div className="landing-page">
+
       {/* LEFT PANEL */}
       <section className="landing-brand-panel">
+
         <div className="landing-brand">
-          
+
           <div className="landing-logo">
             <img
               src="/ilost.png"
@@ -203,10 +269,12 @@ function App() {
             <br />
             to return what matters most."
           </p>
+
         </div>
 
         {/* CAMPUS ILLUSTRATION */}
         <div className="campus-illustration">
+
           <div className="illustration-map">
             <div className="map-pin pin-one"></div>
             <div className="map-pin pin-two"></div>
@@ -215,6 +283,7 @@ function App() {
           </div>
 
           <div className="campus-platform">
+
             <div className="campus-building building-left">
               <div className="building-window"></div>
               <div className="building-window"></div>
@@ -256,6 +325,7 @@ function App() {
               <span className="person-head"></span>
               <span className="person-body"></span>
             </div>
+
           </div>
 
           <div className="illustration-label label-found">
@@ -271,10 +341,12 @@ function App() {
             </span>
             Lost Item
           </div>
+
         </div>
 
         {/* BOTTOM INFORMATION */}
         <div className="network-info">
+
           <div className="network-dot"></div>
 
           <div>
@@ -290,11 +362,14 @@ function App() {
               Integrated campus-wide recovery
             </p>
           </div>
+
         </div>
+
       </section>
 
       {/* RIGHT PANEL */}
       <section className="landing-login-panel">
+
         <div className="circuit-background">
           <div className="circuit-line line-1"></div>
           <div className="circuit-line line-2"></div>
@@ -306,6 +381,7 @@ function App() {
 
         {/* LOGIN CARD */}
         <div className="landing-login-card">
+
           <div className="login-card-heading">
             <h2>
               Welcome to <span>iLost</span>
@@ -313,9 +389,13 @@ function App() {
           </div>
 
           <form onSubmit={handleLandingLogin}>
-            {/* EMAIL */}
+
+            {/* LOGIN FIELDS BOX */}
             <div className="landing-login-fields">
+
+              {/* EMAIL */}
               <div className="landing-field">
+
                 <span className="field-icon">
                   <svg
                     viewBox="0 0 24 24"
@@ -342,10 +422,12 @@ function App() {
                   placeholder="Email or Username"
                   required
                 />
+
               </div>
 
               {/* PASSWORD */}
               <div className="landing-field">
+
                 <span className="field-icon">
                   <svg
                     viewBox="0 0 24 24"
@@ -391,10 +473,12 @@ function App() {
                       : 'Show password'
                   }
                 >
+
                   <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                   >
+
                     <path
                       d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"
                     />
@@ -408,74 +492,87 @@ function App() {
                     {!showPassword && (
                       <path d="M4 4l16 16" />
                     )}
+
                   </svg>
+
                 </button>
+
               </div>
 
-              {/* OPTIONS */}
-              <div className="login-options">
-                <label className="remember-option">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) =>
-                      setRememberMe(e.target.checked)
-                    }
-                  />
+            </div>
 
-                  <span>
-                    Remember me
-                  </span>
-                </label>
+            {/* OPTIONS */}
+            <div className="login-options">
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setLoginMessage(
-                      'Password recovery will be added later.'
+              <label className="remember-option">
+
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) =>
+                    setRememberMe(
+                      e.target.checked
                     )
                   }
-                >
-                  Forgot Password?
-                </button>
-              </div>
+                />
 
-              {/* ERROR */}
-              {loginMessage && (
-                <p className="landing-login-message">
-                  {loginMessage}
-                </p>
-              )}
+                <span>
+                  Remember me
+                </span>
 
-              {/* SIGN IN */}
+              </label>
+
               <button
-                type="submit"
-                className="landing-signin-button"
-                disabled={loginLoading}
+                type="button"
+                onClick={() => {
+                  setLoginMessage('')
+                  setPage('forgot-password')
+                }}
               >
-                {loginLoading
-                  ? 'Signing In...'
-                  : 'Sign In'}
+                Forgot Password?
               </button>
 
-              {/* REGISTER */}
-              <p className="landing-register-link">
-                Don't have an account?
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPage('register')
-                  }
-                >
-                  Sign Up
-                </button>
-              </p>
             </div>
+
+            {/* ERROR */}
+            {loginMessage && (
+              <p className="landing-login-message">
+                {loginMessage}
+              </p>
+            )}
+
+            {/* SIGN IN */}
+            <button
+              type="submit"
+              className="landing-signin-button"
+              disabled={loginLoading}
+            >
+              {loginLoading
+                ? 'Signing In...'
+                : 'Sign In'}
+            </button>
+
+            {/* REGISTER */}
+            <p className="landing-register-link">
+
+              Don't have an account?
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPage('register')
+                }
+              >
+                Sign Up
+              </button>
+
+            </p>
+
           </form>
 
           {/* SECURITY NOTICE */}
           <div className="login-security">
+
             <span>
               <svg
                 viewBox="0 0 24 24"
@@ -496,9 +593,13 @@ function App() {
             </span>
 
             Secure access for Meneses Campus students and staff.
+
           </div>
+
         </div>
+
       </section>
+
     </div>
   )
 }
