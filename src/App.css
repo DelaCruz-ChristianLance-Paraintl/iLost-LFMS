@@ -4006,3 +4006,27 @@ a {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.page-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #756B72;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.page-back-button:hover {
+  color: #D1006F;
+  transform: translateX(-3px);
+}
+

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 import AdminSidebar from '../components/AdminSidebar'
+import { Badge } from '../components/ui/badge'
 
 function AdminUsers({ setPage }) {
   const [users, setUsers] = useState([])
@@ -77,6 +78,17 @@ function AdminUsers({ setPage }) {
 
       <main className="dashboard-main">
         <section className="dashboard-content">
+        <Badge
+          variant="ghost"
+          onClick={() => setPage('admin-dashboard')}
+          className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
+        >
+          <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
+            ←
+          </span>
+          Back to Overview
+        </Badge>
+
 
           <section className="dashboard-welcome">
 

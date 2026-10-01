@@ -2,8 +2,10 @@ import { useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { Button } from '../components/ui/button'
-
+import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
+
+
 
 const categoryOptions = {
   Electronics: [
@@ -484,8 +486,21 @@ function ReportItem({ type, setPage }) {
 
       <main className="dashboard-main">
         <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+
           {/* PAGE HEADER */}
           <header className="mb-8">
+
+            <Badge
+              variant="ghost"
+              onClick={() => setPage('dashboard')}
+              className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
+            >
+              <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
+                ←
+              </span>
+              Back to Overview
+            </Badge>
+
             <div className="mb-3 flex items-center gap-2">
               <span className="rounded-full bg-[#B83A4B]/10 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#B83A4B]">
                 NEW REPORT
@@ -506,6 +521,7 @@ function ReportItem({ type, setPage }) {
               Provide accurate item details so iLost can organize the
               report and help connect lost belongings with their owners.
             </p>
+
           </header>
 
           {/* FORM */}
@@ -513,6 +529,7 @@ function ReportItem({ type, setPage }) {
             onSubmit={handleSubmit}
             className="space-y-5"
           >
+
             {/* ITEM DETAILS */}
             <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
               <SectionHeader
@@ -522,6 +539,7 @@ function ReportItem({ type, setPage }) {
               />
 
               <div className="grid gap-5 md:grid-cols-2">
+
                 <div className="md:col-span-2">
                   <Field
                     label="Item Name"
@@ -728,6 +746,7 @@ function ReportItem({ type, setPage }) {
                       </select>
                     </Field>
                   )}
+
               </div>
             </section>
 
@@ -741,6 +760,7 @@ function ReportItem({ type, setPage }) {
 
               <div className="rounded-xl border border-dashed border-[#D1D5DB] bg-[#F7F9FC] p-6 text-center transition hover:border-[#B83A4B]/50 hover:bg-[#B83A4B]/[0.02]">
                 <div className="mx-auto flex max-w-md flex-col items-center">
+
                   <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#B83A4B] shadow-sm ring-1 ring-[#E5E7EB]">
                     <svg
                       viewBox="0 0 24 24"
@@ -757,7 +777,11 @@ function ReportItem({ type, setPage }) {
                         height="16"
                         rx="2"
                       />
-                      <circle cx="8.5" cy="9" r="1.5" />
+                      <circle
+                        cx="8.5"
+                        cy="9"
+                        r="1.5"
+                      />
                       <path d="m21 15-4.5-4.5L7 20" />
                     </svg>
                   </div>
@@ -796,6 +820,7 @@ function ReportItem({ type, setPage }) {
                       </p>
                     </div>
                   )}
+
                 </div>
               </div>
             </section>
@@ -809,6 +834,7 @@ function ReportItem({ type, setPage }) {
               />
 
               <div className="space-y-5">
+
                 <Field
                   label="General Description"
                   htmlFor="description"
@@ -826,6 +852,7 @@ function ReportItem({ type, setPage }) {
                 </Field>
 
                 <div className="rounded-xl border border-[#D9B65D]/40 bg-[#D9B65D]/[0.06] p-4">
+
                   <div className="mb-2 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#D9B65D]/15 text-[#8A6D1D]">
                       <svg
@@ -866,6 +893,7 @@ function ReportItem({ type, setPage }) {
                       className={textareaClassName}
                     />
                   </Field>
+
                 </div>
               </div>
             </section>
@@ -879,6 +907,7 @@ function ReportItem({ type, setPage }) {
               />
 
               <div className="grid gap-5 md:grid-cols-2">
+
                 <div className="md:col-span-2">
                   <Field
                     label={
@@ -908,18 +937,18 @@ function ReportItem({ type, setPage }) {
                   htmlFor="date"
                   required
                 >
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  value={form.date}
-                  onChange={handleChange}
-                  onClick={(event) => {
-                    event.currentTarget.showPicker?.()
-                  }}
-                  required
-                  className={`${inputClassName} cursor-pointer`}
-                />
+                  <input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value={form.date}
+                    onChange={handleChange}
+                    onClick={(event) => {
+                      event.currentTarget.showPicker?.()
+                    }}
+                    required
+                    className={`${inputClassName} cursor-pointer`}
+                  />
                 </Field>
 
                 <Field
@@ -943,6 +972,7 @@ function ReportItem({ type, setPage }) {
                     className={`${inputClassName} cursor-pointer`}
                   />
                 </Field>
+
               </div>
             </section>
 
@@ -967,6 +997,7 @@ function ReportItem({ type, setPage }) {
 
             {/* FORM ACTIONS */}
             <div className="flex flex-col-reverse gap-3 border-t border-[#E5E7EB] pt-5 sm:flex-row sm:items-center sm:justify-between">
+
               <Button
                 type="button"
                 variant="outline"
@@ -976,16 +1007,9 @@ function ReportItem({ type, setPage }) {
                 Cancel
               </Button>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="h-10 rounded-lg bg-[#B83A4B] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#963040] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loading
-                  ? 'Submitting...'
-                  : `Submit ${isLost ? 'Lost' : 'Found'} Report`}
-              </Button>
+
             </div>
+
           </form>
         </div>
       </main>
