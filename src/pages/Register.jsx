@@ -1,61 +1,135 @@
 import { useState } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
 
 function Register({ setPage }) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [contactNumber, setContactNumber] = useState('')
+  const [userType, setUserType] = useState('')
   const [program, setProgram] = useState('')
   const [yearLevel, setYearLevel] = useState('')
   const [section, setSection] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+
   const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const handleRegister = async (e) => {
     e.preventDefault()
+
     setMessage('')
+    setMessageType('')
 
     if (password !== confirmPassword) {
       setMessage('Passwords do not match.')
+      setMessageType('error')
+      return
+    }
+
+    if (password.length < 6) {
+      setMessage(
+        'Password must be at least 6 characters long.'
+      )
+      setMessageType('error')
       return
     }
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/login`,
         data: {
-          full_name: fullName,
-          contact_number: contactNumber,
-          program,
+          full_name: fullName.trim(),
+          contact_number: contactNumber.trim(),
+          user_type: userType,
+          program: program.trim(),
           year_level: yearLevel,
-          section,
+          section: section.trim(),
         },
       },
     })
 
     if (error) {
       setMessage(error.message)
-    } else {
-      setMessage(
-        'Registration successful. Check your email if confirmation is required.'
-      )
-
-      setFullName('')
-      setEmail('')
-      setContactNumber('')
-      setProgram('')
-      setYearLevel('')
-      setSection('')
-      setPassword('')
-      setConfirmPassword('')
+      setMessageType('error')
+      setLoading(false)
+      return
     }
 
+    /*
+      When email confirmation is enabled, Supabase normally
+      returns a user without an active session.
+
+      We keep the message generic because Supabase may
+      intentionally hide whether an email already belongs
+      to an existing account.
+    */
+    if (data?.user && !data?.session) {
+      setMessage(
+        'Registration submitted. Please check your email to confirm your account.'
+      )
+      setMessageType('success')
+    } else {
+      setMessage(
+        'Registration successful. You can now sign in.'
+      )
+      setMessageType('success')
+    }
+
+    setFullName('')
+    setEmail('')
+    setContactNumber('')
+    setUserType('')
+    setProgram('')
+    setYearLevel('')
+    setSection('')
+    setPassword('')
+    setConfirmPassword('')
+
     setLoading(false)
+  }
+
+  const handleResendConfirmation = async () => {
+    const trimmedEmail = email.trim()
+
+    if (!trimmedEmail) {
+      setMessage(
+        'Enter your email address first before resending the confirmation email.'
+      )
+      setMessageType('error')
+      return
+    }
+
+    setMessage('')
+    setMessageType('')
+    setResending(true)
+
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: trimmedEmail,
+      options: {
+        emailRedirectTo: `${window.location.origin}/login`,
+      },
+    })
+
+    if (error) {
+      setMessage(error.message)
+      setMessageType('error')
+    } else {
+      setMessage(
+        'A new confirmation email has been sent. Please check your inbox.'
+      )
+      setMessageType('success')
+    }
+
+    setResending(false)
   }
 
   return (
@@ -91,7 +165,9 @@ function Register({ setPage }) {
               id="fullName"
               type="text"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) =>
+                setFullName(e.target.value)
+              }
               placeholder="Enter your full name"
               required
             />
@@ -106,7 +182,9 @@ function Register({ setPage }) {
               id="registerEmail"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               placeholder="Enter your email"
               required
             />
@@ -121,10 +199,43 @@ function Register({ setPage }) {
               id="contactNumber"
               type="tel"
               value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
+              onChange={(e) =>
+                setContactNumber(e.target.value)
+              }
               placeholder="Enter your contact number"
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="userType">
+              User Type
+            </label>
+
+            <select
+              id="userType"
+              value={userType}
+              onChange={(e) =>
+                setUserType(e.target.value)
+              }
+              required
+            >
+              <option value="">
+                Select user type
+              </option>
+
+              <option value="Student">
+                Student
+              </option>
+
+              <option value="Faculty">
+                Faculty
+              </option>
+
+              <option value="Staff">
+                Staff
+              </option>
+            </select>
           </div>
 
           <div className="form-group">
@@ -136,7 +247,9 @@ function Register({ setPage }) {
               id="program"
               type="text"
               value={program}
-              onChange={(e) => setProgram(e.target.value)}
+              onChange={(e) =>
+                setProgram(e.target.value)
+              }
               placeholder="Example: BS Computer Engineering"
               required
             />
@@ -150,7 +263,9 @@ function Register({ setPage }) {
             <select
               id="yearLevel"
               value={yearLevel}
-              onChange={(e) => setYearLevel(e.target.value)}
+              onChange={(e) =>
+                setYearLevel(e.target.value)
+              }
               required
             >
               <option value="">
@@ -188,7 +303,9 @@ function Register({ setPage }) {
               id="section"
               type="text"
               value={section}
-              onChange={(e) => setSection(e.target.value)}
+              onChange={(e) =>
+                setSection(e.target.value)
+              }
               placeholder="Example: BSCPE-4A"
               required
             />
@@ -203,7 +320,9 @@ function Register({ setPage }) {
               id="registerPassword"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
               placeholder="Create a password"
               required
             />
@@ -218,7 +337,9 @@ function Register({ setPage }) {
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                setConfirmPassword(e.target.value)
+              }
               placeholder="Confirm your password"
               required
             />
@@ -237,10 +358,29 @@ function Register({ setPage }) {
         </form>
 
         {message && (
-          <p className="auth-message">
+          <p
+            className={`auth-message ${
+              messageType === 'success'
+                ? 'auth-message-success'
+                : 'auth-message-error'
+            }`}
+          >
             {message}
           </p>
         )}
+
+        <div className="auth-confirmation-actions">
+          <button
+            type="button"
+            className="auth-resend-button"
+            onClick={handleResendConfirmation}
+            disabled={resending}
+          >
+            {resending
+              ? 'Resending...'
+              : 'Resend Confirmation Email'}
+          </button>
+        </div>
 
         <p className="auth-footer">
           Already have an account?{' '}

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 import Sidebar from '../components/Sidebar'
+
 import AdminSidebar from '../components/AdminSidebar'
 
 function Account({ setPage }) {
@@ -45,6 +46,7 @@ function Account({ setPage }) {
           full_name,
           email,
           contact_number,
+          user_type,
           program,
           year_level,
           section,
@@ -55,7 +57,10 @@ function Account({ setPage }) {
         .single()
 
       if (error || !data) {
-        setError('Unable to load your account information.')
+        setError(
+          'Unable to load your account information.'
+        )
+
         setLoading(false)
         return
       }
@@ -104,6 +109,7 @@ function Account({ setPage }) {
         full_name,
         email,
         contact_number,
+        user_type,
         program,
         year_level,
         section,
@@ -116,6 +122,7 @@ function Account({ setPage }) {
       setError(
         `Unable to update your profile: ${error.message}`
       )
+
       setSaving(false)
       return
     }
@@ -129,7 +136,11 @@ function Account({ setPage }) {
     setSection(data.section || '')
 
     setEditing(false)
-    setMessage('Profile updated successfully.')
+
+    setMessage(
+      'Profile updated successfully.'
+    )
+
     setSaving(false)
   }
 
@@ -143,37 +154,35 @@ function Account({ setPage }) {
     setSection(profile.section || '')
 
     setEditing(false)
+
     setError('')
     setMessage('')
   }
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+
     setPage('login')
   }
-
-
 
   const isAdmin = profile?.role === 'admin'
 
   return (
     <div className="dashboard-layout">
-
-        {isAdmin ? (
+      {isAdmin ? (
         <AdminSidebar
-            page="account"
-            setPage={setPage}
+          page="account"
+          setPage={setPage}
         />
-        ) : (
+      ) : (
         <Sidebar
-            page="account"
-            setPage={setPage}
+          page="account"
+          setPage={setPage}
         />
-        )}
+      )}
 
       <main className="dashboard-main">
         <section className="dashboard-content">
-
           <section className="account-header">
             <p className="eyebrow">
               ACCOUNT
@@ -228,7 +237,6 @@ function Account({ setPage }) {
             </div>
 
             <div className="account-grid">
-
               <div className="account-field">
                 <label>
                   Full Name
@@ -269,10 +277,39 @@ function Account({ setPage }) {
                   type="text"
                   value={contactNumber}
                   onChange={(event) =>
-                    setContactNumber(event.target.value)
+                    setContactNumber(
+                      event.target.value
+                    )
                   }
                   disabled={!editing}
                 />
+              </div>
+
+              <div className="account-field">
+                <label>
+                  User Type
+                </label>
+
+                <select
+                  value={profile?.user_type || ''}
+                  disabled
+                >
+                  <option value="">
+                    Not specified
+                  </option>
+
+                  <option value="Student">
+                    Student
+                  </option>
+
+                  <option value="Faculty">
+                    Faculty
+                  </option>
+
+                  <option value="Staff">
+                    Staff
+                  </option>
+                </select>
               </div>
 
               <div className="account-field">
@@ -290,12 +327,10 @@ function Account({ setPage }) {
                   disabled
                 />
               </div>
-
             </div>
           </section>
 
           <section className="account-card">
-
             <div className="account-card-header">
               <div>
                 <p className="account-section-label">
@@ -309,7 +344,6 @@ function Account({ setPage }) {
             </div>
 
             <div className="account-grid">
-
               <div className="account-field">
                 <label>
                   Program
@@ -395,13 +429,11 @@ function Account({ setPage }) {
                   disabled
                 />
               </div>
-
             </div>
           </section>
 
           {editing && (
             <div className="account-actions">
-
               <button
                 type="button"
                 className="secondary-button"
@@ -421,12 +453,10 @@ function Account({ setPage }) {
                   ? 'Saving...'
                   : 'Save Changes'}
               </button>
-
             </div>
           )}
 
           <section className="account-logout-section">
-
             <div>
               <p className="account-section-label">
                 SESSION
@@ -448,9 +478,7 @@ function Account({ setPage }) {
             >
               Log Out
             </button>
-
           </section>
-
         </section>
       </main>
     </div>

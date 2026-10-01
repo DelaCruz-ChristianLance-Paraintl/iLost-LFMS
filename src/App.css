@@ -3979,3 +3979,30 @@ a {
   font-size: 14px;
   line-height: 1.6;
 }
+
+.auth-confirmation-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.auth-resend-button {
+  border: none;
+  background: transparent;
+  color: #D1006F;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.auth-resend-button:hover {
+  color: #98004F;
+  text-decoration: underline;
+}
+
+.auth-resend-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
