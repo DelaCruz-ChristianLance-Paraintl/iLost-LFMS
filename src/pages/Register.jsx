@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 
-function Register({ setPage }) {
+function Register({ setPage, embedded = false }) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [contactNumber, setContactNumber] = useState('')
@@ -133,8 +133,8 @@ function Register({ setPage }) {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
+    <div className={embedded ? 'landing-auth-content' : 'auth-page'}>
+      <div className={`auth-card${embedded ? ' landing-auth-inner' : ''}`}>
 
         <div className="auth-brand">
           <img

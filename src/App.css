@@ -4396,10 +4396,30 @@ a {
 .landing-login-card {
   border-radius: 12px;
   background: #FFFFFF;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   box-shadow:
     0 24px 60px rgba(43, 37, 42, 0.16),
     0 4px 14px rgba(43, 37, 42, 0.08),
     inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.landing-auth-content {
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.landing-login-card-form {
+  justify-content: flex-start;
+}
+
+.landing-login-card .landing-auth-inner {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .landing-login-card .login-card-heading {
@@ -4433,6 +4453,10 @@ a {
 }
 
 @media (max-width: 520px) {
+  .landing-login-card {
+    max-height: calc(100vh - 32px);
+  }
+
   .landing-login-card .login-options,
   .landing-login-card .landing-login-message,
   .landing-login-card .landing-signin-button,

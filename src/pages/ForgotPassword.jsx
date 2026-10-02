@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-function ForgotPassword({ setPage }) {
+function ForgotPassword({ setPage, embedded = false }) {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,8 +32,8 @@ function ForgotPassword({ setPage }) {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
+    <div className={embedded ? 'landing-auth-content' : 'auth-page'}>
+      <div className={`auth-card${embedded ? ' landing-auth-inner' : ''}`}>
         <div className="auth-brand">
             <img
                 src="/ilost.png"

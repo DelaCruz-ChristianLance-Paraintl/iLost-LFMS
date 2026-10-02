@@ -144,16 +144,8 @@ function App() {
     return null
   }
 
-  if (page === 'register') {
-    return <Register setPage={setPage} />
-  }
-
   if (page === 'login') {
     return <Login setPage={setPage} />
-  }
-
-  if (page === 'forgot-password') {
-    return <ForgotPassword setPage={setPage} />
   }
 
   if (page === 'reset-password') {
@@ -385,7 +377,19 @@ function App() {
 
 
         {/* LOGIN CARD */}
-        <div className="landing-login-card">
+        <div
+          className={`landing-login-card${
+            page === 'register' || page === 'forgot-password'
+              ? ' landing-login-card-form'
+              : ''
+          }`}
+        >
+          {page === 'register' ? (
+            <Register setPage={setPage} embedded />
+          ) : page === 'forgot-password' ? (
+            <ForgotPassword setPage={setPage} embedded />
+          ) : (
+            <>
 
           <div className="login-card-heading">
             <h2>
@@ -564,6 +568,8 @@ function App() {
             Secure access for Meneses Campus students and staff.
 
           </div>
+            </>
+          )}
 
         </div>
 
