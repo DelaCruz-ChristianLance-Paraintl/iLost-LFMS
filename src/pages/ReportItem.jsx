@@ -487,19 +487,19 @@ function ReportItem({ type, setPage }) {
       <main className="dashboard-main">
         <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
 
-          {/* PAGE HEADER */}
-          <header className="mb-8">
+          <Badge
+            variant="ghost"
+            onClick={() => setPage('dashboard')}
+            className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
+          >
+            <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
+              ←
+            </span>
+            Back to Overview
+          </Badge>
 
-            <Badge
-              variant="ghost"
-              onClick={() => setPage('dashboard')}
-              className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
-            >
-              <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
-                ←
-              </span>
-              Back to Overview
-            </Badge>
+          {/* PAGE HEADER */}
+          <header className="dashboard-welcome page-welcome report-welcome">
 
             <div className="mb-3 flex items-center gap-2">
               <span className="rounded-full bg-[#B83A4B]/10 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#B83A4B]">

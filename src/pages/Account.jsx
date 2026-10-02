@@ -202,7 +202,7 @@ function Account({ setPage, profile: initialProfile }) {
           Back to Overview
         </Badge>
 
-          <section className="dashboard-welcome account-welcome">
+          <section className="dashboard-welcome page-welcome account-welcome">
             <p className="eyebrow">
               ACCOUNT
             </p>

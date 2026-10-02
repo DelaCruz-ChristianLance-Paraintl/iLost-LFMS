@@ -95,7 +95,15 @@ Items classified as **No Match** are excluded from the possible-match results.
 
 ### Report History
 
-Users can review their previously submitted lost and found reports through the History section.
+Users can review their previously submitted lost and found reports through the History section. Found items from approved claims also appear in the claimant's History.
+
+### Claim lifecycle
+
+- Each account can submit one claim per found item. Rejected claims cannot be resubmitted by the same account.
+- Rejected claims do not change the found item's availability, so other users can still see and claim it.
+- Approving a claim marks the found item as claimed, removes it from match results, and adds it to the claimant's History.
+- Confirming physical handover marks the item as returned.
+- Apply `supabase/migrations/20261002_one_claim_per_item_per_account.sql` to the Supabase database to enforce the one-claim-per-item rule and allow claimants to read their own claim statuses and approved claim items.
 
 ### Browse Items
 

@@ -371,6 +371,70 @@ function AdminClaims({ setPage }) {
                   const parsed = parseClaimMessage(
                     claim.message
                   )
+                  const claimant = claim.claimant
+                  const item = claim.item
+                  const comparisonRows = [
+                    {
+                      label: 'Claimant profile',
+                      claimant: (
+                        <>
+                          <strong>{claimant?.full_name || 'Unknown claimant'}</strong>
+                          <span>{claimant?.email || 'No email provided'}</span>
+                          <span>{claimant?.contact_number || 'No contact number provided'}</span>
+                          <span>
+                            {[claimant?.program, claimant?.year_level, claimant?.section]
+                              .filter(Boolean)
+                              .join(' · ') || 'No academic details provided'}
+                          </span>
+                        </>
+                      ),
+                      item: (
+                        <>
+                          <strong>{item?.item_name || 'Unknown item'}</strong>
+                          <span>
+                            {[item?.category, item?.subcategory]
+                              .filter(Boolean)
+                              .join(' · ') || 'No category provided'}
+                          </span>
+                          <span>
+                            {[item?.brand, item?.model, item?.color, item?.size]
+                              .filter(Boolean)
+                              .join(' · ') || 'No additional item attributes recorded'}
+                          </span>
+                        </>
+                      ),
+                    },
+                    {
+                      label: 'Item identification',
+                      claimant: parsed.reason || 'No explanation provided.',
+                      item: item?.description || 'No item description recorded.',
+                    },
+                    {
+                      label: 'Location',
+                      claimant: parsed.location || 'No location provided.',
+                      item: item?.location || 'No found location recorded.',
+                    },
+                    {
+                      label: 'Date and time',
+                      claimant: parsed.date || 'No date provided.',
+                      item: [
+                        item?.date,
+                        item?.time,
+                      ].filter(Boolean).join(' · ') || 'No date or time recorded.',
+                    },
+                    {
+                      label: 'Distinctive details',
+                      claimant: parsed.details || 'No private identifying details provided.',
+                      item: item?.distinctive_details || 'No distinctive item details recorded.',
+                    },
+                    ...(parsed.additionalInfo
+                      ? [{
+                          label: 'Additional information',
+                          claimant: parsed.additionalInfo,
+                          item: 'No corresponding additional-information field in the item record.',
+                        }]
+                      : []),
+                  ]
 
                   return (
                     <article
@@ -399,163 +463,39 @@ function AdminClaims({ setPage }) {
 
                       </div>
 
-                      <div className="admin-claim-grid">
+                      <details className="admin-claim-comparison" open>
+                        <summary>
+                          <span>
+                            <strong>Evidence comparison</strong>
+                            <small>Compare the claimant’s answers with the found-item record.</small>
+                          </span>
+                          <span className="admin-comparison-toggle">
+                            <span className="comparison-show-label">Show details</span>
+                            <span className="comparison-hide-label">Hide details</span>
+                          </span>
+                        </summary>
 
-                        <div className="admin-detail-block">
-
-                          <p className="admin-detail-label">
-                            CLAIMANT
-                          </p>
-
-                          <p>
-                            <strong>
-                              {claim.claimant?.full_name ||
-                                'Unknown'}
-                            </strong>
-                          </p>
-
-                          <p>
-                            {claim.claimant?.email ||
-                              'No email'}
-                          </p>
-
-                          <p>
-                            {claim.claimant?.contact_number ||
-                              'No contact number'}
-                          </p>
-
-                          <p>
-                            {claim.claimant?.program ||
-                              'No program'}
-                            {' · '}
-                            {claim.claimant?.year_level ||
-                              'No year'}
-                            {' · '}
-                            {claim.claimant?.section ||
-                              'No section'}
-                          </p>
-
+                        <div className="admin-comparison-table-wrap">
+                          <table className="admin-comparison-table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Evidence</th>
+                                <th scope="col">Claimant’s submission</th>
+                                <th scope="col">Found item record</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {comparisonRows.map((row) => (
+                                <tr key={row.label}>
+                                  <th scope="row">{row.label}</th>
+                                  <td>{row.claimant}</td>
+                                  <td>{row.item}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
-
-                        <div className="admin-detail-block">
-
-                          <p className="admin-detail-label">
-                            FOUND ITEM
-                          </p>
-
-                          <p>
-                            <strong>
-                              {claim.item?.item_name ||
-                                'Unknown Item'}
-                            </strong>
-                          </p>
-
-                          <p>
-                            {claim.item?.category ||
-                              'No category'}
-                            {' / '}
-                            {claim.item?.subcategory ||
-                              'No subcategory'}
-                          </p>
-
-                          {claim.item?.brand && (
-                            <p>
-                              Brand: {claim.item.brand}
-                            </p>
-                          )}
-
-                          {claim.item?.model && (
-                            <p>
-                              Model: {claim.item.model}
-                            </p>
-                          )}
-
-                          {claim.item?.color && (
-                            <p>
-                              Color: {claim.item.color}
-                            </p>
-                          )}
-
-                          {claim.item?.size && (
-                            <p>
-                              Size: {claim.item.size}
-                            </p>
-                          )}
-
-                          <p>
-                            Found at: {claim.item?.location}
-                          </p>
-
-                          <p>
-                            Date: {claim.item?.date}
-                            {claim.item?.time
-                              ? ` · ${claim.item.time}`
-                              : ''}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      <div className="admin-claim-details">
-
-                        <div>
-                          <p className="admin-detail-label">
-                            WHY THEY BELIEVE IT IS THEIRS
-                          </p>
-
-                          <p>
-                            {parsed.reason ||
-                              'No response provided.'}
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="admin-detail-label">
-                            WHERE THEY LOST IT
-                          </p>
-
-                          <p>
-                            {parsed.location ||
-                              'No response provided.'}
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="admin-detail-label">
-                            WHEN THEY LOST IT
-                          </p>
-
-                          <p>
-                            {parsed.date ||
-                              'No response provided.'}
-                          </p>
-                        </div>
-
-                        <div className="private-detail">
-                          <p className="admin-detail-label">
-                            PRIVATE IDENTIFYING DETAILS
-                          </p>
-
-                          <p>
-                            {parsed.details ||
-                              'No response provided.'}
-                          </p>
-                        </div>
-
-                        {parsed.additionalInfo && (
-                          <div>
-                            <p className="admin-detail-label">
-                              ADDITIONAL INFORMATION
-                            </p>
-
-                            <p>
-                              {parsed.additionalInfo}
-                            </p>
-                          </div>
-                        )}
-
-                      </div>
+                      </details>
 
                       <div className="admin-claim-footer">
 

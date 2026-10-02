@@ -85,7 +85,7 @@ function BrowseItems({ setPage }) {
           Back to Overview
         </Badge>
 
-          <section className="browse-header">
+          <section className="dashboard-welcome page-welcome browse-header">
 
             <p className="eyebrow">
               BROWSE ITEMS

@@ -30,9 +30,59 @@ function History({ setPage }) {
 
       if (reportError) {
         setError('Unable to load your reports.')
-      } else {
-        setReports(data || [])
+        setLoading(false)
+        return
       }
+
+      const { data: claimData, error: claimError } = await supabase
+        .from('claims')
+        .select(`
+          id,
+          status,
+          created_at,
+          item:items!claims_item_id_fkey (
+            id,
+            type,
+            item_name,
+            category,
+            description,
+            location,
+            date,
+            time,
+            status
+          )
+        `)
+        .eq('claimant_id', user.id)
+        .in('status', ['approved', 'completed'])
+
+      if (claimError) {
+        setError('Unable to load your approved claims.')
+        setLoading(false)
+        return
+      }
+
+      const approvedClaimHistory = (claimData || []).map((claim) => ({
+        ...(claim.item || {}),
+        id: `claim-${claim.id}`,
+        type: claim.item?.type || 'found',
+        item_name: claim.item?.item_name || 'Claimed item',
+        category: claim.item?.category || 'Details unavailable',
+        description: claim.item?.description || null,
+        location: claim.item?.location || 'Details unavailable',
+        date: claim.item?.date || null,
+        time: claim.item?.time || null,
+        status: claim.status === 'completed' ? 'returned' : 'claimed',
+        created_at: claim.created_at,
+        isClaimedItem: true,
+        itemDetailsUnavailable: !claim.item,
+      }))
+
+      setReports(
+        [...(data || []), ...approvedClaimHistory].sort(
+          (first, second) =>
+            new Date(second.created_at) - new Date(first.created_at)
+        )
+      )
 
       setLoading(false)
     }
@@ -99,7 +149,7 @@ function History({ setPage }) {
           Back to Overview
         </Badge>
 
-          <section className="history-header">
+          <section className="dashboard-welcome page-welcome history-header">
             <p className="eyebrow">HISTORY</p>
 
             <h1>My Reports</h1>
@@ -123,7 +173,7 @@ function History({ setPage }) {
                 <p>No reports yet.</p>
 
                 <span>
-                  Your lost and found reports will appear here.
+                  Your lost and found reports and approved claims will appear here.
                 </span>
               </div>
             ) : (
@@ -138,7 +188,9 @@ function History({ setPage }) {
                         <span
                           className={`report-type ${report.type}`}
                         >
-                          {report.type === 'lost'
+                          {report.isClaimedItem
+                            ? 'CLAIMED'
+                            : report.type === 'lost'
                             ? 'LOST'
                             : 'FOUND'}
                         </span>
@@ -152,6 +204,13 @@ function History({ setPage }) {
                     </div>
 
                     <div className="report-card-details">
+                      {report.itemDetailsUnavailable && (
+                        <p role="status">
+                          Item details are restricted by database access policies.
+                          Apply the claim access migration to show them here.
+                        </p>
+                      )}
+
                       <p>
                         <strong>Category:</strong>{' '}
                         {report.category}

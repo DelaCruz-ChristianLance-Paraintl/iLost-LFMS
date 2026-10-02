@@ -37,6 +37,7 @@ function FindMyMissingItems({ setPage }) {
   const [claimError, setClaimError] = useState('')
 
   const [claimSuccess, setClaimSuccess] = useState('')
+  const [userClaims, setUserClaims] = useState({})
 
   useEffect(() => {
     const loadItems = async () => {
@@ -78,7 +79,7 @@ function FindMyMissingItems({ setPage }) {
             'id, type, item_name, category, subcategory, brand, model, color, size, description, location, date, time, status, photo_url'
           )
           .eq('type', 'found')
-          .neq('status', 'returned')
+          .eq('status', 'reported')
           .order('created_at', { ascending: false })
 
       if (foundError) {
@@ -86,6 +87,26 @@ function FindMyMissingItems({ setPage }) {
         setLoading(false)
         return
       }
+
+      const { data: claimData, error: claimError } = await supabase
+        .from('claims')
+        .select('item_id, status')
+        .eq('claimant_id', user.id)
+
+      if (claimError) {
+        setError('Unable to load your claim history.')
+        setLoading(false)
+        return
+      }
+
+      setUserClaims(
+        Object.fromEntries(
+          (claimData || []).map((claim) => [
+            claim.item_id,
+            claim.status,
+          ])
+        )
+      )
 
       const lostItemsWithPhotos = await Promise.all(
         (lostData || []).map(async (item) => {
@@ -204,6 +225,10 @@ function FindMyMissingItems({ setPage }) {
   }
 
   const handleOpenClaimForm = (match) => {
+    if (userClaims[match.id]) {
+      return
+    }
+
     setClaimingItem(match)
 
     setClaimMessage('')
@@ -332,6 +357,11 @@ function FindMyMissingItems({ setPage }) {
         return
       }
 
+      setUserClaims((currentClaims) => ({
+        ...currentClaims,
+        [claimingItem.id]: 'pending',
+      }))
+
       setClaimSuccess(
         'Your claim has been submitted and is now pending verification.'
       )
@@ -381,7 +411,7 @@ function FindMyMissingItems({ setPage }) {
           Back to Overview
         </Badge>
 
-          <section className="browse-header">
+          <section className="dashboard-welcome page-welcome browse-header">
 
             <p className="eyebrow">
               FIND MY MISSING ITEMS
@@ -671,15 +701,23 @@ function FindMyMissingItems({ setPage }) {
                           Ownership must still be verified.
                         </p>
 
-                        <button
-                          className="primary-button"
-                          type="button"
-                          onClick={() =>
-                            handleOpenClaimForm(match)
-                          }
-                        >
-                          Submit Claim
-                        </button>
+                        {userClaims[match.id] ? (
+                          <span className="claim-submission-status">
+                            Claim {userClaims[match.id]}
+                            {' · '}
+                            You have already submitted for this item.
+                          </span>
+                        ) : (
+                          <button
+                            className="primary-button"
+                            type="button"
+                            onClick={() =>
+                              handleOpenClaimForm(match)
+                            }
+                          >
+                            Submit Claim
+                          </button>
+                        )}
 
                       </div>
 
