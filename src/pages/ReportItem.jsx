@@ -1007,7 +1007,15 @@ function ReportItem({ type, setPage }) {
                 Cancel
               </Button>
 
-
+              <Button
+                type="submit"
+                disabled={loading}
+                className="h-10 rounded-lg bg-[#B83A4B] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#963040] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading
+                  ? 'Submitting...'
+                  : `Submit ${isLost ? 'Lost' : 'Found'} Report`}
+              </Button>
             </div>
 
           </form>

@@ -161,9 +161,14 @@ function Account({ setPage, profile: initialProfile }) {
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
 
-    setPage('login')
+    if (error) {
+      setError(`Unable to log out: ${error.message}`)
+      return
+    }
+
+    setPage('home')
   }
 
   const isAdmin = profile?.role === 'admin'
