@@ -52,42 +52,14 @@ function App() {
       }
     )
 
-    const restoreSession = async () => {
+    const restoreSession = () => {
       if (recoveryInUrl) {
         setPage('reset-password')
         setCheckingSession(false)
         return
       }
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-
-      if (!session?.user) {
-        setPage('home')
-        setCheckingSession(false)
-        return
-      }
-
-      const { data: profile, error } =
-        await supabase
-          .from('profiles')
-          .select('full_name, role')
-          .eq('id', session.user.id)
-          .single()
-
-      if (error) {
-        setPage('home')
-      } else {
-        setProfile(profile)
-
-        if (profile.role === 'admin') {
-          setPage('admin-dashboard')
-        } else {
-          setPage('dashboard')
-        }
-      }
-
+      setPage('home')
       setCheckingSession(false)
     }
 

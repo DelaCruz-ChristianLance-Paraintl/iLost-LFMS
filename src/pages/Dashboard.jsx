@@ -91,37 +91,55 @@ function Dashboard({ setPage, profile }) {
 
           <section className="dashboard-actions">
             <button
-              className="dashboard-action-card"
+              className="dashboard-action-card dashboard-action-card-lost"
               onClick={() =>
                 setPage('report-lost')
               }
             >
-              <span>01</span>
+              <div className="dashboard-action-copy">
+                <span className="dashboard-action-number">01</span>
 
-              <h2>
-                Report Lost Item
-              </h2>
+                <h2>
+                  Report Lost Item
+                </h2>
 
-              <p>
-                Report something you lost around campus.
-              </p>
+                <p>
+                  Report what you lost around campus.
+                </p>
+              </div>
+
+              <img
+                className="dashboard-action-image"
+                src="/magnifying.png"
+                alt=""
+                aria-hidden="true"
+              />
             </button>
 
             <button
-              className="dashboard-action-card"
+              className="dashboard-action-card dashboard-action-card-found"
               onClick={() =>
                 setPage('report-found')
               }
             >
-              <span>02</span>
+              <div className="dashboard-action-copy">
+                <span className="dashboard-action-number">02</span>
 
-              <h2>
-                Report Found Item
-              </h2>
+                <h2>
+                  Report Found Item
+                </h2>
 
-              <p>
-                Report an item you found on campus.
-              </p>
+                <p>
+                  Report an item you found on campus.
+                </p>
+              </div>
+
+              <img
+                className="dashboard-action-image"
+                src="/bulb.png"
+                alt=""
+                aria-hidden="true"
+              />
             </button>
           </section>
 

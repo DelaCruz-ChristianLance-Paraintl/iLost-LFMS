@@ -637,7 +637,7 @@ body,
 
   background: #ffffff;
 
-  border: 1px solid rgba(142, 42, 99, 0.20);
+  border: 1px solid rgba(142, 42, 99, 0.52);
   border-radius: 16px;
   box-shadow: 0 8px 22px rgba(101, 0, 51, 0.06);
 }
@@ -770,17 +770,63 @@ body,
 .dashboard-action-card {
   position: relative;
   overflow: hidden;
-  min-height: 190px;
-  padding: 30px;
+  min-height: 205px;
+  padding: 26px 28px;
   text-align: left;
-  background: #ffffff;
-  border: 1px solid #E8DEE4;
-  border-radius: 16px;
+  background:
+    linear-gradient(118deg, #ffffff 0%, #ffffff 58%, #FFF6FA 100%);
+  border: 1px solid rgba(142, 42, 99, 0.16);
+  border-radius: 18px;
   cursor: pointer;
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.dashboard-action-card.dashboard-action-card-lost,
+.dashboard-action-card.dashboard-action-card-found {
+  border-color: #B56C91;
+  background:
+    linear-gradient(
+      180deg,
+      #8E2A63 0%,
+      #650033 100%
+    );
+  box-shadow: 0 8px 22px rgba(101, 0, 51, 0.12);
+}
+
+.dashboard-action-card.dashboard-action-card-lost h2,
+.dashboard-action-card.dashboard-action-card-found h2 {
+  color: #ffffff;
+}
+
+.dashboard-action-card.dashboard-action-card-lost p,
+.dashboard-action-card.dashboard-action-card-found p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.dashboard-action-card-lost .dashboard-action-number,
+.dashboard-action-card-found .dashboard-action-number {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.dashboard-action-card-lost .dashboard-action-image,
+.dashboard-action-card-found .dashboard-action-image {
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+}
+
+.dashboard-action-card-lost .dashboard-action-image {
+  bottom: 7px;
+}
+
+.dashboard-action-card-lost:hover .dashboard-action-image,
+.dashboard-action-card-found:hover .dashboard-action-image {
+  opacity: 0.9;
 }
 
 .dashboard-action-card::before {
@@ -788,65 +834,110 @@ body,
   position: absolute;
   left: 0;
   top: 0;
-  width: 5px;
+  width: 4px;
   height: 100%;
   background: #D1006F;
-  opacity: 0.85;
+  opacity: 0.72;
 }
 
 .dashboard-action-card::after {
   content: "";
   position: absolute;
-  width: 120px;
-  height: 120px;
-  right: -45px;
-  bottom: -55px;
+  z-index: 0;
+  width: 154px;
+  height: 154px;
+  right: -32px;
+  bottom: -68px;
   border-radius: 50%;
-  background: rgba(142, 42, 99, 0.045);
-  transition: 0.25s ease;
+  background: rgba(209, 0, 111, 0.055);
+  transition: transform 0.25s ease;
 }
 
 .dashboard-action-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(209, 0, 111, 0.35);
-  box-shadow: 0 16px 35px rgba(43, 37, 42, 0.09);
+  transform: translateY(-3px);
+  border-color: rgba(209, 0, 111, 0.32);
+  box-shadow: 0 14px 30px rgba(101, 0, 51, 0.10);
 }
 
 .dashboard-action-card:hover::after {
-  transform: scale(1.25);
+  transform: scale(1.12);
 }
 
-.dashboard-action-card span {
+.dashboard-action-card:focus-visible {
+  outline: 3px solid rgba(209, 0, 111, 0.38);
+  outline-offset: 3px;
+}
+
+.dashboard-action-number {
   position: relative;
   z-index: 1;
   display: inline-flex;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 30px;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  background: #FBE4F0;
+  border: 1px solid rgba(209, 0, 111, 0.12);
+  border-radius: 9px;
+  background: rgba(251, 228, 240, 0.82);
   color: #D1006F;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.5px;
+}
+
+.dashboard-action-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  max-width: calc(100% - 116px);
+}
+
+.dashboard-action-image {
+  position: absolute;
+  z-index: 1;
+  flex: 0 0 auto;
+  right: 18px;
+  bottom: 12px;
+  width: 106px;
+  height: 106px;
+  object-fit: contain;
+  opacity: 0.58;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.dashboard-action-card-lost .dashboard-action-image {
+  width: 140px;
+  height: 140px;
+}
+
+.dashboard-action-card-found .dashboard-action-image {
+  width: 127px;
+  height: 127px;
+}
+
+.dashboard-action-card:hover .dashboard-action-image {
+  opacity: 0.76;
+  transform: translate(-2px, -2px) scale(1.05);
 }
 
 .dashboard-action-card h2 {
   position: relative;
   z-index: 1;
-  margin: 20px 0 8px;
-  color: #2B252A;
-  font-size: 22px;
+  margin: 16px 0 7px;
+  color: #3A1E2D;
+  font-size: 21px;
+  font-weight: 700;
   letter-spacing: -0.3px;
 }
 
 .dashboard-action-card p {
   position: relative;
   z-index: 1;
-  max-width: 390px;
+  max-width: 330px;
   margin: 0;
   color: #756B72;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -1338,13 +1429,42 @@ body,
 
 .dashboard-layout {
   min-height: 100vh;
-  background: #FAF8FA;
+  background:
+    radial-gradient(
+      circle at 75% 45%,
+      rgba(255, 190, 218, 0.58),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #FFF9FC 0%,
+      #FCEBF3 48%,
+      #F8DFEA 100%
+    );
 }
 
 .dashboard-main {
   min-height: 100vh;
   margin-left: 270px;
   transition: margin-left 0.25s ease;
+}
+
+.dashboard-content .section-heading h2 {
+  color: #650033;
+}
+
+.dashboard-content .section-heading .eyebrow {
+  color: #B3125F;
+}
+
+.dashboard-content > p {
+  color: #5F4B56;
+}
+
+.dashboard-main .group.mb-5 {
+  border-color: rgba(142, 42, 99, 0.3);
+  background: rgba(255, 255, 255, 0.94);
+  color: #650033;
 }
 
 .sidebar.collapsed + .dashboard-main {
@@ -1384,8 +1504,33 @@ body,
   }
 
   .dashboard-action-card {
-    min-height: 150px;
+    min-height: 170px;
     padding: 22px;
+  }
+
+  .dashboard-action-copy {
+    max-width: calc(100% - 98px);
+  }
+
+  .dashboard-action-image {
+    right: 12px;
+    bottom: 10px;
+    width: 108px;
+    height: 108px;
+  }
+
+  .dashboard-action-card-lost .dashboard-action-image {
+    width: 119px;
+    height: 119px;
+  }
+
+  .dashboard-action-card-found .dashboard-action-image {
+    width: 108px;
+    height: 108px;
+  }
+
+  .dashboard-action-card h2 {
+    font-size: 18px;
   }
 
   .overview-stats {
@@ -4266,14 +4411,9 @@ a {
   position: relative;
   margin-bottom: 28px;
   padding: 28px 30px;
-  border: 1px solid rgba(142, 42, 99, 0.18);
+  border: 1px solid rgba(142, 42, 99, 0.52);
   border-radius: 16px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(92, 15, 38, 0.10),
-      rgba(142, 42, 99, 0.06)
-    );
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 4px 16px rgba(101, 0, 51, 0.05);
   overflow: hidden;
 }
