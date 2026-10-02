@@ -502,7 +502,7 @@ function ReportItem({ type, setPage }) {
           <header className="dashboard-welcome page-welcome report-welcome">
 
             <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-full bg-[#B83A4B]/10 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#B83A4B]">
+              <span className="header-eyebrow-pill">
                 NEW REPORT
               </span>
 
