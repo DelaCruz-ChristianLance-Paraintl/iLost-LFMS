@@ -95,7 +95,7 @@ function ForgotPassword({ setPage }) {
 
           <button
             type="button"
-            onClick={() => setPage('login')}
+            onClick={() => setPage('home')}
           >
             Back to Sign In
           </button>

@@ -399,109 +399,73 @@ function App() {
             <div className="landing-login-fields">
 
               {/* EMAIL */}
-              <div className="landing-field">
-
-                <span className="field-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <circle
-                      cx="12"
-                      cy="8"
-                      r="3.5"
-                    />
-
-                    <path
-                      d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"
-                    />
-                  </svg>
-                </span>
-
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) =>
-                    setEmail(e.target.value)
-                  }
-                  placeholder="Email or Username"
-                  required
-                />
-
+              <div className="landing-field-group">
+                <label htmlFor="landing-email">Email</label>
+                <div className="landing-field">
+                  <input
+                    id="landing-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(e.target.value)
+                    }
+                    placeholder="Enter your email"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
               </div>
 
               {/* PASSWORD */}
-              <div className="landing-field">
+              <div className="landing-field-group">
+                <label htmlFor="landing-password">Password</label>
+                <div className="landing-field">
+                  <input
+                    id="landing-password"
+                    type={
+                      showPassword
+                        ? 'text'
+                        : 'password'
+                    }
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(e.target.value)
+                    }
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    required
+                  />
 
-                <span className="field-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
+                  <button
+                    type="button"
+                    className="eye-button"
+                    onClick={() =>
+                      setShowPassword(!showPassword)
+                    }
+                    aria-label={
+                      showPassword
+                        ? 'Hide password'
+                        : 'Show password'
+                    }
                   >
-                    <rect
-                      x="5"
-                      y="10"
-                      width="14"
-                      height="10"
-                      rx="2"
-                    />
-
-                    <path
-                      d="M8 10V7a4 4 0 0 1 8 0v3"
-                    />
-                  </svg>
-                </span>
-
-                <input
-                  type={
-                    showPassword
-                      ? 'text'
-                      : 'password'
-                  }
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
-                  placeholder="Password"
-                  required
-                />
-
-                <button
-                  type="button"
-                  className="eye-button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  aria-label={
-                    showPassword
-                      ? 'Hide password'
-                      : 'Show password'
-                  }
-                >
-
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-
-                    <path
-                      d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"
-                    />
-
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="2.5"
-                    />
-
-                    {!showPassword && (
-                      <path d="M4 4l16 16" />
-                    )}
-
-                  </svg>
-
-                </button>
-
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="2.5"
+                      />
+                      {!showPassword && (
+                        <path d="M4 4l16 16" />
+                      )}
+                    </svg>
+                  </button>
+                </div>
               </div>
 
             </div>
