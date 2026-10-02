@@ -385,9 +385,13 @@ function App() {
           }`}
         >
           {page === 'register' ? (
-            <Register setPage={setPage} embedded />
+            <div className="landing-card-scroll">
+              <Register setPage={setPage} embedded />
+            </div>
           ) : page === 'forgot-password' ? (
-            <ForgotPassword setPage={setPage} embedded />
+            <div className="landing-card-scroll">
+              <ForgotPassword setPage={setPage} embedded />
+            </div>
           ) : (
             <>
 

@@ -12,6 +12,8 @@ function Register({ setPage, embedded = false }) {
   const [section, setSection] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('')
@@ -325,16 +327,32 @@ function Register({ setPage, embedded = false }) {
               Password
             </label>
 
-            <input
-              id="registerPassword"
-              type="password"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              placeholder="Create a password"
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                id="registerPassword"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                placeholder="Create a password"
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                className="eye-button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-pressed={showPassword}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z" />
+                  <circle cx="12" cy="12" r="2.5" />
+                  {!showPassword && <path d="M4 4l16 16" />}
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
@@ -342,16 +360,40 @@ function Register({ setPage, embedded = false }) {
               Confirm Password
             </label>
 
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(e.target.value)
-              }
-              placeholder="Confirm your password"
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) =>
+                  setConfirmPassword(e.target.value)
+                }
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                className="eye-button"
+                onClick={() =>
+                  setShowConfirmPassword((visible) => !visible)
+                }
+                aria-label={
+                  showConfirmPassword
+                    ? 'Hide confirm password'
+                    : 'Show confirm password'
+                }
+                aria-pressed={showConfirmPassword}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z" />
+                  <circle cx="12" cy="12" r="2.5" />
+                  {!showConfirmPassword && (
+                    <path d="M4 4l16 16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
 
           <button

@@ -2735,6 +2735,31 @@ body,
     0 0 0 3px rgba(209, 0, 111, 0.08);
 }
 
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input {
+  padding-right: 48px;
+}
+
+.password-input-wrapper input::-ms-reveal,
+.password-input-wrapper input::-ms-clear {
+  display: none;
+}
+
+.password-input-wrapper .eye-button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.password-input-wrapper .eye-button:focus-visible {
+  outline: 2px solid #D1006F;
+  outline-offset: 2px;
+}
+
 .auth-button {
   width: 100%;
   height: 44px;
@@ -4397,7 +4422,6 @@ a {
   border-radius: 12px;
   background: #FFFFFF;
   max-height: calc(100vh - 40px);
-  overflow-y: auto;
   box-shadow:
     0 24px 60px rgba(43, 37, 42, 0.16),
     0 4px 14px rgba(43, 37, 42, 0.08),
@@ -4411,6 +4435,34 @@ a {
 
 .landing-login-card-form {
   justify-content: flex-start;
+  overflow: hidden;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.landing-card-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-block: 10px;
+  overflow-y: auto;
+  scrollbar-color: #c9a9b8 transparent;
+  scrollbar-width: thin;
+}
+
+.landing-card-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.landing-card-scroll::-webkit-scrollbar-track {
+  margin-block: 2px;
+  background: transparent;
+}
+
+.landing-card-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: #c9a9b8;
+  background-clip: padding-box;
 }
 
 .landing-login-card .landing-auth-inner {
@@ -4455,6 +4507,11 @@ a {
 @media (max-width: 520px) {
   .landing-login-card {
     max-height: calc(100vh - 32px);
+  }
+
+  .landing-login-card-form {
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 
   .landing-login-card .login-options,
