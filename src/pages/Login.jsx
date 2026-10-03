@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-function Login({ setPage }) {
+function Login({ setPage, setProfile }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -13,7 +13,7 @@ function Login({ setPage }) {
     setMessage('')
     setLoading(true)
 
-    const { error } =
+    const { data, error } =
       await supabase.auth.signInWithPassword({
         email,
         password,
@@ -22,7 +22,18 @@ function Login({ setPage }) {
     if (error) {
       setMessage(error.message)
     } else {
-      setPage('dashboard')
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profileError) {
+        setMessage('Unable to load your account information.')
+      } else {
+        setProfile(profile)
+        setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
+      }
     }
 
     setLoading(false)

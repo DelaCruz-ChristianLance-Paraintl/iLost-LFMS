@@ -1498,6 +1498,8 @@ body,
   }
 
   .dashboard-welcome {
+    height: 190px;
+    min-height: 190px;
     padding: 28px 20px;
   }
 
@@ -4419,6 +4421,9 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
+  height: 208px;
+  min-height: 208px;
   margin-bottom: 28px;
   padding: 28px 30px;
   border: 1px solid rgba(142, 42, 99, 0.52);

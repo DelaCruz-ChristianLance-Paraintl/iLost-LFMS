@@ -64,9 +64,10 @@ function AdminSidebar({ page, setPage }) {
         aria-label="Go to admin overview"
       >
         <img
-          src="/ilost.png"
+          src={`${import.meta.env.BASE_URL}ilost.png`}
           alt="iLost"
           className="sidebar-logo"
+          fetchPriority="high"
         />
       </button>
 

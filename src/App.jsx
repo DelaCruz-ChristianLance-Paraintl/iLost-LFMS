@@ -117,7 +117,7 @@ function App() {
   }
 
   if (page === 'login') {
-    return <Login setPage={setPage} />
+    return <Login setPage={setPage} setProfile={setProfile} />
   }
 
   if (page === 'reset-password') {
