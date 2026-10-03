@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { Button } from '../components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
+import ItemImagePreview from '../components/ItemImagePreview'
 
 
 
@@ -311,11 +312,58 @@ function ReportItem({ type, setPage }) {
   })
 
   const [photo, setPhoto] = useState(null)
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState('')
+  const photoPreviewUrlRef = useRef('')
+  const photoInputRef = useRef(null)
+  const [isPhotoDragging, setIsPhotoDragging] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
   const isLost = type === 'lost'
+
+  useEffect(() => () => {
+    if (photoPreviewUrlRef.current) {
+      URL.revokeObjectURL(photoPreviewUrlRef.current)
+    }
+  }, [])
+
+  const clearSelectedPhoto = () => {
+    if (photoPreviewUrlRef.current) {
+      URL.revokeObjectURL(photoPreviewUrlRef.current)
+      photoPreviewUrlRef.current = ''
+    }
+
+    setPhoto(null)
+    setPhotoPreviewUrl('')
+  }
+
+  const openPhotoPicker = (event) => {
+    if (
+      event.target.closest('button') ||
+      event.target.id === 'itemPhoto'
+    ) {
+      return
+    }
+
+    const input = photoInputRef.current
+
+    if (input?.showPicker) {
+      input.showPicker()
+    } else {
+      input?.click()
+    }
+  }
+
+  const handleChoosePhoto = () => {
+    const input = photoInputRef.current
+
+    if (input?.showPicker) {
+      input.showPicker()
+    } else {
+      input?.click()
+    }
+  }
 
   const handleChange = (event) => {
     setForm({
@@ -336,21 +384,17 @@ function ReportItem({ type, setPage }) {
     })
   }
 
-  const handlePhotoChange = (event) => {
-    const selectedFile = event.target.files?.[0]
-
+  const handlePhotoFile = (selectedFile) => {
     setError('')
     setMessage('')
 
     if (!selectedFile) {
-      setPhoto(null)
       return
     }
 
     if (!selectedFile.type.startsWith('image/')) {
       setError('Please select an image file.')
-      event.target.value = ''
-      setPhoto(null)
+      clearSelectedPhoto()
       return
     }
 
@@ -358,12 +402,43 @@ function ReportItem({ type, setPage }) {
 
     if (selectedFile.size > maxSize) {
       setError('Photo must be 5 MB or smaller.')
-      event.target.value = ''
-      setPhoto(null)
+      clearSelectedPhoto()
       return
     }
 
+    if (photoPreviewUrlRef.current) {
+      URL.revokeObjectURL(photoPreviewUrlRef.current)
+    }
+
+    const previewUrl = URL.createObjectURL(selectedFile)
+    photoPreviewUrlRef.current = previewUrl
+    setPhotoPreviewUrl(previewUrl)
     setPhoto(selectedFile)
+  }
+
+  const handlePhotoChange = (event) => {
+    handlePhotoFile(event.target.files?.[0])
+    event.target.value = ''
+  }
+
+  const handlePhotoDragOver = (event) => {
+    event.preventDefault()
+
+    if (Array.from(event.dataTransfer.types).includes('Files')) {
+      setIsPhotoDragging(true)
+    }
+  }
+
+  const handlePhotoDragLeave = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setIsPhotoDragging(false)
+    }
+  }
+
+  const handlePhotoDrop = (event) => {
+    event.preventDefault()
+    setIsPhotoDragging(false)
+    handlePhotoFile(event.dataTransfer.files?.[0])
   }
 
   const handleSubmit = async (event) => {
@@ -461,7 +536,7 @@ function ReportItem({ type, setPage }) {
       time: '',
     })
 
-    setPhoto(null)
+    clearSelectedPhoto()
 
     const fileInput = document.getElementById('itemPhoto')
 
@@ -531,7 +606,7 @@ function ReportItem({ type, setPage }) {
           >
 
             {/* ITEM DETAILS */}
-            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+            <section className="report-form-card rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
               <SectionHeader
                 number="01"
                 title="Item details"
@@ -751,74 +826,97 @@ function ReportItem({ type, setPage }) {
             </section>
 
             {/* PHOTO */}
-            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+            <section className="report-form-card rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
               <SectionHeader
                 number="02"
                 title="Item photo"
                 description="A clear photo can make the item easier to recognize."
               />
 
-              <div className="rounded-xl border border-dashed border-[#D1D5DB] bg-[#F7F9FC] p-6 text-center transition hover:border-[#B83A4B]/50 hover:bg-[#B83A4B]/[0.02]">
+              <div
+                className={`report-photo-upload rounded-xl border border-dashed border-[#D1D5DB] bg-[#F7F9FC] p-6 text-center transition hover:border-[#B83A4B]/50 hover:bg-[#B83A4B]/[0.02] ${
+                  photo ? 'has-photo' : ''
+                } ${isPhotoDragging ? 'is-dragging' : ''}`}
+                onClick={openPhotoPicker}
+                onDragOver={handlePhotoDragOver}
+                onDragLeave={handlePhotoDragLeave}
+                onDrop={handlePhotoDrop}
+              >
                 <div className="mx-auto flex max-w-md flex-col items-center">
 
-                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#B83A4B] shadow-sm ring-1 ring-[#E5E7EB]">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    >
-                      <rect
-                        x="3"
-                        y="4"
-                        width="18"
-                        height="16"
-                        rx="2"
-                      />
-                      <circle
-                        cx="8.5"
-                        cy="9"
-                        r="1.5"
-                      />
-                      <path d="m21 15-4.5-4.5L7 20" />
-                    </svg>
-                  </div>
+                  {photoPreviewUrl ? (
+                    <ItemImagePreview
+                      className="report-photo-preview"
+                      imageClassName="report-photo-preview-image"
+                      src={photoPreviewUrl}
+                      alt="Selected item photo"
+                    />
+                  ) : (
+                    <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-[#B83A4B] shadow-sm ring-1 ring-[#E5E7EB]">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          x="3"
+                          y="4"
+                          width="18"
+                          height="16"
+                          rx="2"
+                        />
+                        <circle
+                          cx="8.5"
+                          cy="9"
+                          r="1.5"
+                        />
+                        <path d="m21 15-4.5-4.5L7 20" />
+                      </svg>
+                    </div>
+                  )}
 
                   <p className="text-sm font-medium text-[#263238]">
-                    Upload a photo of the item
+                    {photo
+                      ? 'Photo selected'
+                      : 'Upload a photo of the item'}
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-[#6B7280]">
-                    JPG, PNG, or other image formats up to 5 MB.
+                    {isPhotoDragging
+                      ? 'Drop your photo here.'
+                      : photo
+                      ? 'Click anywhere in this box to change your photo.'
+                      : 'Drag and drop a photo here, or click anywhere in this box to choose one. JPG, PNG, or other image formats up to 5 MB.'}
                   </p>
 
-                  <label
-                    htmlFor="itemPhoto"
+                  <button
+                    type="button"
                     className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#263238] shadow-sm transition hover:border-[#B83A4B] hover:text-[#B83A4B]"
+                    onClick={handleChoosePhoto}
                   >
-                    Choose Photo
-                  </label>
+                    {photo ? 'Change Photo' : 'Choose Photo'}
+                  </button>
 
                   <input
+                    ref={photoInputRef}
                     id="itemPhoto"
                     type="file"
                     accept="image/*"
                     onChange={handlePhotoChange}
                     className="sr-only"
+                    tabIndex={-1}
                   />
 
                   {photo && (
-                    <div className="mt-4 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-left">
-                      <p className="text-xs font-medium text-[#263238]">
-                        Selected file
-                      </p>
-
-                      <p className="mt-0.5 max-w-sm truncate text-xs text-[#6B7280]">
-                        {photo.name}
-                      </p>
-                    </div>
+                    <p
+                      role="status"
+                      className="mt-3 max-w-full truncate text-xs font-medium text-[#26733F]"
+                    >
+                      Ready to upload: {photo.name}
+                    </p>
                   )}
 
                 </div>
@@ -826,7 +924,7 @@ function ReportItem({ type, setPage }) {
             </section>
 
             {/* DESCRIPTION */}
-            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+            <section className="report-form-card rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
               <SectionHeader
                 number="03"
                 title="Description"
@@ -899,7 +997,7 @@ function ReportItem({ type, setPage }) {
             </section>
 
             {/* LOCATION AND DATE */}
-            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
+            <section className="report-form-card rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_12px_rgba(38,50,56,0.04)] sm:p-7">
               <SectionHeader
                 number="04"
                 title="When and where"
@@ -943,9 +1041,6 @@ function ReportItem({ type, setPage }) {
                     type="date"
                     value={form.date}
                     onChange={handleChange}
-                    onClick={(event) => {
-                      event.currentTarget.showPicker?.()
-                    }}
                     required
                     className={`${inputClassName} cursor-pointer`}
                   />
@@ -966,9 +1061,6 @@ function ReportItem({ type, setPage }) {
                     type="time"
                     value={form.time}
                     onChange={handleChange}
-                    onClick={(event) => {
-                      event.currentTarget.showPicker?.()
-                    }}
                     className={`${inputClassName} cursor-pointer`}
                   />
                 </Field>

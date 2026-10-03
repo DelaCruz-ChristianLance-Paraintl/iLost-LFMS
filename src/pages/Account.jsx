@@ -18,7 +18,6 @@ function Account({ setPage, profile: initialProfile }) {
   const [section, setSection] = useState('')
 
   const [editing, setEditing] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   const [error, setError] = useState('')
@@ -26,7 +25,6 @@ function Account({ setPage, profile: initialProfile }) {
 
   useEffect(() => {
     const loadProfile = async () => {
-      setLoading(true)
       setError('')
 
       const {
@@ -62,7 +60,6 @@ function Account({ setPage, profile: initialProfile }) {
           'Unable to load your account information.'
         )
 
-        setLoading(false)
         return
       }
 
@@ -74,7 +71,6 @@ function Account({ setPage, profile: initialProfile }) {
       setYearLevel(data.year_level || '')
       setSection(data.section || '')
 
-      setLoading(false)
     }
 
     loadProfile()
@@ -167,7 +163,6 @@ function Account({ setPage, profile: initialProfile }) {
       setError(`Unable to log out: ${error.message}`)
       return
     }
-
     setPage('home')
   }
 

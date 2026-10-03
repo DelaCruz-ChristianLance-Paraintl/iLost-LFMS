@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 import AdminSidebar from '../components/AdminSidebar'
+import ItemImagePreview from '../components/ItemImagePreview'
 import { Badge } from '../components/ui/badge'
 
 function AdminItems({ setPage }) {
@@ -165,7 +166,7 @@ function AdminItems({ setPage }) {
 
             <div className="section-heading">
 
-              <p className="eyebrow">
+              <p className="eyebrow admin-label-pill admin-label-pill-red">
                 ITEMS
               </p>
 
@@ -200,22 +201,24 @@ function AdminItems({ setPage }) {
                     className="admin-item-card"
                   >
 
-                    {item.photoSignedUrl && (
-                      <div className="admin-item-photo">
-
-                        <img
-                          src={item.photoSignedUrl}
-                          alt={item.item_name}
-                        />
-
-                      </div>
-                    )}
+                    <ItemImagePreview
+                      className="admin-item-photo"
+                      imageClassName="admin-item-photo-image"
+                      src={item.photoSignedUrl}
+                      alt={item.item_name}
+                    />
 
                     <div className="admin-item-header">
 
                       <div>
 
-                        <p className="eyebrow">
+                        <p
+                          className={`eyebrow admin-label-pill ${
+                            item.type === 'lost'
+                              ? 'admin-label-pill-red'
+                              : 'admin-label-pill-green'
+                          }`}
+                        >
                           {item.type === 'lost'
                             ? 'LOST ITEM'
                             : 'FOUND ITEM'}

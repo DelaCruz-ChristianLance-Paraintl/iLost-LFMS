@@ -341,7 +341,7 @@ function AdminClaims({ setPage }) {
           <section className="admin-section">
 
             <div className="section-heading">
-              <p className="eyebrow">
+              <p className="eyebrow admin-label-pill admin-label-pill-red">
                 CLAIMS
               </p>
 
@@ -445,7 +445,7 @@ function AdminClaims({ setPage }) {
                       <div className="admin-claim-header">
 
                         <div>
-                          <p className="eyebrow">
+                          <p className="eyebrow admin-label-pill admin-label-pill-red">
                             CLAIM #{claim.id.slice(0, 8)}
                           </p>
 

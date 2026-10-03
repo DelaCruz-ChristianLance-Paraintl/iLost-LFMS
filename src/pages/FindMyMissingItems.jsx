@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 
 import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
+import ItemImagePreview from '../components/ItemImagePreview'
 
 import { findMatches } from '../lib/matching'
 
@@ -271,6 +272,15 @@ function FindMyMissingItems({ setPage }) {
     setClaimError('')
 
     setClaimSuccess('')
+
+    setTimeout(() => {
+      document
+        .getElementById('find-missing-content')
+        ?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+    }, 50)
   }
 
   const handleSubmitClaim = async (e) => {
@@ -399,7 +409,14 @@ function FindMyMissingItems({ setPage }) {
 
       <main className="dashboard-main">
 
-        <section className="dashboard-content">
+        <section
+          id="find-missing-content"
+          className={`dashboard-content ${
+            selectedItem ? 'match-mode' : ''
+          } ${
+            claimingItem ? 'claim-mode' : ''
+          }`}
+        >
         <Badge
           variant="ghost"
           onClick={() => setPage('dashboard')}
@@ -534,7 +551,7 @@ function FindMyMissingItems({ setPage }) {
 
                 <div>
 
-                  <p className="eyebrow">
+                  <p className="eyebrow claim-form-eyebrow">
                     MATCH RESULTS
                   </p>
 
@@ -558,10 +575,11 @@ function FindMyMissingItems({ setPage }) {
                     setMatches([])
                     setClaimingItem(null)
                     setClaimError('')
+
                     setClaimSuccess('')
                   }}
                 >
-                  Close
+                  Back to Find My Missing Items
                 </button>
 
               </div>
@@ -592,15 +610,12 @@ function FindMyMissingItems({ setPage }) {
                       key={match.id}
                     >
 
-                      {match.photoSignedUrl && (
-                        <div className="match-card-image">
-                          <img
-                            src={match.photoSignedUrl}
-                            alt="Found item"
-                            className="match-item-image"
-                          />
-                        </div>
-                      )}
+                      <ItemImagePreview
+                        className="match-card-image"
+                        imageClassName="match-item-image"
+                        src={match.photoSignedUrl}
+                        alt={`Found item: ${match.item_name}`}
+                      />
 
                       <div className="match-card-top">
 
@@ -740,7 +755,7 @@ function FindMyMissingItems({ setPage }) {
 
                     <div>
 
-                      <p className="eyebrow">
+                      <p className="eyebrow claim-form-eyebrow">
                         SUBMIT CLAIM
                       </p>
 
@@ -765,124 +780,164 @@ function FindMyMissingItems({ setPage }) {
 
                   </div>
 
-                  <div className="claim-privacy-note">
-
-                    <strong>
-                      Verification information
-                    </strong>
-
-                    <p>
-                      Some identifying details about the found item
-                      are kept private. Provide accurate information
-                      that only the owner would reasonably know.
-                    </p>
-
-                  </div>
-
                   <form
                     className="claim-form"
                     onSubmit={handleSubmitClaim}
                   >
 
-                    <div className="form-group">
-
-                      <label htmlFor="claim-message">
-                        Why do you believe this is your item?
-                      </label>
-
-                      <textarea
-                        id="claim-message"
-                        value={claimMessage}
-                        onChange={(e) =>
-                          setClaimMessage(e.target.value)
-                        }
-                        placeholder="Explain why you believe this item belongs to you."
-                        rows="4"
-                        required
-                      />
-
+                    <div className="claim-form-guidance">
+                      Fields marked <span aria-hidden="true">*</span> are required.
                     </div>
 
-                    <div className="form-group">
+                    <div className="claim-form-grid">
 
-                      <label htmlFor="claim-location">
-                        Where did you lose it?
-                      </label>
+                      <section
+                        className="claim-form-step"
+                        aria-labelledby="claim-details-heading"
+                      >
 
-                      <input
-                        id="claim-location"
-                        type="text"
-                        value={claimLocation}
-                        onChange={(e) =>
-                          setClaimLocation(e.target.value)
-                        }
-                        placeholder="Example: Engineering Building, Room 204"
-                        required
-                      />
+                        <div className="claim-form-step-heading">
+                          <span className="claim-form-step-number">1</span>
+                          <div>
+                            <h3 id="claim-details-heading">Claim details</h3>
+                            <p>Tell us when and where you lost the item.</p>
+                          </div>
+                        </div>
 
-                    </div>
+                        <div className="form-group">
 
-                    <div className="form-group">
+                          <label htmlFor="claim-message">
+                            Why do you believe this is your item?
+                            <span className="claim-required-marker" aria-hidden="true"> *</span>
+                          </label>
 
-                      <label htmlFor="claim-date">
-                        When did you lose it?
-                      </label>
+                          <textarea
+                            id="claim-message"
+                            value={claimMessage}
+                            onChange={(e) =>
+                              setClaimMessage(e.target.value)
+                            }
+                            placeholder="Explain why you believe this item belongs to you."
+                            rows="4"
+                            required
+                          />
 
-                      <input
-                        id="claim-date"
-                        type="date"
-                        value={claimDate}
-                        onChange={(e) =>
-                          setClaimDate(e.target.value)
-                        }
-                        required
-                      />
+                        </div>
 
-                    </div>
+                        <div className="claim-form-context-fields">
 
-                    <div className="form-group">
+                          <div className="form-group">
 
-                      <label htmlFor="claim-details">
-                        Private identifying details
-                      </label>
+                            <label htmlFor="claim-location">
+                              Where did you lose it?
+                              <span className="claim-required-marker" aria-hidden="true"> *</span>
+                            </label>
 
-                      <textarea
-                        id="claim-details"
-                        value={claimDetails}
-                        onChange={(e) =>
-                          setClaimDetails(e.target.value)
-                        }
-                        placeholder="Describe identifying details that were not shown in the match."
-                        rows="5"
-                        required
-                      />
+                            <input
+                              id="claim-location"
+                              type="text"
+                              value={claimLocation}
+                              onChange={(e) =>
+                                setClaimLocation(e.target.value)
+                              }
+                              placeholder="Example: Engineering Building, Room 204"
+                              required
+                            />
 
-                    </div>
+                          </div>
 
-                    <div className="form-group">
+                          <div className="form-group">
 
-                      <label htmlFor="claim-additional-info">
+                            <label htmlFor="claim-date">
+                              When did you lose it?
+                              <span className="claim-required-marker" aria-hidden="true"> *</span>
+                            </label>
 
-                        Additional information
+                            <input
+                              id="claim-date"
+                              type="date"
+                              value={claimDate}
+                              onChange={(e) =>
+                                setClaimDate(e.target.value)
+                              }
+                              required
+                            />
 
-                        <span>
-                          {' '}
-                          Optional
-                        </span>
+                          </div>
 
-                      </label>
+                        </div>
 
-                      <textarea
-                        id="claim-additional-info"
-                        value={claimAdditionalInfo}
-                        onChange={(e) =>
-                          setClaimAdditionalInfo(
-                            e.target.value
-                          )
-                        }
-                        placeholder="Add anything else that may help with verification."
-                        rows="4"
-                      />
+                      </section>
+
+                      <section
+                        className="claim-form-step"
+                        aria-labelledby="claim-verification-heading"
+                      >
+
+                        <div className="claim-form-step-heading">
+                          <span className="claim-form-step-number">2</span>
+                          <div>
+                            <h3 id="claim-verification-heading">Ownership verification</h3>
+                            <p>Share identifying details to help us verify your claim.</p>
+                          </div>
+                        </div>
+
+                        <div className="claim-privacy-note">
+
+                          <strong>
+                            Keep private details specific
+                          </strong>
+
+                          <p>
+                            Some identifying details about the found item
+                            are kept private. Include accurate information
+                            that only the owner would reasonably know.
+                          </p>
+
+                        </div>
+
+                        <div className="form-group">
+
+                          <label htmlFor="claim-details">
+                            Private identifying details
+                            <span className="claim-required-marker" aria-hidden="true"> *</span>
+                          </label>
+
+                          <textarea
+                            id="claim-details"
+                            value={claimDetails}
+                            onChange={(e) =>
+                              setClaimDetails(e.target.value)
+                            }
+                            placeholder="Describe identifying details that were not shown in the match."
+                            rows="5"
+                            required
+                          />
+
+                        </div>
+
+                        <div className="form-group">
+
+                          <label htmlFor="claim-additional-info">
+                            Additional information
+                            <span className="claim-optional-marker">Optional</span>
+                          </label>
+
+                          <textarea
+                            id="claim-additional-info"
+                            value={claimAdditionalInfo}
+                            onChange={(e) =>
+                              setClaimAdditionalInfo(
+                                e.target.value
+                              )
+                            }
+                            placeholder="Add anything else that may help with verification."
+                            rows="4"
+                          />
+
+                        </div>
+
+                      </section>
 
                     </div>
 

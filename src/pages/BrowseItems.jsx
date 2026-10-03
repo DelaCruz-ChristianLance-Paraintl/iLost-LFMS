@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 import Sidebar from '../components/Sidebar'
+import ItemImagePreview from '../components/ItemImagePreview'
 
 import { Badge } from "../components/ui/badge";
 
@@ -140,21 +141,12 @@ function BrowseItems({ setPage }) {
                     key={item.id}
                   >
 
-                    <div className="browse-card-image">
-
-                      {item.photoSignedUrl ? (
-                        <img
-                          src={item.photoSignedUrl}
-                          alt="Reported item"
-                          className="browse-item-image"
-                        />
-                      ) : (
-                        <div className="browse-image-placeholder">
-                          No Image
-                        </div>
-                      )}
-
-                    </div>
+                    <ItemImagePreview
+                      className="browse-card-image"
+                      imageClassName="browse-item-image"
+                      src={item.photoSignedUrl}
+                      alt={`${item.type} item`}
+                    />
 
                     <div className="browse-card-content">
 

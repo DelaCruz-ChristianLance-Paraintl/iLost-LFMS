@@ -116,7 +116,7 @@ function AdminUsers({ setPage }) {
 
             <div className="section-heading">
 
-              <p className="eyebrow">
+              <p className="eyebrow admin-label-pill admin-label-pill-red">
                 USERS
               </p>
 
@@ -155,7 +155,7 @@ function AdminUsers({ setPage }) {
 
                       <div>
 
-                        <p className="eyebrow">
+                        <p className="eyebrow admin-label-pill admin-label-pill-red">
                           {user.role === 'admin'
                             ? 'ADMINISTRATOR'
                             : 'USER'}

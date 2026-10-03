@@ -13,15 +13,18 @@ function Login({ setPage, setProfile }) {
     setMessage('')
     setLoading(true)
 
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    try {
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
 
-    if (error) {
-      setMessage(error.message)
-    } else {
+      if (error) {
+        setMessage(error.message)
+        return
+      }
+
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('full_name, role')
@@ -30,13 +33,14 @@ function Login({ setPage, setProfile }) {
 
       if (profileError) {
         setMessage('Unable to load your account information.')
-      } else {
-        setProfile(profile)
-        setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
+        return
       }
-    }
 
-    setLoading(false)
+      setProfile(profile)
+      setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

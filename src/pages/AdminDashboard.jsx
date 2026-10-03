@@ -12,6 +12,14 @@ function AdminDashboard({ setPage, profile }) {
   const [authorized, setAuthorized] = useState(
     profile?.role === 'admin'
   )
+  const [counts, setCounts] = useState({
+    claims: 0,
+    users: 0,
+    items: 0,
+  })
+  const [countsLoading, setCountsLoading] = useState(true)
+  const [countsError, setCountsError] = useState('')
+  const [realtimeError, setRealtimeError] = useState('')
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -42,6 +50,76 @@ function AdminDashboard({ setPage, profile }) {
 
     checkAdmin()
   }, [setPage])
+
+  useEffect(() => {
+    if (!authorized) {
+      return
+    }
+
+    let isActive = true
+
+    const loadCounts = async () => {
+      const [claimsResult, usersResult, itemsResult] = await Promise.all([
+        supabase.from('claims').select('id', { count: 'exact', head: true }),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('items').select('id', { count: 'exact', head: true }),
+      ])
+
+      if (!isActive) {
+        return
+      }
+
+      const error =
+        claimsResult.error || usersResult.error || itemsResult.error
+
+      if (error) {
+        setCountsError('Unable to load the Overview counts.')
+      } else {
+        setCounts({
+          claims: claimsResult.count ?? 0,
+          users: usersResult.count ?? 0,
+          items: itemsResult.count ?? 0,
+        })
+        setCountsError('')
+      }
+
+      setCountsLoading(false)
+    }
+
+    void loadCounts()
+
+    const channel = supabase
+      .channel('admin-overview-counts')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'claims' },
+        loadCounts
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        loadCounts
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'items' },
+        loadCounts
+      )
+      .subscribe((status) => {
+        if (isActive) {
+          if (['CHANNEL_ERROR', 'TIMED_OUT'].includes(status)) {
+            setRealtimeError('Live count updates are unavailable.')
+          } else if (status === 'SUBSCRIBED') {
+            setRealtimeError('')
+          }
+        }
+      })
+
+    return () => {
+      isActive = false
+      void supabase.removeChannel(channel)
+    }
+  }, [authorized])
 
   if (loading) {
     return (
@@ -92,7 +170,7 @@ function AdminDashboard({ setPage, profile }) {
           <section className="dashboard-overview">
 
             <div className="section-heading">
-              <p className="eyebrow">
+              <p className="eyebrow admin-label-pill admin-label-pill-red">
                 ADMIN PANEL
               </p>
 
@@ -101,77 +179,57 @@ function AdminDashboard({ setPage, profile }) {
               </h2>
             </div>
 
-            <div className="overview-stats">
-
+            <div className="overview-stats admin-overview-stats">
               <button
-                className="stat-card"
+                className="stat-card admin-stat-card"
                 onClick={() => setPage('admin-claims')}
               >
-                <span>
-                  CLAIMS
-                </span>
-
+                <span className="admin-stat-title">Current claims</span>
+                <span className="admin-stat-divider" aria-hidden="true" />
                 <strong>
-                  View
+                  {countsLoading || countsError ? '—' : counts.claims}
                 </strong>
-
-                <p>
-                  Review submitted claims.
-                </p>
+                <span className="admin-stat-divider" aria-hidden="true" />
+                <span className="admin-stat-description">
+                  Submitted claims of all users.
+                </span>
               </button>
 
               <button
-                className="stat-card"
+                className="stat-card admin-stat-card"
                 onClick={() => setPage('admin-users')}
               >
-                <span>
-                  USERS
-                </span>
-
+                <span className="admin-stat-title">Registered users</span>
+                <span className="admin-stat-divider" aria-hidden="true" />
                 <strong>
-                  View
+                  {countsLoading || countsError ? '—' : counts.users}
                 </strong>
-
-                <p>
-                  Manage registered users.
-                </p>
+                <span className="admin-stat-divider" aria-hidden="true" />
+                <span className="admin-stat-description">
+                  Accounts registered in the system.
+                </span>
               </button>
 
               <button
-                className="stat-card"
+                className="stat-card admin-stat-card"
                 onClick={() => setPage('admin-items')}
               >
-                <span>
-                  ITEMS
-                </span>
-
+                <span className="admin-stat-title">Reported items</span>
+                <span className="admin-stat-divider" aria-hidden="true" />
                 <strong>
-                  View
+                  {countsLoading || countsError ? '—' : counts.items}
                 </strong>
-
-                <p>
-                  Manage reported items.
-                </p>
-              </button>
-
-              <button
-                className="stat-card"
-                onClick={() => setPage('account')}
-              >
-                <span>
-                  ACCOUNT
+                <span className="admin-stat-divider" aria-hidden="true" />
+                <span className="admin-stat-description">
+                  Lost and found reports on record.
                 </span>
-
-                <strong>
-                  View
-                </strong>
-
-                <p>
-                  Manage your administrator account.
-                </p>
               </button>
-
             </div>
+            {(countsError || realtimeError) && (
+              <p className="admin-overview-counts-message" role="status">
+                {countsError || realtimeError}
+              </p>
+            )}
           </section>
 
         </section>
