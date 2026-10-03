@@ -334,8 +334,18 @@ function ReportItem({ type, setPage }) {
       photoPreviewUrlRef.current = ''
     }
 
+    if (photoInputRef.current) {
+      photoInputRef.current.value = ''
+    }
+
     setPhoto(null)
     setPhotoPreviewUrl('')
+  }
+
+  const handleRemovePhoto = () => {
+    clearSelectedPhoto()
+    setError('')
+    setMessage('')
   }
 
   const openPhotoPicker = (event) => {
@@ -892,13 +902,25 @@ function ReportItem({ type, setPage }) {
                       : 'Drag and drop a photo here, or click anywhere in this box to choose one. JPG, PNG, or other image formats up to 5 MB.'}
                   </p>
 
-                  <button
-                    type="button"
-                    className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#263238] shadow-sm transition hover:border-[#B83A4B] hover:text-[#B83A4B]"
-                    onClick={handleChoosePhoto}
-                  >
-                    {photo ? 'Change Photo' : 'Choose Photo'}
-                  </button>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#263238] shadow-sm transition hover:border-[#B83A4B] hover:text-[#B83A4B]"
+                      onClick={handleChoosePhoto}
+                    >
+                      {photo ? 'Change Photo' : 'Choose Photo'}
+                    </button>
+
+                    {photo && (
+                      <button
+                        type="button"
+                        className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-[#E7C5D4] bg-white px-4 py-2 text-sm font-medium text-[#8E2A63] shadow-sm transition hover:border-[#8E2A63] hover:bg-[#FFF6FA]"
+                        onClick={handleRemovePhoto}
+                      >
+                        Remove Photo
+                      </button>
+                    )}
+                  </div>
 
                   <input
                     ref={photoInputRef}
