@@ -257,7 +257,7 @@ function App() {
           </p>
 
           <p className="landing-tagline">
-            "Connecting students and campus administrators
+            "Connecting students, staffs and campus administrators
             <br />
             to return what matters most."
           </p>
