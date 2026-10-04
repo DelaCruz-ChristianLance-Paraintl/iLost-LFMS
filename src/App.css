@@ -1396,7 +1396,10 @@ body {
 .sidebar-nav {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   gap: 9px;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .sidebar-link,
@@ -1435,6 +1438,7 @@ body {
 }
 
 .sidebar-bottom {
+  flex: 0 0 auto;
   margin-top: auto;
   padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.10);
@@ -1491,6 +1495,7 @@ body {
 @media (max-width: 700px) {
   .sidebar {
     width: min(270px, calc(100vw - 54px));
+    height: 100dvh;
   }
 
   .sidebar:not(.collapsed) {
@@ -4738,6 +4743,13 @@ a {
   .circuit-current path,
   .circuit-dots circle {
     animation: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .circuit-current,
+  .circuit-dots {
+    filter: none;
   }
 }
 

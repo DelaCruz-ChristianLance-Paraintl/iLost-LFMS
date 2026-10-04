@@ -47,6 +47,7 @@ function App() {
       nextPage === pageRef.current ||
       !pageRef.current ||
       checkingSessionRef.current ||
+      window.matchMedia('(max-width: 700px)').matches ||
       typeof document.startViewTransition !== 'function' ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ) {

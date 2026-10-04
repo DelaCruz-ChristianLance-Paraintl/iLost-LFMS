@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 // src/components/CircuitBackground.jsx
 // Circuit-board background with unsynchronized electric current animations.
 
@@ -80,7 +82,7 @@ function buildCircuit() {
 
 const { traces, dots } = buildCircuit()
 
-export default function CircuitBackground() {
+function CircuitBackground() {
   return (
     <svg
       className="circuit-svg"
@@ -149,3 +151,5 @@ export default function CircuitBackground() {
     </svg>
   )
 }
+
+export default memo(CircuitBackground)

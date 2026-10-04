@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 // src/components/CampusIllustration.jsx
 // Isometric lost-and-found campus scene (static SVG markup, no external assets).
 
@@ -75,7 +77,7 @@ return s+'</svg>';}
 
 const markup = buildScene(false)
 
-export default function CampusIllustration() {
+function CampusIllustration() {
   return (
     <div
       className="campus-illustration-image"
@@ -83,3 +85,5 @@ export default function CampusIllustration() {
     />
   )
 }
+
+export default memo(CampusIllustration)
