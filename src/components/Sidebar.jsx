@@ -1,14 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 
 function Sidebar({ page, setPage }) {
+  const sidebarRef = useRef(null)
   const [collapsed, setCollapsed] = useState(
     () =>
       window.matchMedia('(max-width: 700px)').matches ||
       window.localStorage.getItem('sidebar-collapsed') === 'true'
   )
+
+  useEffect(() => {
+    if (collapsed) {
+      return
+    }
+
+    const collapseOnOutsidePointer = (event) => {
+      if (
+        !window.matchMedia('(max-width: 700px)').matches ||
+        !(event.target instanceof Node) ||
+        sidebarRef.current?.contains(event.target)
+      ) {
+        return
+      }
+
+      setCollapsed(true)
+      window.localStorage.setItem('sidebar-collapsed', 'true')
+    }
+
+    document.addEventListener('pointerdown', collapseOnOutsidePointer)
+
+    return () => {
+      document.removeEventListener('pointerdown', collapseOnOutsidePointer)
+    }
+  }, [collapsed])
 
   const toggleSidebar = () => {
     setCollapsed((current) => {
@@ -45,7 +71,10 @@ function Sidebar({ page, setPage }) {
   }
 
   return (
-    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <aside
+      ref={sidebarRef}
+      className={`sidebar ${collapsed ? 'collapsed' : ''}`}
+    >
       <button
         type="button"
         className="sidebar-toggle"
