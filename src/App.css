@@ -4585,7 +4585,7 @@ a {
   /* change these two to recolor everything (e.g. red like the reference) */
   --trace: #b3125f;
   --glow: #ff3d7f;
-  --glow-hot: #ffd0e3;
+  --glow-hot: #ff1744;
 }
 
 .circuit-base path {
@@ -4669,7 +4669,7 @@ a {
 
   --trace: #b3125f;
   --glow: #ff3d7f;
-  --glow-hot: #ffd0e3;
+  --glow-hot: #ff1744;
 }
 
 .circuit-base path {
