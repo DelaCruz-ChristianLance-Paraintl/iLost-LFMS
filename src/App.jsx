@@ -1,5 +1,7 @@
 import './App.css'
 
+import { Analytics } from '@vercel/analytics/react'
+
 import {
   useCallback,
   useEffect,
@@ -232,6 +234,7 @@ function App() {
   }
 
   return (
+    <>
     <div className="landing-page">
       {/* LEFT PANEL */}
       <section className="landing-brand-panel">
@@ -409,6 +412,8 @@ function App() {
         </div>
       </section>
     </div>
+    <Analytics />
+</>
   )
 }
 
