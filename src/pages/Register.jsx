@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { LoaderCircle } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 
@@ -19,6 +20,22 @@ function Register({ setPage, embedded = false }) {
   const [messageType, setMessageType] = useState('')
   const [loading, setLoading] = useState(false)
   const [resending, setResending] = useState(false)
+  const [resendEligible, setResendEligible] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
+
+  useEffect(() => {
+    if (resendCooldown === 0) {
+      return
+    }
+
+    const intervalId = window.setInterval(() => {
+      setResendCooldown((seconds) => Math.max(seconds - 1, 0))
+    }, 1000)
+
+    return () => {
+      window.clearInterval(intervalId)
+    }
+  }, [resendCooldown])
 
   const handleRegister = async (e) => {
     e.preventDefault()
@@ -40,6 +57,8 @@ function Register({ setPage, embedded = false }) {
       return
     }
 
+    setResendEligible(false)
+    setResendCooldown(0)
     setLoading(true)
 
     const { data, error } = await supabase.auth.signUp({
@@ -78,15 +97,15 @@ function Register({ setPage, embedded = false }) {
         'Registration submitted. Please check your email to confirm your account.'
       )
       setMessageType('success')
+      setResendEligible(true)
+      setResendCooldown(15)
     } else {
       setMessage(
         'Registration successful. You can now sign in.'
       )
       setMessageType('success')
     }
-
     setFullName('')
-    setEmail('')
     setContactNumber('')
     setUserType('')
     setProgram('')
@@ -129,6 +148,7 @@ function Register({ setPage, embedded = false }) {
         'A new confirmation email has been sent. Please check your inbox.'
       )
       setMessageType('success')
+      setResendCooldown(15)
     }
 
     setResending(false)
@@ -425,11 +445,30 @@ function Register({ setPage, embedded = false }) {
             type="button"
             className="auth-resend-button"
             onClick={handleResendConfirmation}
-            disabled={resending}
+            disabled={
+              !resendEligible ||
+              loading ||
+              resending ||
+              resendCooldown > 0
+            }
+            aria-busy={resending || resendCooldown > 0}
           >
-            {resending
-              ? 'Resending...'
-              : 'Resend Confirmation Email'}
+            {resending || resendCooldown > 0 ? (
+              <>
+                <LoaderCircle
+                  size={14}
+                  aria-hidden="true"
+                  className="auth-resend-spinner"
+                />
+                <span>
+                  {resending
+                    ? 'Resending...'
+                    : `Resend available in ${resendCooldown}s`}
+                </span>
+              </>
+            ) : (
+              'Resend Confirmation Email'
+            )}
           </button>
         </div>
 

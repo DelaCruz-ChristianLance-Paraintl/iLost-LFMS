@@ -4523,6 +4523,10 @@ a {
 }
 
 .auth-resend-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border: none;
   background: transparent;
   color: #D1006F;
@@ -4531,6 +4535,17 @@ a {
   font-weight: 600;
   cursor: pointer;
   padding: 4px 0;
+}
+
+.auth-resend-spinner {
+  flex: 0 0 auto;
+  animation: auth-resend-spin 0.9s linear infinite;
+}
+
+@keyframes auth-resend-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-resend-button:hover {
