@@ -447,9 +447,10 @@ function FindMyMissingItems({ setPage }) {
 
       setClaimAdditionalInfo('')
 
-      setTimeout(() => {
-        setClaimingItem(null)
-      }, 2500)
+      setClaimingItem(null)
+      setClaimLoading(false)
+      setPage('dashboard')
+      return
     } catch (claimSubmitError) {
       const message =
         claimSubmitError.message ||

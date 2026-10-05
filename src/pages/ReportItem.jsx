@@ -596,6 +596,7 @@ function ReportItem({ type, setPage }) {
     }
 
     setLoading(false)
+    setPage('dashboard')
   }
 
   const brandOptions = getBrandOptions(
