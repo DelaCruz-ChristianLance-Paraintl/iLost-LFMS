@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
+  LayoutDashboard,
+  FileWarning,
+  PackageCheck,
+  Search,
+  ScanSearch,
+  History,
+  UserRound,
+  LogOut,
+} from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 
@@ -65,10 +77,11 @@ function Sidebar({ page, setPage }) {
     setPage(target)
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setPage('home')
-  }
+    const handleLogout = async () => {
+      await supabase.auth.signOut()
+      window.sessionStorage.removeItem('ilost-page')
+      setPage('home')
+    }
 
   return (
     <aside
@@ -101,77 +114,88 @@ function Sidebar({ page, setPage }) {
     </button>
 
       <nav className="sidebar-nav">
-        <button
-          className={`sidebar-link ${
-            page === 'dashboard' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('dashboard')}
-        >
-          Overview
-        </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'report-lost' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('report-lost')}
-        >
-          Report Lost Item
-        </button>
+      <button
+        className={`sidebar-link ${
+          page === 'dashboard' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('dashboard')}
+      >
+        <LayoutDashboard size={18} />
+        <span>Overview</span>
+      </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'report-found' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('report-found')}
-        >
-          Report Found Item
-        </button>
+    <button
+      className={`sidebar-link ${
+        page === 'report-lost' ? 'active' : ''
+      }`}
+      onClick={() => navigateTo('report-lost')}
+    >
+      <FileWarning size={18} />
+      <span>Report Lost Item</span>
+    </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'browse' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('browse')}
-        >
-          Browse Items
-        </button>
+    <button
+      className={`sidebar-link ${
+        page === 'report-found' ? 'active' : ''
+      }`}
+      onClick={() => navigateTo('report-found')}
+    >
+      <PackageCheck size={18} />
+      <span>Report Found Item</span>
+    </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'find-missing' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('find-missing')}
-        >
-          Find My Missing Items
-        </button>
+    <button
+      className={`sidebar-link ${
+        page === 'browse' ? 'active' : ''
+      }`}
+      onClick={() => navigateTo('browse')}
+    >
+      <Search size={18} />
+      <span>Browse Items</span>
+    </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'history' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('history')}
-        >
-          History
-        </button>
+    <button
+      className={`sidebar-link ${
+        page === 'find-missing' ? 'active' : ''
+      }`}
+      onClick={() => navigateTo('find-missing')}
+    >
+      <ScanSearch size={18} />
+      <span>Find My Missing Items</span>
+    </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'account' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('account')}
-        >
-          Account
-        </button>
+    <button
+      className={`sidebar-link ${
+        page === 'history' ? 'active' : ''
+      }`}
+      onClick={() => navigateTo('history')}
+    >
+      <History size={18} />
+      <span>History</span>
+    </button>
+
+      <button
+        className={`sidebar-link ${
+          page === 'account' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('account')}
+      >
+        <UserRound size={18} />
+        <span>Account</span>
+      </button>
       </nav>
 
       <div className="sidebar-bottom">
-        <button
-          className="sidebar-logout"
-          onClick={handleLogout}
-        >
-          Log Out
-        </button>
+
+      <button
+        className="sidebar-logout"
+        onClick={handleLogout}
+      >
+        <LogOut size={18} />
+        <span>Log Out</span>
+      </button>
+
       </div>
     </aside>
   )

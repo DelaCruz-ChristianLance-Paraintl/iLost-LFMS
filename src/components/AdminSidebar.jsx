@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
+  LayoutDashboard,
+  ClipboardCheck,
+  Package,
+  Users,
+  UserRound,
+  LogOut,
+} from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 
@@ -101,59 +111,69 @@ function AdminSidebar({ page, setPage }) {
       </button>
 
       <nav className="sidebar-nav">
-        <button
-          className={`sidebar-link ${
-            page === 'admin-dashboard' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('admin-dashboard')}
-        >
-          Overview
-        </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'admin-claims' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('admin-claims')}
-        >
-          Claims
-        </button>
+      <button
+        className={`sidebar-link ${
+          page === 'admin-dashboard' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('admin-dashboard')}
+      >
+        <LayoutDashboard size={18} />
+        <span>Admin Overview</span>
+      </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'admin-users' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('admin-users')}
-        >
-          Users
-        </button>
+      <button
+        className={`sidebar-link ${
+          page === 'admin-claims' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('admin-claims')}
+      >
+        <ClipboardCheck size={18} />
+        <span>User Claims</span>
+      </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'admin-items' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('admin-items')}
-        >
-          Items
-        </button>
+      <button
+        className={`sidebar-link ${
+          page === 'admin-users' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('admin-users')}
+      >
+        <Users size={18} />
+        <span>System Users</span>
+      </button>
 
-        <button
-          className={`sidebar-link ${
-            page === 'account' ? 'active' : ''
-          }`}
-          onClick={() => navigateTo('account')}
-        >
-          Account
-        </button>
+      <button
+        className={`sidebar-link ${
+          page === 'admin-items' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('admin-items')}
+      >
+        <Package size={18} />
+        <span>Items Overview</span>
+      </button>
+
+      <button
+        className={`sidebar-link ${
+          page === 'account' ? 'active' : ''
+        }`}
+        onClick={() => navigateTo('account')}
+      >
+        <UserRound size={18} />
+        <span>Admin Account</span>
+      </button>
+
       </nav>
 
       <div className="sidebar-bottom">
-        <button
-          className="sidebar-logout"
-          onClick={handleLogout}
-        >
-          Log Out
-        </button>
+
+<button
+  className="sidebar-logout"
+  onClick={handleLogout}
+>
+  <LogOut size={18} />
+  <span>Log Out</span>
+</button>
+
       </div>
     </aside>
   )

@@ -33,7 +33,10 @@ import Account from './pages/Account'
 
 function App() {
   const notify = useToast()
-  const [page, setPageState] = useState(null)
+
+  const [page, setPageState] = useState(
+    () => window.sessionStorage.getItem('ilost-page') || null
+  )  
   const [checkingSession, setCheckingSession] = useState(true)
   const [profile, setProfile] = useState(null)
   const pageRef = useRef(page)
@@ -45,6 +48,8 @@ function App() {
   }, [page, checkingSession])
 
   const setPage = useCallback((nextPage) => {
+    window.sessionStorage.setItem('ilost-page', nextPage)
+
     if (
       nextPage === pageRef.current ||
       !pageRef.current ||
@@ -109,16 +114,81 @@ function App() {
       }
     )
 
-    const restoreSession = () => {
-      if (recoveryInUrl) {
-        setPage('reset-password')
-        setCheckingSession(false)
-        return
-      }
+const restoreSession = async () => {
+  if (recoveryInUrl) {
+    setPage('reset-password')
+    setCheckingSession(false)
+    return
+  }
 
-      setPage('home')
-      setCheckingSession(false)
-    }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (!session?.user) {
+    window.sessionStorage.removeItem('ilost-page')
+    setProfile(null)
+    setPage('home')
+    setCheckingSession(false)
+    return
+  }
+
+  const { data: userProfile, error } = await supabase
+    .from('profiles')
+    .select('full_name, role')
+    .eq('id', session.user.id)
+    .single()
+
+  if (error || !userProfile) {
+    window.sessionStorage.removeItem('ilost-page')
+    setProfile(null)
+    setPage('home')
+    setCheckingSession(false)
+    return
+  }
+
+  setProfile(userProfile)
+
+  const savedPage =
+    window.sessionStorage.getItem('ilost-page')
+
+  const userPages = [
+    'dashboard',
+    'report-lost',
+    'report-found',
+    'find-missing',
+    'history',
+    'browse',
+    'account',
+  ]
+
+  const adminPages = [
+    'admin-dashboard',
+    'admin-claims',
+    'admin-items',
+    'admin-users',
+  ]
+
+  if (
+    userProfile.role === 'admin' &&
+    adminPages.includes(savedPage)
+  ) {
+    setPage(savedPage)
+  } else if (
+    userProfile.role !== 'admin' &&
+    userPages.includes(savedPage)
+  ) {
+    setPage(savedPage)
+  } else {
+    setPage(
+      userProfile.role === 'admin'
+        ? 'admin-dashboard'
+        : 'dashboard'
+    )
+  }
+
+  setCheckingSession(false)
+}
 
     restoreSession()
 

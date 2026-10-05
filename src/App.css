@@ -6194,3 +6194,30 @@ input[type="radio"] {
     animation: none;
   }
 }
+
+
+.sidebar-link,
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-link svg,
+.sidebar-logout svg {
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.sidebar-link,
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-link svg,
+.sidebar-logout svg {
+  flex-shrink: 0;
+  stroke-width: 2;
+}
