@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function ResetPassword({ setPage }) {
   const notify = useToast()
@@ -9,6 +10,7 @@ function ResetPassword({ setPage }) {
     useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const handlePasswordUpdate = async (e) => {
@@ -39,8 +41,11 @@ function ResetPassword({ setPage }) {
       return
     }
 
-    setLoading(true)
+    setConfirmOpen(true)
+  }
 
+  const updatePassword = async () => {
+    setLoading(true)
     const { error } =
       await supabase.auth.updateUser({
         password,
@@ -137,6 +142,18 @@ function ResetPassword({ setPage }) {
               : 'Update Password'}
           </button>
         </form>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title="Update your password?"
+          description="Your current password will be replaced with the new password you entered. You will need to sign in again after it is updated."
+          confirmLabel="Update Password"
+          onConfirm={() => {
+            setConfirmOpen(false)
+            void updatePassword()
+          }}
+        />
 
         {message && (
           <p

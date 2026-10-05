@@ -5,6 +5,7 @@ import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function AdminClaims({ setPage }) {
   const notify = useToast()
@@ -12,6 +13,7 @@ function AdminClaims({ setPage }) {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [processingId, setProcessingId] = useState(null)
+  const [confirmation, setConfirmation] = useState(null)
 
   const loadClaims = async () => {
     setLoading(true)
@@ -144,21 +146,7 @@ function AdminClaims({ setPage }) {
     }
   }
 
-  const handleApprove = async (claim) => {
-    const confirmed = window.confirm(
-      `Approve this claim for ${
-        claim.claimant?.full_name || 'this claimant'
-      }?\n\n` +
-      `Item: ${
-        claim.item?.item_name || 'Unknown item'
-      }\n\n` +
-      `This will mark the claim as approved and the item as claimed.`
-    )
-
-    if (!confirmed) {
-      return
-    }
-
+  const executeApprove = async (claim) => {
     setProcessingId(claim.id)
     setMessage('')
 
@@ -221,21 +209,7 @@ function AdminClaims({ setPage }) {
     await loadClaims()
   }
 
-  const handleReject = async (claim) => {
-    const confirmed = window.confirm(
-      `Reject this claim from ${
-        claim.claimant?.full_name || 'this claimant'
-      }?\n\n` +
-      `Item: ${
-        claim.item?.item_name || 'Unknown item'
-      }\n\n` +
-      `This action will mark the claim as rejected.`
-    )
-
-    if (!confirmed) {
-      return
-    }
-
+  const executeReject = async (claim) => {
     setProcessingId(claim.id)
     setMessage('')
 
@@ -268,21 +242,7 @@ function AdminClaims({ setPage }) {
     await loadClaims()
   }
 
-  const handleHandover = async (claim) => {
-    const confirmed = window.confirm(
-      `Confirm physical handover for ${
-        claim.claimant?.full_name || 'this claimant'
-      }?\n\n` +
-      `Item: ${
-        claim.item?.item_name || 'Unknown item'
-      }\n\n` +
-      `Only confirm this if the claimant has physically received the item.`
-    )
-
-    if (!confirmed) {
-      return
-    }
-
+  const executeHandover = async (claim) => {
     setProcessingId(claim.id)
     setMessage('')
 
@@ -341,6 +301,64 @@ function AdminClaims({ setPage }) {
     setProcessingId(null)
 
     await loadClaims()
+  }
+
+  const handleApprove = (claim) => {
+    setConfirmation({ action: 'approve', claim })
+  }
+
+  const handleReject = (claim) => {
+    setConfirmation({ action: 'reject', claim })
+  }
+
+  const handleHandover = (claim) => {
+    setConfirmation({ action: 'handover', claim })
+  }
+
+  const confirmationDetails = confirmation
+    ? {
+        approve: {
+          title: 'Approve this claim?',
+          description:
+            `Approve ${confirmation.claim.claimant?.full_name || 'this claimant'}'s claim for ` +
+            `${confirmation.claim.item?.item_name || 'this item'}? ` +
+            'The claim will be approved and the item marked as claimed.',
+          confirmLabel: 'Approve Claim',
+          destructive: false,
+          action: executeApprove,
+        },
+        reject: {
+          title: 'Reject this claim?',
+          description:
+            `Reject ${confirmation.claim.claimant?.full_name || 'this claimant'}'s claim for ` +
+            `${confirmation.claim.item?.item_name || 'this item'}? ` +
+            'This will close the claim as rejected.',
+          confirmLabel: 'Reject Claim',
+          destructive: true,
+          action: executeReject,
+        },
+        handover: {
+          title: 'Confirm item handover?',
+          description:
+            `Confirm that ${confirmation.claim.claimant?.full_name || 'the claimant'} has physically received ` +
+            `${confirmation.claim.item?.item_name || 'this item'}? ` +
+            'The item will be marked returned and the claim completed.',
+          confirmLabel: 'Confirm Handover',
+          destructive: false,
+          action: executeHandover,
+        },
+      }[confirmation.action]
+    : null
+
+  const confirmClaimAction = () => {
+    if (!confirmation || !confirmationDetails) {
+      return
+    }
+
+    const { claim } = confirmation
+    const { action } = confirmationDetails
+    setConfirmation(null)
+    void action(claim)
   }
 
   return (
@@ -678,6 +696,19 @@ function AdminClaims({ setPage }) {
         </section>
       </main>
 
+      <ConfirmDialog
+        open={Boolean(confirmation)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmation(null)
+          }
+        }}
+        title={confirmationDetails?.title || ''}
+        description={confirmationDetails?.description || ''}
+        confirmLabel={confirmationDetails?.confirmLabel || 'Confirm'}
+        destructive={confirmationDetails?.destructive}
+        onConfirm={confirmClaimAction}
+      />
     </div>
   )
 }

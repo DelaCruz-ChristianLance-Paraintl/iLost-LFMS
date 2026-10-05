@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 
 
@@ -319,6 +320,7 @@ function ReportItem({ type, setPage }) {
   const photoInputRef = useRef(null)
   const [isPhotoDragging, setIsPhotoDragging] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -465,9 +467,12 @@ function ReportItem({ type, setPage }) {
     handlePhotoFile(event.dataTransfer.files?.[0])
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
+    setConfirmOpen(true)
+  }
 
+  const submitReport = async () => {
     setLoading(true)
     setMessage('')
     setError('')
@@ -1169,6 +1174,18 @@ function ReportItem({ type, setPage }) {
             </div>
 
           </form>
+
+          <ConfirmDialog
+            open={confirmOpen}
+            onOpenChange={setConfirmOpen}
+            title={`Submit this ${isLost ? 'lost' : 'found'} item report?`}
+            description={`You are about to submit "${form.itemName.trim()}". Please make sure the report details are accurate before continuing.`}
+            confirmLabel={`Submit ${isLost ? 'Lost' : 'Found'} Report`}
+            onConfirm={() => {
+              setConfirmOpen(false)
+              void submitReport()
+            }}
+          />
         </div>
       </main>
     </div>

@@ -3,6 +3,7 @@ import { LoaderCircle } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function Register({ setPage, embedded = false }) {
   const notify = useToast()
@@ -21,6 +22,7 @@ function Register({ setPage, embedded = false }) {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('')
   const [loading, setLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [resending, setResending] = useState(false)
   const [resendEligible, setResendEligible] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
@@ -69,6 +71,10 @@ function Register({ setPage, embedded = false }) {
       return
     }
 
+    setConfirmOpen(true)
+  }
+
+  const createAccount = async () => {
     setResendEligible(false)
     setResendCooldown(0)
     setLoading(true)
@@ -469,6 +475,18 @@ function Register({ setPage, embedded = false }) {
           </button>
 
         </form>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title="Create your iLost account?"
+          description={`Create an account for ${email.trim()}? Check your details before continuing. You may need to confirm your email before signing in.`}
+          confirmLabel="Create Account"
+          onConfirm={() => {
+            setConfirmOpen(false)
+            void createAccount()
+          }}
+        />
 
         {message && (
           <p

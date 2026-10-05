@@ -6,6 +6,7 @@ import { useToast } from '../components/useToast'
 import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
 import ItemImagePreview from '../components/ItemImagePreview'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 import { findMatches } from '../lib/matching'
 
@@ -36,6 +37,7 @@ function FindMyMissingItems({ setPage }) {
   const [claimAdditionalInfo, setClaimAdditionalInfo] = useState('')
 
   const [claimLoading, setClaimLoading] = useState(false)
+  const [claimConfirmOpen, setClaimConfirmOpen] = useState(false)
 
   const [claimError, setClaimError] = useState('')
 
@@ -307,9 +309,12 @@ function FindMyMissingItems({ setPage }) {
     }, 50)
   }
 
-  const handleSubmitClaim = async (e) => {
-    e.preventDefault()
+  const handleSubmitClaim = (event) => {
+    event.preventDefault()
+    setClaimConfirmOpen(true)
+  }
 
+  const submitClaim = async () => {
     setClaimError('')
 
     setClaimSuccess('')
@@ -1051,6 +1056,17 @@ function FindMyMissingItems({ setPage }) {
 
       </main>
 
+      <ConfirmDialog
+        open={claimConfirmOpen}
+        onOpenChange={setClaimConfirmOpen}
+        title="Submit this item claim?"
+        description={`Your claim for "${claimingItem?.item_name || 'this item'}" will be sent to administrators for verification. Make sure your ownership details are accurate.`}
+        confirmLabel="Submit Claim"
+        onConfirm={() => {
+          setClaimConfirmOpen(false)
+          void submitClaim()
+        }}
+      />
     </div>
   )
 }
