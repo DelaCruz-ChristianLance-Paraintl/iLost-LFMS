@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 function Register({ setPage, embedded = false }) {
+  const notify = useToast()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [contactNumber, setContactNumber] = useState('')
@@ -46,6 +48,11 @@ function Register({ setPage, embedded = false }) {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match.')
       setMessageType('error')
+      notify({
+        type: 'error',
+        title: 'Check your password',
+        description: 'Passwords do not match.',
+      })
       return
     }
 
@@ -54,6 +61,11 @@ function Register({ setPage, embedded = false }) {
         'Password must be at least 6 characters long.'
       )
       setMessageType('error')
+      notify({
+        type: 'error',
+        title: 'Password is too short',
+        description: 'Password must be at least 6 characters long.',
+      })
       return
     }
 
@@ -80,6 +92,11 @@ function Register({ setPage, embedded = false }) {
     if (error) {
       setMessage(error.message)
       setMessageType('error')
+      notify({
+        type: 'error',
+        title: 'Account creation failed',
+        description: error.message,
+      })
       setLoading(false)
       return
     }
@@ -98,12 +115,22 @@ function Register({ setPage, embedded = false }) {
       )
       setMessageType('success')
       setResendEligible(true)
-      setResendCooldown(15)
+      setResendCooldown(60)
+      notify({
+        type: 'success',
+        title: 'Registration submitted',
+        description: 'Please check your email to confirm your account.',
+      })
     } else {
       setMessage(
         'Registration successful. You can now sign in.'
       )
       setMessageType('success')
+      notify({
+        type: 'success',
+        title: 'Account created',
+        description: 'You can now sign in.',
+      })
     }
     setFullName('')
     setContactNumber('')
@@ -125,6 +152,11 @@ function Register({ setPage, embedded = false }) {
         'Enter your email address first before resending the confirmation email.'
       )
       setMessageType('error')
+      notify({
+        type: 'error',
+        title: 'Email required',
+        description: 'Enter your email address before resending the confirmation email.',
+      })
       return
     }
 
@@ -143,12 +175,22 @@ function Register({ setPage, embedded = false }) {
     if (error) {
       setMessage(error.message)
       setMessageType('error')
+      notify({
+        type: 'error',
+        title: 'Email could not be sent',
+        description: error.message,
+      })
     } else {
       setMessage(
         'A new confirmation email has been sent. Please check your inbox.'
       )
       setMessageType('success')
-      setResendCooldown(15)
+      setResendCooldown(60)
+      notify({
+        type: 'success',
+        title: 'Confirmation email sent',
+        description: 'Please check your inbox.',
+      })
     }
 
     setResending(false)

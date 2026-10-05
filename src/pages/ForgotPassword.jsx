@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 function ForgotPassword({ setPage, embedded = false }) {
+  const notify = useToast()
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -21,11 +23,21 @@ function ForgotPassword({ setPage, embedded = false }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Reset link could not be sent',
+        description: error.message,
+      })
     } else {
       setSuccess(true)
-      setMessage(
+      const message =
         'If an account exists for this email, a password reset link has been sent. Please check your inbox.'
-      )
+      setMessage(message)
+      notify({
+        type: 'success',
+        title: 'Password reset requested',
+        description: message,
+      })
     }
 
     setLoading(false)

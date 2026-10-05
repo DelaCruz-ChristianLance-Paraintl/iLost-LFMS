@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
 
@@ -8,6 +9,7 @@ import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
 
 function Account({ setPage, profile: initialProfile }) {
+  const notify = useToast()
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(initialProfile || null)
 
@@ -56,9 +58,15 @@ function Account({ setPage, profile: initialProfile }) {
         .single()
 
       if (error || !data) {
+        const message = 'Unable to load your account information.'
         setError(
-          'Unable to load your account information.'
+          message
         )
+        notify({
+          type: 'error',
+          title: 'Account information unavailable',
+          description: message,
+        })
 
         return
       }
@@ -74,19 +82,31 @@ function Account({ setPage, profile: initialProfile }) {
     }
 
     loadProfile()
-  }, [setPage])
+  }, [notify, setPage])
 
   const handleSave = async () => {
     setError('')
     setMessage('')
 
     if (!fullName.trim()) {
-      setError('Full Name is required.')
+      const message = 'Full Name is required.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Profile could not be saved',
+        description: message,
+      })
       return
     }
 
     if (!user) {
-      setError('User session not found.')
+      const message = 'User session not found.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Profile could not be saved',
+        description: message,
+      })
       return
     }
 
@@ -116,9 +136,13 @@ function Account({ setPage, profile: initialProfile }) {
       .single()
 
     if (error) {
-      setError(
-        `Unable to update your profile: ${error.message}`
-      )
+      const message = `Unable to update your profile: ${error.message}`
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Profile update failed',
+        description: error.message,
+      })
 
       setSaving(false)
       return
@@ -134,9 +158,13 @@ function Account({ setPage, profile: initialProfile }) {
 
     setEditing(false)
 
-    setMessage(
-      'Profile updated successfully.'
-    )
+    const successMessage = 'Profile updated successfully.'
+    setMessage(successMessage)
+    notify({
+      type: 'success',
+      title: 'Profile updated',
+      description: successMessage,
+    })
 
     setSaving(false)
   }
@@ -161,8 +189,18 @@ function Account({ setPage, profile: initialProfile }) {
 
     if (error) {
       setError(`Unable to log out: ${error.message}`)
+      notify({
+        type: 'error',
+        title: 'Log out failed',
+        description: error.message,
+      })
       return
     }
+    notify({
+      type: 'success',
+      title: 'Logged out',
+      description: 'You have been signed out successfully.',
+    })
     setPage('home')
   }
 
@@ -194,7 +232,7 @@ function Account({ setPage, profile: initialProfile }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
           <section className="dashboard-welcome page-welcome account-welcome">

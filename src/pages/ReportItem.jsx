@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 import { Button } from '../components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
@@ -296,6 +297,7 @@ function SectionHeader({ number, title, description }) {
 }
 
 function ReportItem({ type, setPage }) {
+  const notify = useToast()
   const [form, setForm] = useState({
     itemName: '',
     category: '',
@@ -403,7 +405,13 @@ function ReportItem({ type, setPage }) {
     }
 
     if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select an image file.')
+      const message = 'Please select an image file.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Photo could not be added',
+        description: message,
+      })
       clearSelectedPhoto()
       return
     }
@@ -411,7 +419,13 @@ function ReportItem({ type, setPage }) {
     const maxSize = 5 * 1024 * 1024
 
     if (selectedFile.size > maxSize) {
-      setError('Photo must be 5 MB or smaller.')
+      const message = 'Photo must be 5 MB or smaller.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Photo is too large',
+        description: message,
+      })
       clearSelectedPhoto()
       return
     }
@@ -463,7 +477,13 @@ function ReportItem({ type, setPage }) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      setError('You must be logged in to submit a report.')
+      const message = 'You must be logged in to submit a report.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Report could not be submitted',
+        description: message,
+      })
       setLoading(false)
       return
     }
@@ -486,7 +506,13 @@ function ReportItem({ type, setPage }) {
         })
 
       if (uploadError) {
-        setError(`Photo upload failed: ${uploadError.message}`)
+        const message = `Photo upload failed: ${uploadError.message}`
+        setError(message)
+        notify({
+          type: 'error',
+          title: 'Photo upload failed',
+          description: uploadError.message,
+        })
         setLoading(false)
         return
       }
@@ -523,13 +549,23 @@ function ReportItem({ type, setPage }) {
       }
 
       setError(insertError.message)
+      notify({
+        type: 'error',
+        title: 'Report could not be submitted',
+        description: insertError.message,
+      })
       setLoading(false)
       return
     }
 
-    setMessage(
+    const successMessage =
       `${isLost ? 'Lost' : 'Found'} item reported successfully.`
-    )
+    setMessage(successMessage)
+    notify({
+      type: 'success',
+      title: 'Report submitted',
+      description: successMessage,
+    })
 
     setForm({
       itemName: '',
@@ -580,7 +616,7 @@ function ReportItem({ type, setPage }) {
             <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
               ←
             </span>
-            Back to Overview
+            Back
           </Badge>
 
           {/* PAGE HEADER */}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
@@ -9,6 +10,7 @@ import ItemImagePreview from '../components/ItemImagePreview'
 import { findMatches } from '../lib/matching'
 
 function FindMyMissingItems({ setPage }) {
+  const notify = useToast()
   const [lostItems, setLostItems] = useState([])
 
   const [foundItems, setFoundItems] = useState([])
@@ -50,9 +52,13 @@ function FindMyMissingItems({ setPage }) {
       } = await supabase.auth.getUser()
 
       if (!user) {
-        setError(
-          'You must be logged in to view your missing items.'
-        )
+        const message = 'You must be logged in to view your missing items.'
+        setError(message)
+        notify({
+          type: 'error',
+          title: 'Missing items could not be loaded',
+          description: message,
+        })
         setLoading(false)
         return
       }
@@ -68,7 +74,13 @@ function FindMyMissingItems({ setPage }) {
           .order('created_at', { ascending: false })
 
       if (lostError) {
-        setError('Unable to load your lost items.')
+        const message = 'Unable to load your lost items.'
+        setError(message)
+        notify({
+          type: 'error',
+          title: 'Lost items could not be loaded',
+          description: message,
+        })
         setLoading(false)
         return
       }
@@ -84,7 +96,13 @@ function FindMyMissingItems({ setPage }) {
           .order('created_at', { ascending: false })
 
       if (foundError) {
-        setError('Unable to load found items.')
+        const message = 'Unable to load found items.'
+        setError(message)
+        notify({
+          type: 'error',
+          title: 'Found items could not be loaded',
+          description: message,
+        })
         setLoading(false)
         return
       }
@@ -95,7 +113,13 @@ function FindMyMissingItems({ setPage }) {
         .eq('claimant_id', user.id)
 
       if (claimError) {
-        setError('Unable to load your claim history.')
+        const message = 'Unable to load your claim history.'
+        setError(message)
+        notify({
+          type: 'error',
+          title: 'Claim history could not be loaded',
+          description: message,
+        })
         setLoading(false)
         return
       }
@@ -179,7 +203,7 @@ function FindMyMissingItems({ setPage }) {
     }
 
     loadItems()
-  }, [])
+  }, [notify, setPage])
 
   const handleViewMatches = (item) => {
     const results = findMatches(item, foundItems)
@@ -291,7 +315,13 @@ function FindMyMissingItems({ setPage }) {
     setClaimSuccess('')
 
     if (!claimingItem) {
-      setClaimError('Please select an item to claim.')
+      const message = 'Please select an item to claim.'
+      setClaimError(message)
+      notify({
+        type: 'error',
+        title: 'Claim could not be submitted',
+        description: message,
+      })
       return
     }
 
@@ -304,6 +334,11 @@ function FindMyMissingItems({ setPage }) {
       setClaimError(
         'Please complete all required claim information.'
       )
+      notify({
+        type: 'error',
+        title: 'Required information missing',
+        description: 'Please complete all required claim information.',
+      })
       return
     }
 
@@ -318,6 +353,11 @@ function FindMyMissingItems({ setPage }) {
         setClaimError(
           'You must be logged in to submit a claim.'
         )
+        notify({
+          type: 'error',
+          title: 'Claim could not be submitted',
+          description: 'You must be logged in to submit a claim.',
+        })
 
         setClaimLoading(false)
 
@@ -355,11 +395,22 @@ function FindMyMissingItems({ setPage }) {
           setClaimError(
             'You have already submitted a claim for this item.'
           )
+          notify({
+            type: 'error',
+            title: 'Claim already submitted',
+            description: 'You have already submitted a claim for this item.',
+          })
         } else {
           setClaimError(
             claimInsertError.message ||
               'Unable to submit your claim.'
           )
+          notify({
+            type: 'error',
+            title: 'Claim could not be submitted',
+            description:
+              claimInsertError.message || 'Unable to submit your claim.',
+          })
         }
 
         setClaimLoading(false)
@@ -375,6 +426,11 @@ function FindMyMissingItems({ setPage }) {
       setClaimSuccess(
         'Your claim has been submitted and is now pending verification.'
       )
+      notify({
+        type: 'success',
+        title: 'Claim submitted',
+        description: 'Your claim is now pending verification.',
+      })
 
       setClaimMessage('')
 
@@ -390,10 +446,15 @@ function FindMyMissingItems({ setPage }) {
         setClaimingItem(null)
       }, 2500)
     } catch (claimSubmitError) {
-      setClaimError(
+      const message =
         claimSubmitError.message ||
-          'Something went wrong while submitting your claim.'
-      )
+        'Something went wrong while submitting your claim.'
+      setClaimError(message)
+      notify({
+        type: 'error',
+        title: 'Claim could not be submitted',
+        description: message,
+      })
     }
 
     setClaimLoading(false)
@@ -425,7 +486,7 @@ function FindMyMissingItems({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
           <section className="dashboard-welcome page-welcome browse-header">
@@ -579,7 +640,7 @@ function FindMyMissingItems({ setPage }) {
                     setClaimSuccess('')
                   }}
                 >
-                  Back to Find My Missing Items
+                  Back
                 </button>
 
               </div>

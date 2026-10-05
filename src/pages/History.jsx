@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
 
 function History({ setPage }) {
+  const notify = useToast()
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -30,6 +32,11 @@ function History({ setPage }) {
 
       if (reportError) {
         setError('Unable to load your reports.')
+        notify({
+          type: 'error',
+          title: 'Report history could not be loaded',
+          description: 'Unable to load your reports.',
+        })
         setLoading(false)
         return
       }
@@ -57,6 +64,11 @@ function History({ setPage }) {
 
       if (claimError) {
         setError('Unable to load your approved claims.')
+        notify({
+          type: 'error',
+          title: 'Claim history could not be loaded',
+          description: 'Unable to load your approved claims.',
+        })
         setLoading(false)
         return
       }
@@ -88,7 +100,7 @@ function History({ setPage }) {
     }
 
     getReports()
-  }, [])
+  }, [notify])
 
   const formatDate = (date) => {
     if (!date) {
@@ -146,7 +158,7 @@ function History({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
           <section className="dashboard-welcome page-welcome history-header">

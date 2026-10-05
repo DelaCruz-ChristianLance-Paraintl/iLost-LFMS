@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
 
 function AdminClaims({ setPage }) {
+  const notify = useToast()
   const [claims, setClaims] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -75,6 +77,11 @@ function AdminClaims({ setPage }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Claims could not be loaded',
+        description: error.message,
+      })
     } else {
       setClaims(data || [])
     }
@@ -165,6 +172,11 @@ function AdminClaims({ setPage }) {
 
     if (claimError) {
       setMessage(claimError.message)
+      notify({
+        type: 'error',
+        title: 'Claim approval failed',
+        description: claimError.message,
+      })
       setProcessingId(null)
       return
     }
@@ -186,13 +198,23 @@ function AdminClaims({ setPage }) {
         .eq('id', claim.id)
 
       setMessage(itemError.message)
+      notify({
+        type: 'error',
+        title: 'Claim approval failed',
+        description: itemError.message,
+      })
       setProcessingId(null)
       return
     }
 
-    setMessage(
+    const successMessage =
       'Claim approved. The claimant may now proceed to the LSC for physical handover.'
-    )
+    setMessage(successMessage)
+    notify({
+      type: 'success',
+      title: 'Claim approved',
+      description: successMessage,
+    })
 
     setProcessingId(null)
 
@@ -226,11 +248,21 @@ function AdminClaims({ setPage }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Claim rejection failed',
+        description: error.message,
+      })
       setProcessingId(null)
       return
     }
 
     setMessage('Claim rejected.')
+    notify({
+      type: 'success',
+      title: 'Claim rejected',
+      description: 'The claim was rejected successfully.',
+    })
     setProcessingId(null)
 
     await loadClaims()
@@ -263,6 +295,11 @@ function AdminClaims({ setPage }) {
 
     if (itemError) {
       setMessage(itemError.message)
+      notify({
+        type: 'error',
+        title: 'Handover could not be confirmed',
+        description: itemError.message,
+      })
       setProcessingId(null)
       return
     }
@@ -283,13 +320,23 @@ function AdminClaims({ setPage }) {
         .eq('id', claim.item_id)
 
       setMessage(claimError.message)
+      notify({
+        type: 'error',
+        title: 'Handover could not be confirmed',
+        description: claimError.message,
+      })
       setProcessingId(null)
       return
     }
 
-    setMessage(
+    const successMessage =
       'Handover confirmed. The item has been marked as returned and the claim completed.'
-    )
+    setMessage(successMessage)
+    notify({
+      type: 'success',
+      title: 'Handover confirmed',
+      description: successMessage,
+    })
 
     setProcessingId(null)
 
@@ -314,7 +361,7 @@ function AdminClaims({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
 

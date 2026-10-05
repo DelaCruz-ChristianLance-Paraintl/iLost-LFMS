@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
 import { Badge } from '../components/ui/badge'
 
 function AdminItems({ setPage }) {
+  const notify = useToast()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -72,6 +74,11 @@ function AdminItems({ setPage }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Items could not be loaded',
+        description: error.message,
+      })
     } else {
       const itemsWithPhotos = await Promise.all(
         (data || []).map(async (item) => {
@@ -136,7 +143,7 @@ function AdminItems({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
 

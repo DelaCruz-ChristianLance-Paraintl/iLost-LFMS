@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
@@ -8,6 +9,7 @@ import ItemImagePreview from '../components/ItemImagePreview'
 import { Badge } from "../components/ui/badge";
 
 function BrowseItems({ setPage }) {
+  const notify = useToast()
   const [items, setItems] = useState([])
 
   const [loading, setLoading] = useState(true)
@@ -23,6 +25,11 @@ function BrowseItems({ setPage }) {
 
       if (itemsError) {
         setError('Unable to load reported items.')
+        notify({
+          type: 'error',
+          title: 'Items could not be loaded',
+          description: 'Unable to load reported items.',
+        })
       } else {
         const itemsWithPhotos = await Promise.all(
           (data || []).map(async (item) => {
@@ -62,7 +69,7 @@ function BrowseItems({ setPage }) {
     }
 
     getItems()
-  }, [])
+  }, [notify])
 
   return (
     <div className="dashboard-layout">
@@ -83,7 +90,7 @@ function BrowseItems({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
           <section className="dashboard-welcome page-welcome browse-header">

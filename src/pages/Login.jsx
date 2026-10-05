@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 function Login({ setPage, setProfile }) {
+  const notify = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -22,6 +24,11 @@ function Login({ setPage, setProfile }) {
 
       if (error) {
         setMessage(error.message)
+        notify({
+          type: 'error',
+          title: 'Sign in failed',
+          description: error.message,
+        })
         return
       }
 
@@ -32,11 +39,22 @@ function Login({ setPage, setProfile }) {
         .single()
 
       if (profileError) {
-        setMessage('Unable to load your account information.')
+        const message = 'Unable to load your account information.'
+        setMessage(message)
+        notify({
+          type: 'error',
+          title: 'Sign in failed',
+          description: message,
+        })
         return
       }
 
       setProfile(profile)
+      notify({
+        type: 'success',
+        title: 'Signed in successfully',
+        description: 'Welcome back to iLost.',
+      })
       setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
     } finally {
       setLoading(false)

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
 
 function AdminUsers({ setPage }) {
+  const notify = useToast()
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -57,6 +59,11 @@ function AdminUsers({ setPage }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Users could not be loaded',
+        description: error.message,
+      })
     } else {
       setUsers(data || [])
     }
@@ -86,7 +93,7 @@ function AdminUsers({ setPage }) {
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
             ←
           </span>
-          Back to Overview
+          Back
         </Badge>
 
 

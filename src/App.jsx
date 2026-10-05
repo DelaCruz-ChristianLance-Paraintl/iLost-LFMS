@@ -14,6 +14,7 @@ import { supabase } from './lib/supabaseClient'
 
 import CampusIllustration from './components/CampusIllustration'
 import CircuitBackground from './components/CircuitBackground'
+import { useToast } from './components/useToast'
 
 import Register from './pages/Register'
 import Login from './pages/Login'
@@ -31,6 +32,7 @@ import AdminUsers from './pages/AdminUsers'
 import Account from './pages/Account'
 
 function App() {
+  const notify = useToast()
   const [page, setPageState] = useState(null)
   const [checkingSession, setCheckingSession] = useState(true)
   const [profile, setProfile] = useState(null)
@@ -140,6 +142,11 @@ function App() {
 
       if (error) {
         setLoginMessage(error.message)
+        notify({
+          type: 'error',
+          title: 'Sign in failed',
+          description: error.message,
+        })
         return
       }
 
@@ -153,13 +160,22 @@ function App() {
         .single()
 
       if (profileError) {
-        setLoginMessage(
-          'Unable to load your account information.'
-        )
+        const message = 'Unable to load your account information.'
+        setLoginMessage(message)
+        notify({
+          type: 'error',
+          title: 'Sign in failed',
+          description: message,
+        })
         return
       }
 
       setProfile(profile)
+      notify({
+        type: 'success',
+        title: 'Signed in successfully',
+        description: 'Welcome back to iLost.',
+      })
       setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
     } finally {
       setLoginLoading(false)

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useToast } from '../components/useToast'
 
 function ResetPassword({ setPage }) {
+  const notify = useToast()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] =
     useState('')
@@ -16,14 +18,24 @@ function ResetPassword({ setPage }) {
     setSuccess(false)
 
     if (password.length < 6) {
-      setMessage(
-        'Password must be at least 6 characters long.'
-      )
+      const message = 'Password must be at least 6 characters long.'
+      setMessage(message)
+      notify({
+        type: 'error',
+        title: 'Password is too short',
+        description: message,
+      })
       return
     }
 
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match.')
+      const message = 'Passwords do not match.'
+      setMessage(message)
+      notify({
+        type: 'error',
+        title: 'Check your password',
+        description: message,
+      })
       return
     }
 
@@ -36,11 +48,20 @@ function ResetPassword({ setPage }) {
 
     if (error) {
       setMessage(error.message)
+      notify({
+        type: 'error',
+        title: 'Password update failed',
+        description: error.message,
+      })
     } else {
       setSuccess(true)
-      setMessage(
-        'Your password has been successfully updated.'
-      )
+      const message = 'Your password has been successfully updated.'
+      setMessage(message)
+      notify({
+        type: 'success',
+        title: 'Password updated',
+        description: message,
+      })
 
       await supabase.auth.signOut()
 
