@@ -1399,7 +1399,13 @@ body {
   flex: 1 1 auto;
   gap: 9px;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-link,
@@ -1415,6 +1421,7 @@ body {
   font-weight: 600;
   line-height: 1.0;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background 0.2s ease,
@@ -5948,10 +5955,9 @@ input[type="radio"] {
   }
 
   .sidebar-nav {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     gap: 6px;
-    min-height: auto;
-    overflow: visible;
+    min-height: 0;
   }
 
   .sidebar-link,
