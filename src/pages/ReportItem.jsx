@@ -253,6 +253,15 @@ const selectClassName =
 const textareaClassName =
   'w-full resize-y rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-3 text-sm leading-6 text-[#263238] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#B83A4B] focus:ring-2 focus:ring-[#B83A4B]/10'
 
+function getTodayDateValue() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 function Field({ label, htmlFor, required = false, hint, children }) {
   return (
     <div className="space-y-1.5">
@@ -325,6 +334,7 @@ function ReportItem({ type, setPage }) {
   const [error, setError] = useState('')
 
   const isLost = type === 'lost'
+  const maxReportDate = getTodayDateValue()
 
   useEffect(() => () => {
     if (photoPreviewUrlRef.current) {
@@ -469,10 +479,34 @@ function ReportItem({ type, setPage }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+
+    if (form.date > maxReportDate) {
+      const message = 'The report date cannot be in the future.'
+      setError(message)
+      notify({
+        type: 'error',
+        title: 'Invalid report date',
+        description: message,
+      })
+      return
+    }
+
     setConfirmOpen(true)
   }
 
   const submitReport = async () => {
+    if (form.date > getTodayDateValue()) {
+      const message = 'The report date cannot be in the future.'
+      setError(message)
+      setConfirmOpen(false)
+      notify({
+        type: 'error',
+        title: 'Invalid report date',
+        description: message,
+      })
+      return
+    }
+
     setLoading(true)
     setMessage('')
     setError('')
@@ -1104,6 +1138,7 @@ function ReportItem({ type, setPage }) {
                     name="date"
                     type="date"
                     value={form.date}
+                    max={maxReportDate}
                     onChange={handleChange}
                     required
                     className={`${inputClassName} cursor-pointer`}

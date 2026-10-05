@@ -11,6 +11,10 @@ import {
 } from 'recharts'
 
 import { supabase } from '../lib/supabaseClient'
+import {
+  buildCompleteTimeBuckets,
+  getTimeBucketKey,
+} from '../lib/chartTimeBuckets'
 import Sidebar from '../components/Sidebar'
 
 const chartSeries = {
@@ -34,24 +38,6 @@ const chartSeries = {
     color: '#D9B65D',
     interpretation: 'items not yet returned',
   },
-}
-
-function getDateKey(dateString) {
-  if (!dateString) {
-    return ''
-  }
-
-  return dateString.slice(0, 10)
-}
-
-function getWeekStart(dateString) {
-  const date = new Date(`${dateString}T00:00:00`)
-  const day = date.getDay()
-  const difference = day === 0 ? -6 : 1 - day
-
-  date.setDate(date.getDate() + difference)
-
-  return date.toISOString().slice(0, 10)
 }
 
 function formatDay(dateString) {
@@ -89,14 +75,10 @@ function buildChartData(items, timeScale) {
       return
     }
 
-    let key = getDateKey(item.date)
+    const key = getTimeBucketKey(item.date, timeScale)
 
-    if (timeScale === 'weeks') {
-      key = getWeekStart(item.date)
-    }
-
-    if (timeScale === 'months') {
-      key = getDateKey(item.date).slice(0, 7)
+    if (!key) {
+      return
     }
 
     if (!grouped[key]) {
@@ -126,28 +108,40 @@ function buildChartData(items, timeScale) {
     }
   })
 
-  return Object.values(grouped)
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .map((item) => {
-      let label = item.date
+  const minimumBuckets =
+    timeScale === 'weeks' ? 8 : timeScale === 'months' ? 5 : 1
 
-      if (timeScale === 'days') {
-        label = formatDay(item.date)
-      }
+  return buildCompleteTimeBuckets(
+    items.map((item) => item.date),
+    timeScale,
+    minimumBuckets
+  ).map((date) => {
+    const item = grouped[date] || {
+      date,
+      lost: 0,
+      found: 0,
+      recovered: 0,
+      unclaimed: 0,
+    }
+    let label = item.date
 
-      if (timeScale === 'weeks') {
-        label = formatWeek(item.date)
-      }
+    if (timeScale === 'days') {
+      label = formatDay(item.date)
+    }
 
-      if (timeScale === 'months') {
-        label = formatMonth(`${item.date}-01`)
-      }
+    if (timeScale === 'weeks') {
+      label = formatWeek(item.date)
+    }
 
-      return {
-        ...item,
-        label,
-      }
-    })
+    if (timeScale === 'months') {
+      label = formatMonth(item.date)
+    }
+
+    return {
+      ...item,
+      label,
+    }
+  })
 }
 
 function DashboardChartTooltip({ active, payload, label }) {

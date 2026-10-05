@@ -10,8 +10,11 @@ import {
 } from 'recharts'
 
 import { supabase } from '../lib/supabaseClient'
-
 import AdminSidebar from '../components/AdminSidebar'
+import {
+  buildCompleteTimeBuckets,
+  getTimeBucketKey,
+} from '../lib/chartTimeBuckets'
 
 const overviewCharts = [
   {
@@ -42,25 +45,6 @@ const overviewCharts = [
     page: 'admin-items',
   },
 ]
-
-function getDateKey(dateString) {
-  return dateString ? dateString.slice(0, 10) : ''
-}
-
-function getWeekStart(dateString) {
-  const dateKey = getDateKey(dateString)
-  const date = new Date(`${dateKey}T00:00:00`)
-  const day = date.getDay()
-  const difference = day === 0 ? -6 : 1 - day
-
-  date.setDate(date.getDate() + difference)
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const dayOfMonth = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${dayOfMonth}`
-}
 
 function formatTimeScaleLabel(dateString, timeScale) {
   const date = new Date(`${dateString}T00:00:00`)
@@ -93,31 +77,27 @@ function buildChartData(records, timeScale) {
       return
     }
 
-    let key = getDateKey(record.created_at)
+    const key = getTimeBucketKey(record.created_at, timeScale)
 
-    if (timeScale === 'weeks') {
-      key = getWeekStart(key)
-    } else if (timeScale === 'months') {
-      key = key.slice(0, 7)
+    if (!key) {
+      return
     }
 
     grouped[key] = (grouped[key] || 0) + 1
   })
 
-  return Object.entries(grouped)
-    .sort(([firstDate], [secondDate]) =>
-      firstDate.localeCompare(secondDate)
-    )
-    .map(([date, count]) => {
-      const labelDate =
-        timeScale === 'months' ? `${date}-01` : date
+  const minimumBuckets =
+    timeScale === 'weeks' ? 8 : timeScale === 'months' ? 5 : 1
 
-      return {
-        date,
-        label: formatTimeScaleLabel(labelDate, timeScale),
-        count,
-      }
-    })
+  return buildCompleteTimeBuckets(
+    records.map((record) => record.created_at),
+    timeScale,
+    minimumBuckets
+  ).map((date) => ({
+    date,
+    label: formatTimeScaleLabel(date, timeScale),
+    count: grouped[date] || 0,
+  }))
 }
 
 function AdminChartTooltip({ active, payload, label, unit, color }) {

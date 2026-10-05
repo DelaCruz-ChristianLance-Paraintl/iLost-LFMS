@@ -361,6 +361,26 @@ function AdminClaims({ setPage }) {
     void action(claim)
   }
 
+  const formatClaimReference = (value) => {
+    const safeValue = Number.isFinite(value) ? Math.max(1, value) : 1
+    return `MC-${String(safeValue).padStart(4, '0')}`
+  }
+
+  const claimNumbers = new Map(
+    [...claims]
+      .sort((first, second) => {
+        const dateComparison = (first.created_at || '').localeCompare(
+          second.created_at || ''
+        )
+
+        return dateComparison || first.id.localeCompare(second.id)
+      })
+      .map((claim, index) => [
+        claim.id,
+        formatClaimReference(index + 1),
+      ])
+  )
+
   return (
     <div className="dashboard-layout">
 
@@ -511,7 +531,7 @@ function AdminClaims({ setPage }) {
 
                         <div>
                           <p className="eyebrow admin-label-pill admin-label-pill-red">
-                            CLAIM #{claim.id.slice(0, 8)}
+                            {claimNumbers.get(claim.id)}
                           </p>
 
                           <h3>
