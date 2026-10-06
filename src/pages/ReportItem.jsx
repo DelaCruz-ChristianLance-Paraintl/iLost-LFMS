@@ -8,7 +8,12 @@ import Sidebar from '../components/Sidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
 import ConfirmDialog from '../components/ConfirmDialog'
 
-
+import { Calendar } from "../components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../components/ui/popover"
 
 const categoryOptions = {
   Electronics: [
@@ -305,6 +310,187 @@ function SectionHeader({ number, title, description }) {
     </div>
   )
 }
+
+function parseTimeValue(time) {
+  if (!time) {
+    return {
+      hour: 12,
+      minute: 0,
+      period: 'AM',
+    }
+  }
+
+  const [hours, minutes] = time.split(':').map(Number)
+
+  return {
+    hour: hours % 12 || 12,
+    minute: minutes,
+    period: hours >= 12 ? 'PM' : 'AM',
+  }
+}
+
+function formatTimeValue(hour, minute, period) {
+  let hours = hour % 12
+
+  if (period === 'PM') {
+    hours += 12
+  }
+
+  return `${String(hours).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+}
+
+function TimePicker({ value, onChange, placeholder }) {
+  const { hour, minute, period } = parseTimeValue(value)
+
+  const hours = Array.from({ length: 12 }, (_, index) => index + 1)
+  const minutes = Array.from({ length: 60 }, (_, index) => index)
+
+  const handleTimeChange = (newHour, newMinute, newPeriod) => {
+    onChange(formatTimeValue(newHour, newMinute, newPeriod))
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          id="time"
+          type="button"
+          className={`${inputClassName} flex cursor-pointer items-center justify-between text-left ${
+            !value ? 'text-[#9CA3AF]' : 'text-[#263238]'
+          }`}
+        >
+          <span>
+            {value
+              ? `${hour}:${String(minute).padStart(2, '0')} ${period}`
+              : placeholder}
+          </span>
+
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="shrink-0"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            />
+            <path
+              d="M12 7V12L15 14"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="w-[250px] rounded-xl border-[#E8DEE4] bg-white p-3 shadow-md"
+      >
+        <div className="grid grid-cols-[1fr_1fr_1fr] gap-2">
+          {/* HOURS */}
+          <div>
+            <div className="mb-2 text-center text-xs font-medium text-[#756B72]">
+              Hour
+            </div>
+
+            <div className="h-[210px] overflow-y-auto rounded-lg border border-[#E8DEE4] p-1">
+              {hours.map((item) => {
+                const selected = hour === item
+
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() =>
+                      handleTimeChange(item, minute, period)
+                    }
+                    className={`mb-1 flex h-8 w-full items-center justify-center rounded-md text-sm font-normal transition-colors ${
+                      selected
+                        ? 'bg-[#D1006F] text-white'
+                        : 'text-[#263238] hover:bg-[#FBE4F0] hover:text-[#650033]'
+                    }`}
+                  >
+                    {String(item).padStart(2, '0')}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* MINUTES */}
+          <div>
+            <div className="mb-2 text-center text-xs font-medium text-[#756B72]">
+              Minute
+            </div>
+
+            <div className="h-[210px] overflow-y-auto rounded-lg border border-[#E8DEE4] p-1">
+              {minutes.map((item) => {
+                const selected = minute === item
+
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() =>
+                      handleTimeChange(hour, item, period)
+                    }
+                    className={`mb-1 flex h-8 w-full items-center justify-center rounded-md text-sm font-normal transition-colors ${
+                      selected
+                        ? 'bg-[#D1006F] text-white'
+                        : 'text-[#263238] hover:bg-[#FBE4F0] hover:text-[#650033]'
+                    }`}
+                  >
+                    {String(item).padStart(2, '0')}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* AM / PM */}
+          <div>
+            <div className="mb-2 text-center text-xs font-medium text-[#756B72]">
+              Period
+            </div>
+
+            <div className="rounded-lg border border-[#E8DEE4] p-1">
+              {['AM', 'PM'].map((item) => {
+                const selected = period === item
+
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() =>
+                      handleTimeChange(hour, minute, item)
+                    }
+                    className={`mb-1 flex h-8 w-full items-center justify-center rounded-md text-sm font-normal transition-colors last:mb-0 ${
+                      selected
+                        ? 'bg-[#D1006F] text-white'
+                        : 'text-[#263238] hover:bg-[#FBE4F0] hover:text-[#650033]'
+                    }`}
+                  >
+                    {item}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 
 function ReportItem({ type, setPage }) {
   const notify = useToast()
@@ -1128,41 +1314,114 @@ function ReportItem({ type, setPage }) {
                   </Field>
                 </div>
 
-                <Field
+               <Field
                   label={isLost ? 'Date Lost' : 'Date Found'}
                   htmlFor="date"
                   required
                 >
-                  <input
-                    id="date"
-                    name="date"
-                    type="date"
-                    value={form.date}
-                    max={maxReportDate}
-                    onChange={handleChange}
-                    required
-                    className={`${inputClassName} cursor-pointer`}
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        id="date"
+                        type="button"
+                        className={`${inputClassName} flex cursor-pointer items-center justify-between text-left ${
+                          !form.date ? 'text-[#9CA3AF]' : 'text-[#263238]'
+                        }`}
+                      >
+                        <span>
+                          {form.date
+                            ? new Date(`${form.date}T00:00:00`).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                }
+                              )
+                            : isLost
+                              ? 'Select date lost'
+                              : 'Select date found'}
+                        </span>
+
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          className="h-4 w-4 shrink-0 text-[#6B7280]"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="17"
+                            rx="2"
+                          />
+                          <path d="M16 2v4M8 2v4M3 10h18" />
+                        </svg>
+                      </button>
+                    </PopoverTrigger>
+
+                    <PopoverContent
+                      align="start"
+                      className="rounded-xl border-[#E8DEE4] bg-white p-0"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={
+                          form.date
+                            ? new Date(`${form.date}T00:00:00`)
+                            : undefined
+                        }
+                        onSelect={(date) => {
+                          if (!date) return
+
+                          const year = date.getFullYear()
+                          const month = String(date.getMonth() + 1).padStart(2, '0')
+                          const day = String(date.getDate()).padStart(2, '0')
+
+                          setForm((prev) => ({
+                            ...prev,
+                            date: `${year}-${month}-${day}`,
+                          }))
+                        }}
+                        disabled={(date) => {
+                          const today = new Date()
+                          today.setHours(23, 59, 59, 999)
+
+                          return date > today
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </Field>
 
-                <Field
-                  label={
-                    isLost
-                      ? 'Estimated Time Lost'
-                      : 'Estimated Time Found'
-                  }
-                  htmlFor="time"
-                  hint="Optional if the exact time is unknown."
-                >
-                  <input
-                    id="time"
-                    name="time"
-                    type="time"
-                    value={form.time}
-                    onChange={handleChange}
-                    className={`${inputClassName} cursor-pointer`}
-                  />
-                </Field>
+<Field
+  label={
+    isLost
+      ? 'Estimated Time Lost'
+      : 'Estimated Time Found'
+  }
+  htmlFor="time"
+  hint="Optional if the exact time is unknown."
+>
+  <TimePicker
+    value={form.time}
+    onChange={(time) =>
+      setForm((prev) => ({
+        ...prev,
+        time,
+      }))
+    }
+    placeholder={
+      isLost
+        ? 'Select time lost'
+        : 'Select time found'
+    }
+  />
+</Field>
 
               </div>
             </section>
