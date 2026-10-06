@@ -4,10 +4,12 @@ import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
+import ItemSearch from '../components/ItemSearch'
 
 function History({ setPage }) {
   const notify = useToast()
   const [reports, setReports] = useState([])
+  const [filteredReports, setFilteredReports] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -189,8 +191,21 @@ function History({ setPage }) {
                 </span>
               </div>
             ) : (
+              <>
+              <ItemSearch
+                items={reports}
+                onSearch={setFilteredReports}
+                label="reports"
+                placeholder="Search item name or details"
+              />
+              {filteredReports?.length === 0 ? (
+                <div className="empty-state">
+                  <p>No reports match your search.</p>
+                  <span>Try another item name or category.</span>
+                </div>
+              ) : (
               <div className="reports-list">
-                {reports.map((report) => (
+                {(filteredReports ?? reports).map((report) => (
                   <article
                     className="report-card"
                     key={report.id}
@@ -243,6 +258,8 @@ function History({ setPage }) {
                   </article>
                 ))}
               </div>
+              )}
+              </>
             )}
           </section>
         </section>

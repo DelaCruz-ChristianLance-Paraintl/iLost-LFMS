@@ -7,6 +7,7 @@ import Sidebar from '../components/Sidebar'
 import { Badge } from '../components/ui/badge'
 import ItemImagePreview from '../components/ItemImagePreview'
 import ConfirmDialog from '../components/ConfirmDialog'
+import ItemSearch from '../components/ItemSearch'
 
 import { findMatches } from '../lib/matching'
 
@@ -19,6 +20,8 @@ function FindMyMissingItems({ setPage }) {
   const [selectedItem, setSelectedItem] = useState(null)
 
   const [matches, setMatches] = useState([])
+  const [filteredLostItems, setFilteredLostItems] = useState(null)
+  const [filteredMatches, setFilteredMatches] = useState(null)
 
   const [loading, setLoading] = useState(true)
 
@@ -213,6 +216,7 @@ function FindMyMissingItems({ setPage }) {
     setSelectedItem(item)
 
     setMatches(results)
+    setFilteredMatches(null)
 
     setClaimingItem(null)
 
@@ -549,9 +553,22 @@ function FindMyMissingItems({ setPage }) {
             lostItems.length > 0 && (
               <section className="missing-items-section">
 
+                <ItemSearch
+                  items={lostItems}
+                  onSearch={setFilteredLostItems}
+                  label="your lost items"
+                  placeholder="Search item name or details"
+                />
+
+                {filteredLostItems?.length === 0 ? (
+                  <div className="empty-state">
+                    <p>No lost items match your search.</p>
+                    <span>Try another item name or category.</span>
+                  </div>
+                ) : (
                 <div className="missing-item-list">
 
-                  {lostItems.map((item) => (
+                  {(filteredLostItems ?? lostItems).map((item) => (
 
                     <article
                       className="missing-item-card"
@@ -603,6 +620,7 @@ function FindMyMissingItems({ setPage }) {
                   ))}
 
                 </div>
+                )}
 
               </section>
             )}
@@ -667,10 +685,23 @@ function FindMyMissingItems({ setPage }) {
                 </div>
 
               ) : (
+                <>
+                <ItemSearch
+                  items={matches}
+                  onSearch={setFilteredMatches}
+                  label="possible matches"
+                  placeholder="Search item name or details"
+                />
+                {filteredMatches?.length === 0 ? (
+                  <div className="empty-state">
+                    <p>No possible match fits your search.</p>
+                    <span>Try another item name or category.</span>
+                  </div>
+                ) : (
 
                 <div className="match-list">
 
-                  {matches.map((match) => (
+                  {(filteredMatches ?? matches).map((match) => (
 
                     <article
                       className="match-card"
@@ -815,6 +846,8 @@ function FindMyMissingItems({ setPage }) {
                   ))}
 
                 </div>
+                )}
+                </>
 
               )}
 

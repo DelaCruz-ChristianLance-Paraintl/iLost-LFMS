@@ -6,10 +6,12 @@ import { useToast } from '../components/useToast'
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
 import ConfirmDialog from '../components/ConfirmDialog'
+import ItemSearch from '../components/ItemSearch'
 
 function AdminClaims({ setPage }) {
   const notify = useToast()
   const [claims, setClaims] = useState([])
+  const [filteredClaims, setFilteredClaims] = useState(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [processingId, setProcessingId] = useState(null)
@@ -206,6 +208,7 @@ function AdminClaims({ setPage }) {
 
     setProcessingId(null)
 
+    setFilteredClaims(null)
     await loadClaims()
   }
 
@@ -239,6 +242,7 @@ function AdminClaims({ setPage }) {
     })
     setProcessingId(null)
 
+    setFilteredClaims(null)
     await loadClaims()
   }
 
@@ -300,6 +304,7 @@ function AdminClaims({ setPage }) {
 
     setProcessingId(null)
 
+    setFilteredClaims(null)
     await loadClaims()
   }
 
@@ -450,9 +455,38 @@ function AdminClaims({ setPage }) {
                 </p>
               </div>
             ) : (
+              <>
+              <ItemSearch
+                items={claims}
+                onSearch={setFilteredClaims}
+                getCategory={(claim) => claim.item?.category}
+                getSearchText={(claim) => [
+                  claim.item?.item_name,
+                  claim.item?.category,
+                  claim.item?.subcategory,
+                  claim.item?.brand,
+                  claim.item?.model,
+                  claim.item?.color,
+                  claim.item?.size,
+                  claim.item?.description,
+                  claim.item?.location,
+                  claim.status,
+                  claim.claimant?.full_name,
+                  claim.claimant?.email,
+                  claim.message,
+                ].filter(Boolean).join(' ')}
+                label="claims"
+                placeholder="Search item name or claimant"
+              />
+              {filteredClaims?.length === 0 ? (
+                <div className="admin-empty-state">
+                  <h3>No claims match your search.</h3>
+                  <p>Try another item name or category.</p>
+                </div>
+              ) : (
               <div className="admin-claims-list">
 
-                {claims.map((claim) => {
+                {(filteredClaims ?? claims).map((claim) => {
                   const parsed = parseClaimMessage(
                     claim.message
                   )
@@ -716,6 +750,8 @@ function AdminClaims({ setPage }) {
                 })}
 
               </div>
+            )}
+              </>
             )}
 
           </section>

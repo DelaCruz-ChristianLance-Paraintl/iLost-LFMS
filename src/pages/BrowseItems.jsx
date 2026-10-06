@@ -5,12 +5,14 @@ import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
+import ItemSearch from '../components/ItemSearch'
 
 import { Badge } from "../components/ui/badge";
 
 function BrowseItems({ setPage }) {
   const notify = useToast()
   const [items, setItems] = useState([])
+  const [filteredItems, setFilteredItems] = useState(null)
 
   const [loading, setLoading] = useState(true)
 
@@ -20,7 +22,7 @@ function BrowseItems({ setPage }) {
     const getItems = async () => {
       const { data, error: itemsError } = await supabase
         .from('items')
-        .select('id, type, category, photo_url, status')
+        .select('id, type, item_name, category, photo_url, status')
         .order('created_at', { ascending: false })
 
       if (itemsError) {
@@ -139,9 +141,17 @@ function BrowseItems({ setPage }) {
               </div>
 
             ) : (
+              <>
+                <ItemSearch items={items} onSearch={setFilteredItems} />
+                {filteredItems?.length === 0 ? (
+                  <div className="empty-state">
+                    <p>No items match your search.</p>
+                    <span>Try another item name or category.</span>
+                  </div>
+                ) : (
               <div className="browse-list">
 
-                {items.map((item) => (
+                {(filteredItems ?? items).map((item) => (
 
                   <article
                     className="browse-card"
@@ -180,6 +190,8 @@ function BrowseItems({ setPage }) {
                 ))}
 
               </div>
+                )}
+              </>
             )}
 
           </section>

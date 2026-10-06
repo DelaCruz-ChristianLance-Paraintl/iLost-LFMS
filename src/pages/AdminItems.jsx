@@ -6,10 +6,12 @@ import { useToast } from '../components/useToast'
 import AdminSidebar from '../components/AdminSidebar'
 import ItemImagePreview from '../components/ItemImagePreview'
 import { Badge } from '../components/ui/badge'
+import ItemSearch from '../components/ItemSearch'
 
 function AdminItems({ setPage }) {
   const notify = useToast()
   const [items, setItems] = useState([])
+  const [filteredItems, setFilteredItems] = useState(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
 
@@ -200,9 +202,17 @@ function AdminItems({ setPage }) {
 
               </div>
             ) : (
+              <>
+              <ItemSearch items={items} onSearch={setFilteredItems} />
+              {filteredItems?.length === 0 ? (
+                <div className="admin-empty-state">
+                  <h3>No items match your search.</h3>
+                  <p>Try another item name or category.</p>
+                </div>
+              ) : (
               <div className="admin-items-list">
 
-                {items.map((item) => (
+                {(filteredItems ?? items).map((item) => (
                   <article
                     key={item.id}
                     className="admin-item-card"
@@ -356,6 +366,8 @@ function AdminItems({ setPage }) {
                 ))}
 
               </div>
+              )}
+              </>
             )}
 
           </section>

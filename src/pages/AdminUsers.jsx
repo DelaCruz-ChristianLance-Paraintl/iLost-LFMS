@@ -5,10 +5,12 @@ import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
 import { Badge } from '../components/ui/badge'
+import ItemSearch from '../components/ItemSearch'
 
 function AdminUsers({ setPage }) {
   const notify = useToast()
   const [users, setUsers] = useState([])
+  const [filteredUsers, setFilteredUsers] = useState(null)
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
 
@@ -150,9 +152,32 @@ function AdminUsers({ setPage }) {
 
               </div>
             ) : (
+              <>
+              <ItemSearch
+                items={users}
+                onSearch={setFilteredUsers}
+                getSearchText={(user) => [
+                  user.full_name,
+                  user.email,
+                  user.contact_number,
+                  user.program,
+                  user.year_level,
+                  user.section,
+                  user.role,
+                ].filter(Boolean).join(' ')}
+                label="users"
+                placeholder="Search name, email, or program"
+                showCategory={false}
+              />
+              {filteredUsers?.length === 0 ? (
+                <div className="admin-empty-state">
+                  <h3>No users match your search.</h3>
+                  <p>Try another name, email, or program.</p>
+                </div>
+              ) : (
               <div className="admin-users-list">
 
-                {users.map((user) => (
+                {(filteredUsers ?? users).map((user) => (
                   <article
                     key={user.id}
                     className="admin-user-card"
@@ -262,6 +287,8 @@ function AdminUsers({ setPage }) {
                 ))}
 
               </div>
+              )}
+              </>
             )}
 
           </section>
