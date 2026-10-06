@@ -790,15 +790,22 @@ function FindMyMissingItems({ setPage }) {
                             You have already submitted for this item.
                           </span>
                         ) : (
-                          <button
-                            className="primary-button"
-                            type="button"
-                            onClick={() =>
-                              handleOpenClaimForm(match)
-                            }
-                          >
-                            Submit Claim
-                          </button>
+
+                        <button
+                          className="primary-button"
+                          type="button"
+                          onClick={() =>
+                            handleOpenClaimForm(match)
+                          }
+                          style={{
+                            backgroundColor: '#D1006F',
+                            borderColor: '#D1006F',
+                            color: '#FFFFFF',
+                          }}
+                        >
+                          Submit Claim
+                        </button>
+
                         )}
 
                       </div>
@@ -1031,15 +1038,20 @@ function FindMyMissingItems({ setPage }) {
                         Cancel
                       </button>
 
-                      <button
-                        className="primary-button"
-                        type="submit"
-                        disabled={claimLoading}
-                      >
-                        {claimLoading
-                          ? 'Submitting Claim...'
-                          : 'Submit Claim'}
-                      </button>
+<button
+  className="primary-button"
+  type="submit"
+  disabled={claimLoading}
+  style={{
+    backgroundColor: '#D1006F',
+    borderColor: '#D1006F',
+    color: '#FFFFFF',
+  }}
+>
+  {claimLoading
+    ? 'Submitting Claim...'
+    : 'Submit Claim'}
+</button>
 
                     </div>
 

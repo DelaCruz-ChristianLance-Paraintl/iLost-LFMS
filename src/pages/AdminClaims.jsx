@@ -623,6 +623,11 @@ function AdminClaims({ setPage }) {
                             <button
                               type="button"
                               className="admin-approve-button"
+                                style={{
+                                  backgroundColor: '#D1006F',
+                                  borderColor: '#D1006F',
+                                  color: '#FFFFFF',
+                                }}
                               disabled={
                                 processingId === claim.id
                               }
@@ -657,12 +662,14 @@ function AdminClaims({ setPage }) {
                             <button
                               type="button"
                               className="admin-approve-button"
-                              disabled={
-                                processingId === claim.id
-                              }
-                              onClick={() =>
+                              style={{
+                                backgroundColor: '#D1006F',
+                                borderColor: '#D1006F',
+                                color: '#FFFFFF',
+                              }}
+                              onClick={() => {
                                 handleHandover(claim)
-                              }
+                              }}
                             >
                               {processingId === claim.id
                                 ? 'Processing...'

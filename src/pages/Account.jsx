@@ -2,28 +2,26 @@ import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
-
 import Sidebar from '../components/Sidebar'
-
 import AdminSidebar from '../components/AdminSidebar'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { Badge } from '../components/ui/badge'
 
 function Account({ setPage, profile: initialProfile }) {
   const notify = useToast()
+
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(initialProfile || null)
-
   const [fullName, setFullName] = useState('')
   const [contactNumber, setContactNumber] = useState('')
   const [program, setProgram] = useState('')
   const [yearLevel, setYearLevel] = useState('')
   const [section, setSection] = useState('')
-
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -35,7 +33,6 @@ function Account({ setPage, profile: initialProfile }) {
       } = await supabase.auth.getUser()
 
       if (userError || !user) {
-        setPage('login')
         return
       }
 
@@ -58,10 +55,11 @@ function Account({ setPage, profile: initialProfile }) {
         .single()
 
       if (error || !data) {
-        const message = 'Unable to load your account information.'
-        setError(
-          message
-        )
+        const message =
+          'Unable to load your account information.'
+
+        setError(message)
+
         notify({
           type: 'error',
           title: 'Account information unavailable',
@@ -72,13 +70,11 @@ function Account({ setPage, profile: initialProfile }) {
       }
 
       setProfile(data)
-
       setFullName(data.full_name || '')
       setContactNumber(data.contact_number || '')
       setProgram(data.program || '')
       setYearLevel(data.year_level || '')
       setSection(data.section || '')
-
     }
 
     loadProfile()
@@ -90,23 +86,29 @@ function Account({ setPage, profile: initialProfile }) {
 
     if (!fullName.trim()) {
       const message = 'Full Name is required.'
+
       setError(message)
+
       notify({
         type: 'error',
         title: 'Profile could not be saved',
         description: message,
       })
+
       return
     }
 
     if (!user) {
       const message = 'User session not found.'
+
       setError(message)
+
       notify({
         type: 'error',
         title: 'Profile could not be saved',
         description: message,
       })
+
       return
     }
 
@@ -136,8 +138,11 @@ function Account({ setPage, profile: initialProfile }) {
       .single()
 
     if (error) {
-      const message = `Unable to update your profile: ${error.message}`
+      const message =
+        `Unable to update your profile: ${error.message}`
+
       setError(message)
+
       notify({
         type: 'error',
         title: 'Profile update failed',
@@ -149,17 +154,17 @@ function Account({ setPage, profile: initialProfile }) {
     }
 
     setProfile(data)
-
     setFullName(data.full_name || '')
     setContactNumber(data.contact_number || '')
     setProgram(data.program || '')
     setYearLevel(data.year_level || '')
     setSection(data.section || '')
-
     setEditing(false)
 
     const successMessage = 'Profile updated successfully.'
+
     setMessage(successMessage)
+
     notify({
       type: 'success',
       title: 'Profile updated',
@@ -177,9 +182,7 @@ function Account({ setPage, profile: initialProfile }) {
     setProgram(profile.program || '')
     setYearLevel(profile.year_level || '')
     setSection(profile.section || '')
-
     setEditing(false)
-
     setError('')
     setMessage('')
   }
@@ -189,18 +192,25 @@ function Account({ setPage, profile: initialProfile }) {
 
     if (error) {
       setError(`Unable to log out: ${error.message}`)
+
       notify({
         type: 'error',
         title: 'Log out failed',
         description: error.message,
       })
+
       return
     }
+
+    window.sessionStorage.removeItem('ilost-page')
+
     notify({
       type: 'success',
       title: 'Logged out',
-      description: 'You have been signed out successfully.',
+      description:
+        'You have been signed out successfully.',
     })
+
     setPage('home')
   }
 
@@ -222,18 +232,22 @@ function Account({ setPage, profile: initialProfile }) {
 
       <main className="dashboard-main">
         <section className="dashboard-content">
-        <Badge
-          variant="ghost"
-          onClick={() =>
-            setPage(isAdmin ? 'admin-dashboard' : 'dashboard')
-          }
-          className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
-        >
-          <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
-            ←
-          </span>
-          Back
-        </Badge>
+          <Badge
+            variant="ghost"
+            onClick={() =>
+              setPage(
+                isAdmin
+                  ? 'admin-dashboard'
+                  : 'dashboard'
+              )
+            }
+            className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
+          >
+            <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">
+              ←
+            </span>
+            Back
+          </Badge>
 
           <section className="dashboard-welcome page-welcome account-welcome">
             <p className="eyebrow">
@@ -500,6 +514,11 @@ function Account({ setPage, profile: initialProfile }) {
                 className="account-save-button"
                 onClick={handleSave}
                 disabled={saving}
+                style={{
+                  backgroundColor: '#D1006F',
+                  borderColor: '#D1006F',
+                  color: '#FFFFFF',
+                }}
               >
                 {saving
                   ? 'Saving...'
@@ -526,13 +545,26 @@ function Account({ setPage, profile: initialProfile }) {
             <button
               type="button"
               className="account-logout-button"
-              onClick={handleLogout}
+              onClick={() =>
+                setLogoutDialogOpen(true)
+              }
             >
               Log Out
             </button>
           </section>
         </section>
       </main>
+
+      <ConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        title="Log Out?"
+        description="Are you sure you want to log out of your iLost account?"
+        confirmLabel="Log Out"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={handleLogout}
+      />
     </div>
   )
 }

@@ -12,14 +12,18 @@ import {
 } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
+import ConfirmDialog from './ConfirmDialog'
 
 function AdminSidebar({ page, setPage }) {
   const sidebarRef = useRef(null)
+
   const [collapsed, setCollapsed] = useState(
     () =>
       window.matchMedia('(max-width: 700px)').matches ||
       window.localStorage.getItem('sidebar-collapsed') === 'true'
   )
+
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
   useEffect(() => {
     if (collapsed) {
@@ -42,14 +46,20 @@ function AdminSidebar({ page, setPage }) {
     document.addEventListener('pointerdown', collapseOnOutsidePointer)
 
     return () => {
-      document.removeEventListener('pointerdown', collapseOnOutsidePointer)
+      document.removeEventListener(
+        'pointerdown',
+        collapseOnOutsidePointer
+      )
     }
   }, [collapsed])
 
   const toggleSidebar = () => {
     setCollapsed((current) => {
       const next = !current
-      window.localStorage.setItem('sidebar-collapsed', String(next))
+      window.localStorage.setItem(
+        'sidebar-collapsed',
+        String(next)
+      )
       return next
     })
   }
@@ -77,6 +87,7 @@ function AdminSidebar({ page, setPage }) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+    window.sessionStorage.removeItem('ilost-page')
     setPage('home')
   }
 
@@ -89,11 +100,19 @@ function AdminSidebar({ page, setPage }) {
         type="button"
         className="sidebar-toggle"
         onClick={toggleSidebar}
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        aria-label={
+          collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+        }
         aria-expanded={!collapsed}
-        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={
+          collapsed ? 'Expand sidebar' : 'Collapse sidebar'
+        }
       >
-        {collapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
+        {collapsed ? (
+          <PanelLeftOpen size={19} />
+        ) : (
+          <PanelLeftClose size={19} />
+        )}
       </button>
 
       <button
@@ -111,70 +130,77 @@ function AdminSidebar({ page, setPage }) {
       </button>
 
       <nav className="sidebar-nav">
+        <button
+          className={`sidebar-link ${
+            page === 'admin-dashboard' ? 'active' : ''
+          }`}
+          onClick={() => navigateTo('admin-dashboard')}
+        >
+          <LayoutDashboard size={18} />
+          <span>Admin Overview</span>
+        </button>
 
-      <button
-        className={`sidebar-link ${
-          page === 'admin-dashboard' ? 'active' : ''
-        }`}
-        onClick={() => navigateTo('admin-dashboard')}
-      >
-        <LayoutDashboard size={18} />
-        <span>Admin Overview</span>
-      </button>
+        <button
+          className={`sidebar-link ${
+            page === 'admin-claims' ? 'active' : ''
+          }`}
+          onClick={() => navigateTo('admin-claims')}
+        >
+          <ClipboardCheck size={18} />
+          <span>User Claims</span>
+        </button>
 
-      <button
-        className={`sidebar-link ${
-          page === 'admin-claims' ? 'active' : ''
-        }`}
-        onClick={() => navigateTo('admin-claims')}
-      >
-        <ClipboardCheck size={18} />
-        <span>User Claims</span>
-      </button>
+        <button
+          className={`sidebar-link ${
+            page === 'admin-users' ? 'active' : ''
+          }`}
+          onClick={() => navigateTo('admin-users')}
+        >
+          <Users size={18} />
+          <span>System Users</span>
+        </button>
 
-      <button
-        className={`sidebar-link ${
-          page === 'admin-users' ? 'active' : ''
-        }`}
-        onClick={() => navigateTo('admin-users')}
-      >
-        <Users size={18} />
-        <span>System Users</span>
-      </button>
+        <button
+          className={`sidebar-link ${
+            page === 'admin-items' ? 'active' : ''
+          }`}
+          onClick={() => navigateTo('admin-items')}
+        >
+          <Package size={18} />
+          <span>Items Overview</span>
+        </button>
 
-      <button
-        className={`sidebar-link ${
-          page === 'admin-items' ? 'active' : ''
-        }`}
-        onClick={() => navigateTo('admin-items')}
-      >
-        <Package size={18} />
-        <span>Items Overview</span>
-      </button>
-
-      <button
-        className={`sidebar-link ${
-          page === 'account' ? 'active' : ''
-        }`}
-        onClick={() => navigateTo('account')}
-      >
-        <UserRound size={18} />
-        <span>Admin Account</span>
-      </button>
-
+        <button
+          className={`sidebar-link ${
+            page === 'account' ? 'active' : ''
+          }`}
+          onClick={() => navigateTo('account')}
+        >
+          <UserRound size={18} />
+          <span>Admin Account</span>
+        </button>
       </nav>
 
       <div className="sidebar-bottom">
-
-<button
-  className="sidebar-logout"
-  onClick={handleLogout}
->
-  <LogOut size={18} />
-  <span>Log Out</span>
-</button>
-
+        <button
+          className="sidebar-logout"
+          onClick={() => setLogoutDialogOpen(true)}
+        >
+          <LogOut size={18} />
+          <span>Log Out</span>
+        </button>
       </div>
+
+      <ConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        title="Log Out?"
+        description="Are you sure you want to log out of your iLost account?"
+        confirmLabel="Log Out"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={handleLogout}
+      />
     </aside>
   )
 }
