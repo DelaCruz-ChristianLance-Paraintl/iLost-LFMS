@@ -1460,7 +1460,7 @@ function ReportItem({ type, setPage }) {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-10 rounded-lg bg-[#B83A4B] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#963040] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-10 rounded-lg bg-[#EC7FA8] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#DE5D96] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? 'Submitting...'

@@ -4512,6 +4512,10 @@ a {
   letter-spacing: 1.8px;
 }
 
+.report-welcome .header-eyebrow-pill {
+  margin: 0;
+}
+
 .account-welcome h1 {
   margin-top: 0;
 }
@@ -4787,8 +4791,10 @@ a {
   flex: 1 1 auto;
   min-height: 0;
   margin-block: 10px;
-  padding-inline: 5px;
+  margin-right: -28px;
+  padding-inline: 5px 46px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   scrollbar-color: #c9a9b8 transparent;
   scrollbar-width: thin;
 }
@@ -6253,9 +6259,9 @@ input[type="radio"] {
   gap: 8px;
   min-height: 42px;
   padding: 0 18px;
-  border: 1px solid #8E2A63;
+  border: 1px solid #EC7FA8;
   border-radius: 9px;
-  background: #8E2A63;
+  background: #EC7FA8;
   color: #ffffff;
   font: inherit;
   font-size: 13px;
@@ -6265,8 +6271,8 @@ input[type="radio"] {
 }
 
 .item-search-button:hover {
-  border-color: #650033;
-  background: #650033;
+  border-color: #DE5D96;
+  background: #DE5D96;
 }
 
 .item-search-button:focus-visible {
