@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { Check, ChevronDown, LoaderCircle, X } from 'lucide-react'
+import { ArrowLeft, Check, ChevronDown, LoaderCircle, X } from 'lucide-react'
 
 import { supabase } from '../lib/supabaseClient'
 
@@ -275,7 +275,7 @@ function Register({ setPage, embedded = false }) {
       notify({
         type: 'error',
         title: 'Invalid student number',
-        description: 'Please enter your valid student number.',
+        description: 'Please enter numbers only for your student number.',
       })
     }
 
@@ -744,6 +744,54 @@ function Register({ setPage, embedded = false }) {
       <style>{`
         .register-form-shell {
           width: 100%;
+        }
+
+        /*
+         * ------------------------------------------------------
+         * BACK TO SIGN IN
+         * ------------------------------------------------------
+         */
+
+        .register-back-button {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          margin: 0 0 18px;
+          padding: 7px 10px;
+
+          border: 0;
+          border-radius: 7px;
+          background: transparent;
+          color: #756b72;
+
+          font-family: inherit;
+          font-size: 12.5px;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+
+          cursor: pointer;
+          transition:
+            color 0.18s ease,
+            background 0.18s ease,
+            transform 0.18s ease;
+        }
+
+        .register-back-button:hover {
+          color: #98004f;
+          background: #fbe4f0;
+        }
+
+        .register-back-button:active {
+          transform: translateX(-2px);
+        }
+
+        .register-back-button:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(209, 0, 111, 0.12);
+        }
+
+        .register-back-button svg {
+          flex-shrink: 0;
         }
 
         /*
@@ -1227,6 +1275,18 @@ function Register({ setPage, embedded = false }) {
           embedded ? ' landing-auth-inner' : ''
         }`}
       >
+        {!showVerification && (
+          <button
+            type="button"
+            className="register-back-button"
+            onClick={() => setPage('home')}
+            aria-label="Back to Sign In"
+          >
+            <ArrowLeft size={15} strokeWidth={2.2} aria-hidden="true" />
+            <span>Back to Sign In</span>
+          </button>
+        )}
+
         <div className="auth-brand">
           <img
             src="/ilost.png"
