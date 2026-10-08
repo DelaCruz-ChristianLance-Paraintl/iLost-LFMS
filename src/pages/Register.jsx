@@ -264,6 +264,27 @@ function Register({ setPage, embedded = false }) {
 
   /*
    * ============================================================
+   * STUDENT NUMBER VALIDATION
+   * ============================================================
+   */
+
+  const handleStudentNumberChange = (e) => {
+    const rawValue = e.target.value
+
+    if (/[^0-9]/.test(rawValue)) {
+      notify({
+        type: 'error',
+        title: 'Invalid student number',
+        description: 'Please enter your valid student number.',
+      })
+    }
+
+    const digitsOnly = rawValue.replace(/\D/g, '').slice(0, 10)
+    setStudentNumber(digitsOnly)
+  }
+
+  /*
+   * ============================================================
    * REGISTER
    * ============================================================
    */
@@ -298,6 +319,22 @@ function Register({ setPage, embedded = false }) {
         type: 'error',
         title: 'Check your password',
         description: 'Passwords do not match.',
+      })
+
+      return
+    }
+
+    if (userType === 'Student' && !/^\d{10}$/.test(studentNumber)) {
+      const studentNumberMessage =
+        'Please enter a valid 10-digit student number.'
+
+      setMessage(studentNumberMessage)
+      setMessageType('error')
+
+      notify({
+        type: 'error',
+        title: 'Invalid student number',
+        description: studentNumberMessage,
       })
 
       return
@@ -1370,11 +1407,12 @@ function Register({ setPage, embedded = false }) {
                     <input
                       id="studentNumber"
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={10}
                       value={studentNumber}
-                      onChange={(e) =>
-                        setStudentNumber(e.target.value)
-                      }
-                      placeholder="Enter your student number"
+                      onChange={handleStudentNumberChange}
+                      placeholder="Enter your 10-digit student number"
                       required
                     />
                   </div>
