@@ -350,6 +350,7 @@ body {
   font-size: 13px;
 }
 
+
 @media (max-width: 900px) {
   .hero-section {
     flex-direction: column;
@@ -1291,6 +1292,7 @@ body {
   }
 }
 
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -1514,6 +1516,7 @@ body {
   .sidebar:not(.collapsed) {
     box-shadow: 16px 0 40px rgba(30, 0, 16, 0.24);
   }
+
 
   .dashboard-main,
   .sidebar.collapsed + .dashboard-main {
@@ -3707,14 +3710,22 @@ body {
   color: #4b5563;
 }
 
+
+
 .admin-items-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin-top: 24px;
+  min-width: 0;
+  width: 100%;
 }
 
 .admin-item-card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   background: #ffffff;
   border: 1px solid #E8DEE4;
   border-radius: 18px;
@@ -3731,20 +3742,40 @@ body {
   border-bottom: 1px solid #E8DEE4;
 }
 
+.admin-item-header > div {
+  min-width: 0;
+}
+
 .admin-item-header h3 {
   margin: 6px 0 0;
   font-size: 22px;
   color: #2B252A;
+  overflow-wrap: anywhere;
 }
 
 .admin-item-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   margin-top: 20px;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-detail-block {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-detail-block p {
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .admin-item-description {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
   margin-top: 20px;
   padding: 18px;
   background: #FAF8FA;
@@ -3756,6 +3787,7 @@ body {
   margin: 0;
   color: #2B252A;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .admin-item-footer {
@@ -3765,13 +3797,47 @@ body {
   margin-top: 20px;
   padding-top: 18px;
   border-top: 1px solid #E8DEE4;
+  min-width: 0;
 }
 
 .admin-item-footer p {
+  min-width: 0;
   margin: 0;
   color: #756B72;
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
+
+@media (max-width: 640px) {
+  .admin-item-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .admin-item-header {
+    gap: 12px;
+  }
+
+  .admin-item-header h3 {
+    font-size: 18px;
+  }
+
+  .admin-item-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .admin-item-description {
+    padding: 14px;
+  }
+
+  .admin-item-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+
 
 .claim-status-reported {
   background: #F2EAF0;
@@ -4350,26 +4416,31 @@ body {
 CAMPUS ILLUSTRATION
    ========================================================= */
 
+
 .campus-illustration {
   position: relative;
-  flex: 1;
-  min-height: 350px;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .campus-illustration-image {
   width: 100%;
   max-width: 560px;
+  min-width: 0;
   filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
 }
 
 .campus-illustration-image svg {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
+  max-width: 100%;
 }
 
 /* =========================================================
@@ -6334,4 +6405,251 @@ input[type="radio"] {
 .sidebar-logout svg {
   flex-shrink: 0;
   stroke-width: 2;
+}
+
+/* MOBILE SIDEBAR VIEWPORT FIX */
+@media (max-width: 700px) {
+.sidebar {
+position: fixed;
+top: 0;
+bottom: 0;
+left: 0;
+
+
+/* Let top and bottom define the sidebar height */
+height: auto;
+min-height: 0;
+max-height: none;
+
+display: flex;
+flex-direction: column;
+overflow: hidden;
+box-sizing: border-box;
+
+
+}
+
+.sidebar-nav {
+flex: 1 1 auto;
+min-height: 0;
+overflow-x: hidden;
+overflow-y: auto;
+overscroll-behavior: contain;
+-webkit-overflow-scrolling: touch;
+}
+
+.sidebar-bottom {
+flex: 0 0 auto;
+margin-top: auto;
+padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+}
+
+
+
+/* =========================================================
+   iLost LANDING PAGE — RESPONSIVE LAYOUT FIX
+   Add at the very end of App.css
+   ========================================================= */
+
+/* Desktop: keep both panels full-height without clipping content */
+.landing-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  height: auto;
+  overflow: visible;
+  align-items: stretch;
+}
+
+.landing-brand-panel,
+.landing-login-panel {
+  box-sizing: border-box;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.landing-brand-panel {
+  overflow: visible;
+}
+
+.campus-illustration {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campus-illustration-image {
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+}
+
+.campus-illustration-image svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.landing-login-panel {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Keep the existing animated circuit background behind the card */
+.circuit-svg {
+  z-index: 0;
+}
+
+.landing-login-card {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  max-width: calc(100% - 48px);
+}
+
+/* Mobile and tablet: two full-height sections */
+@media (max-width: 900px) {
+  .landing-page {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .landing-brand-panel,
+  .landing-login-panel {
+    width: 100%;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  /* Screen 1: complete hero */
+  .landing-brand-panel {
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    padding: clamp(18px, 3.5svh, 32px)
+      clamp(20px, 5vw, 35px);
+    overflow: hidden;
+  }
+
+  .landing-brand {
+    flex: 0 0 auto;
+  }
+
+  .landing-logo {
+    margin-bottom: clamp(10px, 2svh, 18px);
+  }
+
+  .landing-brand h1 {
+    font-size: clamp(27px, 5.2vw, 40px);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  .landing-campus {
+    margin-bottom: clamp(8px, 1.5svh, 14px);
+    font-size: clamp(12px, 2.6vw, 16px);
+    line-height: 1.4;
+  }
+
+  .landing-tagline {
+    font-size: clamp(11px, 2.4vw, 14px);
+    line-height: 1.45;
+  }
+
+  .landing-tagline br {
+    display: none;
+  }
+
+  .campus-illustration {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    margin-top: clamp(6px, 1.5svh, 14px);
+  }
+
+  .campus-illustration-image {
+    width: 100%;
+    max-width: 560px;
+    max-height: 100%;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.22));
+  }
+
+  .campus-illustration-image svg {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .network-info {
+    flex: 0 0 auto;
+    margin-top: clamp(6px, 1svh, 12px);
+  }
+
+  /* Screen 2: complete sign-in card */
+  .landing-login-panel {
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .landing-login-card {
+    width: min(90%, 520px);
+    max-width: calc(100% - 32px);
+    max-height: calc(100% - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .landing-login-card-form {
+    max-height: calc(100% - 24px);
+  }
+}
+
+/* Smaller phones */
+@media (max-width: 520px) {
+  .landing-brand-panel {
+    padding: 18px 20px;
+  }
+
+  .landing-logo-image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: clamp(70px, 13svh, 112px);
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .landing-brand h1 {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+
+  .landing-campus {
+    font-size: 12px;
+  }
+
+  .landing-tagline {
+    font-size: 11px;
+  }
+
+  .network-info {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .landing-login-card {
+    width: calc(100% - 32px);
+  }
 }
