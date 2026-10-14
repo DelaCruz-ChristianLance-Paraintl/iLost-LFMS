@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
+import UserManual from '../components/UserManual'
 import { Badge } from '../components/ui/badge'
 import ItemImagePreview from '../components/ItemImagePreview'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -479,6 +480,7 @@ function FindMyMissingItems({ setPage }) {
       />
 
       <main className="dashboard-main">
+        <UserManual />
 
         <section
           id="find-missing-content"

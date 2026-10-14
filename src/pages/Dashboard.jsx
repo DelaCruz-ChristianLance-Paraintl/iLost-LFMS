@@ -16,6 +16,7 @@ import {
   getTimeBucketKey,
 } from '../lib/chartTimeBuckets'
 import Sidebar from '../components/Sidebar'
+import UserManual from '../components/UserManual'
 
 const chartSeries = {
   lost: {
@@ -281,6 +282,7 @@ function Dashboard({ setPage, profile }) {
       />
 
       <main className="dashboard-main">
+        <UserManual />
         <section className="dashboard-content">
 
           <section className="dashboard-welcome">

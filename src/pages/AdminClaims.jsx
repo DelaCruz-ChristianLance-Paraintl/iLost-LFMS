@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 
 import AdminSidebar from '../components/AdminSidebar'
+import UserManual from '../components/UserManual'
 import { Badge } from '../components/ui/badge'
 import ConfirmDialog from '../components/ConfirmDialog'
 import ItemSearch from '../components/ItemSearch'
@@ -395,6 +396,7 @@ function AdminClaims({ setPage }) {
       />
 
       <main className="dashboard-main">
+        <UserManual isAdmin />
         <section className="dashboard-content">
         <Badge
           variant="ghost"

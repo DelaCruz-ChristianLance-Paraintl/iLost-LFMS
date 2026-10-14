@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 
 import Sidebar from '../components/Sidebar'
+import UserManual from '../components/UserManual'
 import ItemImagePreview from '../components/ItemImagePreview'
 import ItemSearch from '../components/ItemSearch'
 
@@ -82,6 +83,7 @@ function BrowseItems({ setPage }) {
       />
 
       <main className="dashboard-main">
+        <UserManual />
 
         <section className="dashboard-content">
         <Badge

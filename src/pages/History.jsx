@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 import Sidebar from '../components/Sidebar'
+import UserManual from '../components/UserManual'
 import { Badge } from '../components/ui/badge'
 import ItemSearch from '../components/ItemSearch'
 
@@ -151,6 +152,7 @@ function History({ setPage }) {
       />
 
       <main className="dashboard-main">
+        <UserManual />
         <section className="dashboard-content">
         <Badge
           variant="ghost"

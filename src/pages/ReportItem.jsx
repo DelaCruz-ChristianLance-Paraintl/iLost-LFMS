@@ -5,6 +5,7 @@ import { useToast } from '../components/useToast'
 import { Button } from '../components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
+import UserManual from '../components/UserManual'
 import ItemImagePreview from '../components/ItemImagePreview'
 import ConfirmDialog from '../components/ConfirmDialog'
 
@@ -832,6 +833,7 @@ function ReportItem({ type, setPage }) {
       />
 
       <main className="dashboard-main">
+        <UserManual />
         <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
 
           <Badge

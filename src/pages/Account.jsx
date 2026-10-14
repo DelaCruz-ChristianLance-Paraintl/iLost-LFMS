@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
 import Sidebar from '../components/Sidebar'
 import AdminSidebar from '../components/AdminSidebar'
+import UserManual from '../components/UserManual'
 import ConfirmDialog from '../components/ConfirmDialog'
 import { Badge } from '../components/ui/badge'
 
@@ -231,6 +232,7 @@ function Account({ setPage, profile: initialProfile }) {
       )}
 
       <main className="dashboard-main">
+        <UserManual isAdmin={isAdmin} />
         <section className="dashboard-content">
           <Badge
             variant="ghost"

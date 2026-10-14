@@ -11,6 +11,7 @@ import {
 
 import { supabase } from '../lib/supabaseClient'
 import AdminSidebar from '../components/AdminSidebar'
+import UserManual from '../components/UserManual'
 import {
   buildCompleteTimeBuckets,
   getTimeBucketKey,
@@ -431,6 +432,7 @@ function AdminDashboard({ setPage, profile }) {
       />
 
       <main className="dashboard-main">
+        <UserManual isAdmin />
         <section className="dashboard-content">
           <section className="dashboard-welcome">
             <p className="eyebrow">ADMINISTRATION</p>

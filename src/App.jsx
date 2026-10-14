@@ -14,6 +14,7 @@ import { supabase } from './lib/supabaseClient'
 
 import CampusIllustration from './components/CampusIllustration'
 import CircuitBackground from './components/CircuitBackground'
+import UserManual from './components/UserManual'
 import { useToast } from './components/useToast'
 
 import Register from './pages/Register'
@@ -499,6 +500,7 @@ const restoreSession = async () => {
         </div>
       </section>
     </div>
+    <UserManual />
     <Analytics />
 </>
   )
