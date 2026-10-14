@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import { useLoading } from '../components/Loadingprovider'
 
 import Sidebar from '../components/Sidebar'
 import UserManual from '../components/UserManual'
@@ -13,6 +14,7 @@ import ItemSearch from '../components/ItemSearch'
 import { findMatches } from '../lib/matching'
 
 function FindMyMissingItems({ setPage }) {
+  const { flash } = useLoading()
   const notify = useToast()
   const [lostItems, setLostItems] = useState([])
 
@@ -492,7 +494,7 @@ function FindMyMissingItems({ setPage }) {
         >
         <Badge
           variant="ghost"
-          onClick={() => setPage('dashboard')}
+          onClick={() => flash('back', () => setPage('dashboard'))}
           className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
         >
           <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">

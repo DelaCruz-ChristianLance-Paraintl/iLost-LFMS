@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import { useLoading } from '../components/Loadingprovider'
 
 function Login({ setPage, setProfile }) {
   const notify = useToast()
+  const { showLoading, hideLoading } = useLoading()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -14,6 +16,7 @@ function Login({ setPage, setProfile }) {
 
     setMessage('')
     setLoading(true)
+    showLoading('signin')
 
     try {
       const { data, error } =
@@ -58,6 +61,7 @@ function Login({ setPage, setProfile }) {
       setPage(profile.role === 'admin' ? 'admin-dashboard' : 'dashboard')
     } finally {
       setLoading(false)
+      hideLoading()
     }
   }
 

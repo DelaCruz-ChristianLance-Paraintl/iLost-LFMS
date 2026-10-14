@@ -1,0 +1,328 @@
+/* ──────────────────────────────────────────────────────────────
+   iLost — full-screen loading screen
+   Pure CSS, no SVG files. Works for both user and admin accounts.
+   ────────────────────────────────────────────────────────────── */
+
+.il-loader {
+  --il-pink-50: #fff3f8;
+  --il-pink-100: #ffe1ee;
+  --il-pink-200: #ffc8de;
+  --il-pink-300: #ffa3c6;
+  --il-pink-400: #f576a9;
+  --il-magenta: #c4155f;
+  --il-magenta-deep: #8f0e45;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: progress;
+  font-family: inherit; /* uses your app font (Geist) */
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--il-pink-50) 0%, var(--il-pink-100) 36%, var(--il-pink-200) 70%, var(--il-pink-300) 100%);
+  animation: il-fade-in 0.28s ease both;
+  /* blocks clicks underneath, so nobody can double-submit while loading */
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  padding:
+    env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+.il-loader.is-leaving {
+  animation: il-fade-out 0.38s ease forwards;
+  pointer-events: none;
+}
+
+/* first paint on page boot: no fade, so it swaps invisibly with the index.html splash */
+.il-loader.is-instant {
+  animation: none;
+}
+
+/* ── background ───────────────────────────────────────────── */
+
+.il-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.il-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.il-blob--a {
+  width: 46vmax;
+  height: 46vmax;
+  left: -14vmax;
+  top: -16vmax;
+  background: radial-gradient(circle, #ff9cc4 0%, rgba(255, 156, 196, 0) 70%);
+  animation: il-drift-a 14s ease-in-out infinite alternate;
+}
+.il-blob--b {
+  width: 52vmax;
+  height: 52vmax;
+  right: -18vmax;
+  bottom: -20vmax;
+  background: radial-gradient(circle, #e9559a 0%, rgba(233, 85, 154, 0) 70%);
+  opacity: 0.4;
+  animation: il-drift-b 16s ease-in-out infinite alternate;
+}
+
+/* faint "map" grid that slowly pans, fades out toward the edges */
+.il-grid {
+  position: absolute;
+  inset: -48px;
+  background-image:
+    linear-gradient(rgba(196, 21, 95, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(196, 21, 95, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(60% 55% at 50% 48%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(60% 55% at 50% 48%, #000 0%, transparent 78%);
+  animation: il-grid-pan 16s linear infinite;
+}
+
+/* soft bubbles drifting upward */
+.il-bubble {
+  position: absolute;
+  left: var(--x);
+  bottom: -40px;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15) 60%, transparent 72%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  opacity: 0;
+  animation: il-float var(--d) linear infinite;
+  animation-delay: var(--delay);
+}
+
+/* ── centerpiece ──────────────────────────────────────────── */
+
+.il-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(86vw, 360px);
+  text-align: center;
+}
+
+.il-pin-wrap {
+  position: relative;
+  width: clamp(112px, 26vw, 150px);
+  animation: il-drop 0.8s cubic-bezier(0.2, 1.35, 0.4, 1) both;
+}
+
+.il-pin {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 12px 18px rgba(143, 14, 69, 0.28));
+  animation: il-bob 1.9s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  -webkit-user-drag: none;
+}
+
+/* ground ping: flat ellipses expanding from the pin's tip, like a map location pulse */
+.il-ripple {
+  position: absolute;
+  left: 50%;
+  bottom: 1%;
+  width: 120%;
+  height: 34%;
+  border-radius: 50%;
+  border: 2px solid rgba(196, 21, 95, 0.55);
+  background: radial-gradient(closest-side, rgba(196, 21, 95, 0.1), transparent);
+  transform: translate(-50%, 50%) scale(0.15);
+  opacity: 0;
+  animation: il-ripple 2.7s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.il-ripple--2 { animation-delay: 0.9s; }
+.il-ripple--3 { animation-delay: 1.8s; }
+
+.il-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+  width: 46%;
+  height: 7%;
+  border-radius: 50%;
+  background: rgba(143, 14, 69, 0.45);
+  filter: blur(5px);
+  transform: translateX(-50%);
+  animation: il-shadow 1.9s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+
+.il-wordmark {
+  position: relative;
+  width: clamp(120px, 30vw, 168px);
+  margin-top: clamp(14px, 3vh, 22px);
+  animation: il-rise 0.6s 0.25s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+.il-wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
+}
+/* light sweep clipped to the letterforms */
+.il-wordmark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 36%, rgba(255, 255, 255, 0.9) 50%, transparent 64%);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-mask-image: var(--il-wordmark);
+  mask-image: var(--il-wordmark);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: il-shine 2.6s 0.8s ease-in-out infinite;
+}
+
+.il-status {
+  display: inline-flex;
+  align-items: baseline;
+  margin: clamp(20px, 4vh, 30px) 0 0;
+  font-size: clamp(15px, 3.9vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--il-magenta-deep);
+  animation: il-rise 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.il-ellipsis {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 4px;
+}
+.il-ellipsis i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: il-dot 1.2s ease-in-out infinite both;
+}
+.il-ellipsis i:nth-child(2) { animation-delay: 0.16s; }
+.il-ellipsis i:nth-child(3) { animation-delay: 0.32s; }
+
+.il-bar {
+  width: min(220px, 60vw);
+  height: 5px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(196, 21, 95, 0.14);
+}
+.il-bar span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--il-pink-400), var(--il-magenta));
+  animation: il-slide 1.3s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+}
+
+.il-tagline {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(143, 14, 69, 0.66);
+  animation: il-rise 0.6s 0.45s ease both;
+}
+
+/* ── keyframes ────────────────────────────────────────────── */
+
+@keyframes il-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes il-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes il-drop {
+  from { opacity: 0; transform: translateY(-34px) scale(0.9); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes il-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes il-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  18%      { transform: translateY(1px) rotate(0deg) scale(1.03, 0.97); }
+  50%      { transform: translateY(-16px) rotate(-2.5deg) scale(1, 1.02); }
+  82%      { transform: translateY(0) rotate(1deg) scale(1, 1); }
+}
+@keyframes il-shadow {
+  0%, 100% { transform: translateX(-50%) scale(1);    opacity: 0.55; }
+  50%      { transform: translateX(-50%) scale(0.62); opacity: 0.22; }
+}
+@keyframes il-ripple {
+  0%   { transform: translate(-50%, 50%) scale(0.15); opacity: 0; }
+  12%  { opacity: 0.9; }
+  100% { transform: translate(-50%, 50%) scale(2.3);  opacity: 0; }
+}
+
+@keyframes il-shine {
+  0%        { background-position: 100% 0; }
+  55%, 100% { background-position: 0% 0; }
+}
+@keyframes il-dot {
+  0%, 80%, 100% { transform: translateY(0);    opacity: 0.35; }
+  40%           { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes il-slide {
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(260%); }
+}
+
+@keyframes il-float {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  15%  { opacity: 0.9; }
+  100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
+}
+@keyframes il-grid-pan {
+  to { background-position: 48px 48px; }
+}
+@keyframes il-drift-a {
+  to { transform: translate3d(8vmax, 6vmax, 0) scale(1.12); }
+}
+@keyframes il-drift-b {
+  to { transform: translate3d(-8vmax, -5vmax, 0) scale(1.1); }
+}
+
+/* ── accessibility ────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .il-blob,
+  .il-grid,
+  .il-bubble,
+  .il-ripple,
+  .il-shadow,
+  .il-pin,
+  .il-wordmark::after {
+    animation: none;
+  }
+  .il-bubble,
+  .il-ripple { display: none; }
+  .il-bar span {
+    width: 100%;
+    animation: il-calm 1.8s ease-in-out infinite alternate;
+  }
+  @keyframes il-calm {
+    from { opacity: 0.45; }
+    to   { opacity: 1; }
+  }
+}
+
+@media (max-height: 480px) {
+  .il-tagline { display: none; }
+}

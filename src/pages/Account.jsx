@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import { useLoading } from '../components/Loadingprovider'
 import Sidebar from '../components/Sidebar'
 import AdminSidebar from '../components/AdminSidebar'
 import UserManual from '../components/UserManual'
@@ -10,6 +11,7 @@ import { Badge } from '../components/ui/badge'
 
 function Account({ setPage, profile: initialProfile }) {
   const notify = useToast()
+  const { flash, withLoading } = useLoading()
 
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(initialProfile || null)
@@ -188,7 +190,7 @@ function Account({ setPage, profile: initialProfile }) {
     setMessage('')
   }
 
-  const handleLogout = async () => {
+  const handleLogout = () => withLoading(async () => {
     const { error } = await supabase.auth.signOut()
 
     if (error) {
@@ -213,7 +215,7 @@ function Account({ setPage, profile: initialProfile }) {
     })
 
     setPage('home')
-  }
+  }, 'signout')
 
   const isAdmin = profile?.role === 'admin'
 
@@ -237,11 +239,11 @@ function Account({ setPage, profile: initialProfile }) {
           <Badge
             variant="ghost"
             onClick={() =>
-              setPage(
+              flash('back', () => setPage(
                 isAdmin
                   ? 'admin-dashboard'
                   : 'dashboard'
-              )
+              ))
             }
             className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
           >

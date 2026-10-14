@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../components/useToast'
+import { useLoading } from '../components/Loadingprovider'
 import { Button } from '../components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Sidebar from '../components/Sidebar'
@@ -494,6 +495,7 @@ function TimePicker({ value, onChange, placeholder }) {
 
 
 function ReportItem({ type, setPage }) {
+  const { flash, withLoading } = useLoading()
   const notify = useToast()
   const [form, setForm] = useState({
     itemName: '',
@@ -681,7 +683,7 @@ function ReportItem({ type, setPage }) {
     setConfirmOpen(true)
   }
 
-  const submitReport = async () => {
+  const submitReport = () => withLoading(async () => {
     if (form.date > getTodayDateValue()) {
       const message = 'The report date cannot be in the future.'
       setError(message)
@@ -818,7 +820,7 @@ function ReportItem({ type, setPage }) {
 
     setLoading(false)
     setPage('dashboard')
-  }
+  }, 'submit')
 
   const brandOptions = getBrandOptions(
     form.category,
@@ -838,7 +840,7 @@ function ReportItem({ type, setPage }) {
 
           <Badge
             variant="ghost"
-            onClick={() => setPage('dashboard')}
+            onClick={() => flash('back', () => setPage('dashboard'))}
             className="group mb-5 cursor-pointer gap-2 rounded-full border border-[#8E2A63]/20 bg-[#8E2A63]/[0.06] px-4 py-2 text-sm font-semibold text-[#8E2A63] transition-all duration-200 hover:border-[#8E2A63]/40 hover:bg-[#FBE4F0] hover:text-[#650033]"
           >
             <span className="text-base transition-transform duration-200 group-hover:-translate-x-0.5">

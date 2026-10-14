@@ -15,9 +15,13 @@ import {
 
 import { supabase } from '../lib/supabaseClient'
 import ConfirmDialog from './ConfirmDialog'
+import { useLoading } from './Loadingprovider'
+import { useToast } from './useToast'
 
 function Sidebar({ page, setPage }) {
   const sidebarRef = useRef(null)
+  const { withLoading, reloadApp } = useLoading()
+  const notify = useToast()
 
   const [collapsed, setCollapsed] = useState(
     () =>
@@ -90,9 +94,21 @@ function Sidebar({ page, setPage }) {
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.sessionStorage.removeItem('ilost-page')
-    setPage('home')
+    await withLoading(async () => {
+      const { error } = await supabase.auth.signOut()
+
+      if (error) {
+        notify({
+          type: 'error',
+          title: 'Log out failed',
+          description: error.message,
+        })
+        return
+      }
+
+      window.sessionStorage.removeItem('ilost-page')
+      setPage('home')
+    }, 'signout')
   }
 
   return (
@@ -122,7 +138,7 @@ function Sidebar({ page, setPage }) {
       <button
         type="button"
         className="sidebar-brand"
-        onClick={() => navigateTo('dashboard')}
+        onClick={() => reloadApp()}
         aria-label="Go to iLost overview"
       >
         <img
